@@ -9,10 +9,43 @@ $count = 0;
 function parsePage($page)
 {
 	global $all;
-	$html = file_get_html($page);
-	$dom = new simple_html_dom;
-	$dom->load($html);
+	$dom = file_get_html($page);
+	if (null == $dom)
+	{
+		return;
+	}
 	$info = array("link" => $page);
+	// parse heading
+	$span = $dom->find('#firstHeading span');
+	if (count($span) > 0)
+	{
+		$info["name"] = $span[0]->innertext;
+	}
+	// parse first paragraph
+	$div = $dom->find('#mw-content-text');
+	if (count($div) > 0)
+	{
+		foreach ($div[0]->children as $key => $value)
+		{
+			if ("p" != $value->tag)
+			{
+				continue;
+			}
+			$info["firstp"] = array();
+			$a = $value->find("a");
+			foreach ($a as $key => $value)
+			{
+				array_push($info["firstp"], $value->innertext);
+			}
+			$bold = $value->find("b");
+			foreach ($bold as $key => $value)
+			{
+				array_push($info["firstp"], $value->innertext);
+			}
+			break;
+		}
+	}
+	// parse content table
 	$table = $dom->find('#mw-content-text table');
 	foreach ($table as $key => $value)
 	{
@@ -56,14 +89,34 @@ function parsePage($page)
 			$info[ $th[0]->innertext ] = $td[0]->innertext;
 		}
 	}
+	// parse category links
+	$li = $dom->find('#mw-normal-catlinks ul li');
+	$info["catlinks"] = array();
+	foreach ($li as $key => $value)
+	{
+		$link = $value->find("a");
+		$has_link = false;
+		foreach ($link as $key2 => $value2)
+		{
+			$has_link = true;
+			array_push($info["catlinks"], $value2->innertext);
+		}
+		if (! $has_link)
+		{
+			array_push($info["catlinks"], $value->innertext);
+		}
+	}
 	array_push($all, $info);
+	unset($dom);
 }
 function parseLink($page)
 {
 	global $page_list;
-	$html = file_get_html($page); 
-	$dom = new simple_html_dom;
-	$dom->load($html);
+	$dom = file_get_html($page);
+	if (null == $dom)
+	{
+		return;
+	}
 	$info = array();
 	$table = $dom->find('#mw-content-text .navbox');
 	foreach ($table as $key => $value)
@@ -78,6 +131,7 @@ function parseLink($page)
 			}
 		}
 	}
+	unset($dom);
 }
 while (count($all) < $PARSE_NUM)
 {
@@ -86,11 +140,17 @@ while (count($all) < $PARSE_NUM)
 		break;
 	}
 	$page = $URL_HEAD . $page_list[$count ++];
-	echo "\npage " . $count . " : " . $page;
+	echo "page " . $count . ": " . $page . "\n";
 	parsePage($page);
 	parseLink($page);
+	if (0 != $count && 0 == $count % 500)
+	{
+		echo "dumping " . ($count / 500 - 1) . "\n";
+		file_put_contents("data/raw" . ($count / 500 - 1) . ".json", json_encode($all));
+		//$all = array();
+	}
 	//sleep(2);
 }
 file_put_contents("data/raw.json", json_encode($all));
-echo "\ndone\n";
+echo "done\n";
 ?>

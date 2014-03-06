@@ -97,8 +97,8 @@ MOEQUEST.showQuest = function (quest) {
 		}
 		option.text(quest.options[i]);
 	}
-	$("#" + MOEQUEST.config.canvas + " .id-question").hide().css({visibility: "visible"}).fadeIn("slow");
-	$("#" + MOEQUEST.config.canvas + " .option").hide().css({visibility: "visible"}).fadeIn("slow");
+	$("#" + MOEQUEST.config.canvas + " .id-question").hide().css({visibility: "inherit"}).fadeIn("slow");
+	$("#" + MOEQUEST.config.canvas + " .option").hide().css({visibility: "inherit"}).fadeIn("slow");
 };
 MOEQUEST.showAnswer = function (quest) {
 	if (undefined === MOEQUEST.config.ans_canvas || $("#" + MOEQUEST.config.ans_canvas).length == 0) {
@@ -132,7 +132,7 @@ MOEQUEST.showAnswer = function (quest) {
 		left: ans.position().left,
 	}, "slow", function () {
 		$(this).remove();
-		$("#" + MOEQUEST.config.ans_canvas).hide().css({visibility: "visible"}).fadeIn("slow");
+		$("#" + MOEQUEST.config.ans_canvas).hide().css({visibility: "inherit"}).fadeIn("slow");
 	});
 };
 MOEQUEST.submitQuest = function () {
@@ -172,7 +172,7 @@ MOEQUEST.checkAnswer = function () {
 		}
 	}
 	MOEQUEST.config.results.push(! wrong_flag);
-	$("#" + MOEQUEST.config.canvas + " .id-lastresult").attr("src",'resources/' + (wrong_flag ? "incorrect" : "correct") + '.ico').hide().css({visibility: "visible"}).fadeIn("slow");
+	$("#" + MOEQUEST.config.canvas + " .id-lastresult").attr("src",'resources/' + (wrong_flag ? "incorrect" : "correct") + '.ico').hide().css({visibility: "inherit"}).fadeIn("slow");
 	MOEQUEST.showAnswer(quest);
 };
 MOEQUEST.clearChecked = function () {

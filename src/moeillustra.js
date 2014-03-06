@@ -64,6 +64,7 @@ MOEILLUSTRA.showFrame = function () {
 MOEILLUSTRA.showIllustra = function (illustra) {
 	var table = $("#" + MOEILLUSTRA.config.canvas + " .id-table");
 	table.empty();
+	table.append($('<tr><th class="id-th0"></th><th class="id-th1"></th></tr>'));
 	$("#" + MOEILLUSTRA.config.canvas + " .id-pagelink").attr("href", "#");
 	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").hide();
 	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").attr("src", "resources/nophoto.jpg");
@@ -75,14 +76,17 @@ MOEILLUSTRA.showIllustra = function (illustra) {
 			$("#" + MOEILLUSTRA.config.canvas + " .id-pagelink").attr("href", illustra["link"]);
 		} else {
 			var td = illustra[i];
+			if (typeof illustra[i] == "array" || typeof illustra[i] == "object") {
+				td = JSON.stringify(illustra[i]);
+			}
 			if (td.length > 30) {
-				td = illustra[i].substring(0, 30) + "...";
+				//td = td.substring(0, 30) + "...";
 			}
 			table.append($('<tr><td>' + i + '</td><td>' + td + '</td></tr>'));
 		}
 	}
-	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").hide().css({visibility: "visible"}).fadeIn("slow");
-	table.hide().css({visibility: "visible"}).fadeIn("slow");
+	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").hide().css({visibility: "inherit"}).fadeIn("slow");
+	table.hide().css({visibility: "inherit"}).fadeIn("slow");
 };
 MOEILLUSTRA.showRandom = function () {
 	var r = Math.floor( Math.random() * MOEILLUSTRA.illustra.length );
