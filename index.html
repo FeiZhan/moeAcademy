@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Moe Quest</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="src/moequest.css" />
+	<script src="src/moequest.js"></script>
+	<script src="src/moeillustra.js"></script>
+	<style>
+body {
+	background-color: LightGreen;
+}
+#heading {
+	position: absolute;
+	top: 0%;
+	left: 9%;
+}
+
+#sidebar {
+	background-color: LightGreen;
+	height: 80%;
+	width: 15%;
+	border: 2px solid green;
+	border-style: outset;
+	position: fixed;
+	top: 20%;
+	left: 0%;
+}
+#sidebar ul {
+	list-style-type: none;
+	position: relative;
+	top: 5%;
+	left: 0%;
+}
+#sidebar ul li {
+	align: center;
+	color: DodgerBlue;
+	font-size: large;
+	margin:0.2em auto;
+	border: 2px solid white;
+	border-style: outset;
+	padding: 8% 8% 8% 16%;
+}
+#sidebar ul .active {
+	border-style: inset;
+}
+#sidebar ul :hover { 
+	background-color:yellow;
+}
+
+body .active {
+	visibility: visible;
+}
+body .inactive {
+	visibility: hidden;
+}
+#quest {
+	background-color: LightGreen;
+	height: 60%;
+	width: 60%;
+	position: absolute;
+	top: 25%;
+	left: 20%;
+	border: 3px inset #98bf21;
+	padding: 3px;
+}
+#ans {
+	background-color: LightGreen;
+	height: 15%;
+	width: 50%;
+	position: absolute;
+	top: 1%;
+	left: 25%;
+	border: 3px inset #98bf21;
+	padding: 3px;
+}
+#illustra {
+	background-color: LightGreen;
+	height: 80%;
+	width: 60%;
+	position: absolute;
+	top: 15%;
+	left: 20%;
+	border: 3px inset #98bf21;
+	padding: 3px;
+}
+
+#illustra img {
+	position: absolute;
+	top: 10%;
+	left: 0%;
+}
+#illustra .id-randombutton {
+	position: absolute;
+	top: 0%;
+	left: 5%;
+}
+#illustra .id-table {
+	width: 80%;
+	align: center;
+	float: right;
+}
+#illustra .id-table td {
+	text-align: center;
+}
+	</style>
+</head>
+
+<body>
+	<img border="0" src="resources/logo.jpeg" alt="logo" width="7%" height="7%" />
+	<h2 id="heading">MoeGirl<br />Project</h2>
+	<div id="sidebar">
+		<ul>
+			<li id="li-illustra" class="active">萌娘图鉴</li>
+			<li id="li-quest">萌娘问答</li>
+		</ul>
+	</div>
+	<div id="illustra" class="active"></div>
+	<div id="ans" class="inactive"></div>
+	<div id="quest" class="inactive"></div>
+</body>
+<script>
+$(function() {
+	$("#sidebar li").click(function () {
+		var active = $("#sidebar ul .active");
+		active.removeClass("active");
+		$(this).addClass("active");
+		var choice = $(this).attr('id').substring(3);
+		switch (choice) {
+		case "illustra":
+			console.debug("illustra")
+			break;
+		case "quest":
+			MOEQUEST.run("quest", "ans");
+			break;
+		default:
+			console.log("no active page", choice);
+			break;
+		}
+	});
+	MOEILLUSTRA.run("illustra");
+});
+</script>
+</html>

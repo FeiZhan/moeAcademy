@@ -1,0 +1,70 @@
+#quest .id-question {
+	/*border: 1px solid black;*/
+	align: center;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	height: 35%;
+	text-align: center;
+}
+#quest .id-lastresult {
+	position: absolute;
+	top: 2%;
+	left: 90%;
+	visibility: hidden;
+}
+#quest .id-submitbutton {
+	position: absolute;
+	top: 8%;
+	left: 1%;
+}
+#quest .id-clearbutton {
+	position: absolute;
+	top: 22%;
+	left: 1%;
+}
+#quest .id-optionsection {
+	align: center;
+	margin-left: auto;
+	margin-right: auto;
+	width: 96%;
+	height: 65%;
+}
+#quest .option {
+	width: 49.6%;
+	height: 49%;
+	float: left;
+	text-align: center;
+}
+#quest span {
+}
+
+#ans .id-question {
+	align: center;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	height: 35%;
+	text-align: center;
+}
+#ans .id-optionsection {
+	align: center;
+	margin-left: auto;
+	margin-right: auto;
+	width: 96%;
+	height: 65%;
+}
+#ans .option {
+	width: 24.6%;
+	height: 100%;
+	float: left;
+	text-align: center;
+}
+#ans .correct {
+	background-color: pink;
+}
+#ans .incorrect {
+}
+#ans .id-question span {
+	font-size: small;
+}
