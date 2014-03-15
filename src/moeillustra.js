@@ -1,6 +1,6 @@
 var MOEILLUSTRA = MOEILLUSTRA || new Object();
 MOEILLUSTRA.config = {
-	files: ['data/raw.json'],
+	files: ['data/moegirls.json'],
 	canvas: undefined,
 	count: 0,
 };
@@ -51,6 +51,7 @@ MOEILLUSTRA.loadIllustra = function (data) {
 		}*/
 		MOEILLUSTRA.illustra.push(data[i]);
 	}
+	console.log("loaded illustra ", MOEILLUSTRA.illustra.length);
 }
 MOEILLUSTRA.showFrame = function () {
 	var canvas = $("#" + MOEILLUSTRA.config.canvas);

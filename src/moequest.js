@@ -1,16 +1,18 @@
 var MOEQUEST = MOEQUEST || new Object();
 MOEQUEST.config = {
-	files: ['data/test.json'],
+	files: ['data/moegirls.json'],
 	canvas: undefined,
 	ans_canvas: undefined,
 	current_quest: 0,
 	results: new Array(),
 };
 MOEQUEST.init = function () {
-	function loadJson(file) {
+	function loadJson(file, func) {
 		$.getJSON(file, function(data, textStatus, jqXHR) {
 			console.log("loaded", file);
-			MOEQUEST.loadQuest(data);
+			if (typeof func == "function") {
+				func(data);
+			}
 		})
 		.fail(function(jqXHR, textStatus, errorThrown) {
 			console.error("data load error", textStatus, errorThrown);
@@ -19,7 +21,11 @@ MOEQUEST.init = function () {
 		});
 	}
 	for (var i in MOEQUEST.config.files) {
-		loadJson(MOEQUEST.config.files[i]);
+		loadJson(MOEQUEST.config.files[i], function (data) {
+			for (var i in data) {
+				MOEQUEST.moegirls.push(data[i]);
+			}
+		});
 	}
 };
 $(function() {
@@ -36,24 +42,15 @@ MOEQUEST.run = function (canvas, ans) {
 	MOEQUEST.waitLoad();
 };
 MOEQUEST.waitLoad = function () {
-	if ((typeof MOEQUEST.questions != "array" && typeof MOEQUEST.questions != "object") || MOEQUEST.questions.length == 0) {
+	if ((typeof MOEQUEST.moegirls != "array" && typeof MOEQUEST.moegirls != "object") || MOEQUEST.moegirls.length == 0) {
 		console.log("loading");
 		setTimeout(MOEQUEST.waitLoad, 300);
 		return;
 	}
-	MOEQUEST.config.current_quest = 0;
-	MOEQUEST.showQuest(MOEQUEST.questions[MOEQUEST.config.current_quest]);
+	MOEQUEST.showQuest();
 };
-MOEQUEST.questions = new Array();
-MOEQUEST.loadQuest = function (data) {
-	for (var i in data) {
-		if (undefined === data[i].quest) {
-			console.warn("data format error", data[i]);
-			continue;
-		}
-		MOEQUEST.questions.push(data[i]);
-	}
-};
+MOEQUEST.moegirls = new Array();
+MOEQUEST.question;
 MOEQUEST.showFrame = function () {
 	var canvas = $("#" + MOEQUEST.config.canvas);
 	canvas.empty();
@@ -87,15 +84,17 @@ MOEQUEST.showFrame = function () {
 		html2.append('<span></span>');
 	}
 };
-MOEQUEST.showQuest = function (quest) {
-	$("#" + MOEQUEST.config.canvas + " .id-question span").text(quest.quest);
+MOEQUEST.showQuest = function () {
+	quest = MOEQUEST.createQuest();
+	MOEQUEST.question = quest;
+	$("#" + MOEQUEST.config.canvas + " .id-question span").html(quest.quest);
 	for (var i = 0; i < quest.options.length; ++ i) {
 		var option = $("#" + MOEQUEST.config.canvas + " .id-option" + i + " span");
 		if (option.length == 0) {
 			console.warn("option canvas not enough", i, quest.options);
 			break;
 		}
-		option.text(quest.options[i]);
+		option.html(quest.options[i]);
 	}
 	$("#" + MOEQUEST.config.canvas + " .id-question").hide().css({visibility: "inherit"}).fadeIn("slow");
 	$("#" + MOEQUEST.config.canvas + " .option").hide().css({visibility: "inherit"}).fadeIn("slow");
@@ -137,15 +136,15 @@ MOEQUEST.showAnswer = function (quest) {
 };
 MOEQUEST.submitQuest = function () {
 	MOEQUEST.checkAnswer();
-	if (MOEQUEST.config.current_quest + 1 == MOEQUEST.questions.length) {
+	if (false) {
 		console.debug("game over");
 		return;
 	}
 	MOEQUEST.clearChecked();
-	MOEQUEST.showQuest(MOEQUEST.questions[++ MOEQUEST.config.current_quest]);
+	MOEQUEST.showQuest();
 };
 MOEQUEST.checkAnswer = function () {
-	var quest = MOEQUEST.questions[MOEQUEST.config.current_quest];
+	var quest = MOEQUEST.question;
 	var ans = new Array();
 	$("#" + MOEQUEST.config.canvas + " .id-optionsection .check").each(function (index, value) {
 		var check = $(value)[0];
@@ -180,6 +179,74 @@ MOEQUEST.clearChecked = function () {
 		$(value).attr('checked', false); 
 	});
 };
+MOEQUEST.createQuest = function () {
+	var quest = {
+		quest: "",
+		options: [],
+		correct: []
+	};
+	var OPTION_NUM = 4;
+	var choices = new Array();
+	if (MOEQUEST.moegirls.length < OPTION_NUM) {
+		for (var i in MOEQUEST.moegirls) {
+			choices.push(i);
+		}
+	} else {
+		while (choices.length < OPTION_NUM) {
+			var ran = Math.floor( (Math.random() * MOEQUEST.moegirls.length) );
+			if (choices.indexOf(ran) <= -1) {
+				choices.push(ran);
+			}
+		}
+	}
+	var QUEST_ATTR = ["photo"];
+	var ran = Math.floor( (Math.random() * QUEST_ATTR.length) );
+	var good_choices = new Array();
+	for (var i in choices) {
+		if (undefined !== MOEQUEST.moegirls[choices[i]][QUEST_ATTR[ran]]) {
+			good_choices.push(choices[i]);
+			break;
+		}
+	}
+	if (0 == good_choices.length) {
+		console.warn("question attr fails to find a good choice", QUEST_ATTR[ran]);
+		return;
+	}
+	var answer = Math.floor( (Math.random() * good_choices.length) );
+	if (choices.indexOf(good_choices[answer]) <= -1) {
+		console.warn("invalid answer", MOEQUEST.moegirls[good_choices[answer]].name);
+		return;
+	}
+	// shuffle choices
+	for (var j, x, i = choices.length; i; j = Math.floor(Math.random() * i), x = choices[--i], choices[i] = choices[j], choices[j] = x)
+	{}
+    for (var i in choices) {
+		if (MOEQUEST.moegirls[good_choices[answer]][QUEST_ATTR[ran]] == MOEQUEST.moegirls[choices[i]][QUEST_ATTR[ran]]) {
+			quest.correct.push(i);
+		}
+	}
+	for (var i in choices) {
+		quest.options.push(MOEQUEST.moegirls[choices[i]].name);
+	}
+	switch (QUEST_ATTR[ran]) {
+	case "photo":
+		quest.quest = "该图片是哪位萌娘？" + '<img src="' + MOEQUEST.moegirls[good_choices[answer]].photo + '" alt="guess" style="vertical-align:middle;" />';
+		break;
+	default:
+		console.warn("invalid question attr", QUEST_ATTR[ran]);
+		return;
+		break;
+	}
+	return quest;
+};
+
+
+
+
+
+
+
+
 
 
 
