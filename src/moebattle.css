@@ -1,0 +1,76 @@
+#battle .area {
+	border: 8px inset #98bf21;
+	background-color: Aquamarine;
+}
+#battle .id-table {
+	position: absolute;
+	top: 18%;
+	left: 8%;
+	height: 50%;
+	width: 91%;
+}
+#battle .id-myarea {
+	border: 8px inset #98bf21;
+	position: absolute;
+	top: 70%;
+	left: 15%;
+	height: 30%;
+	width: 70%;
+}
+#battle .id-endbutton {
+	position: relative;
+	top: 20%;
+	left: 90%;
+}
+#battle .id-yourarea {
+	border: 8px inset #98bf21;
+	position: absolute;
+	top: 0%;
+	left: 30%;
+	height: 15%;
+	width: 40%;
+}
+#battle .card {
+	border: 1px solid Black;
+	height: 160px;
+	width: 120px;
+	background-color: LightBlue;
+	text-align: center;
+	position: absolute;
+}
+#battle .deck {
+	position: absolute;
+	top: 45%;
+	left: 90%;
+}
+#battle .card span {
+	align: center;
+	position: relative;
+	top: 5%;
+	left: 0%;
+}
+#battle .card img {
+	max-height: 100%;
+	max-width: 100%;
+	position: relative;
+	top: 20%;
+	left: 0%;
+}
+#battle .icon {
+	border: 1px solid Black;
+	height: 60px;
+	width: 45px;
+	background-color: LightBlue;
+	text-align: center;
+}
+#battle .icon img {
+	max-height: 60px;
+	max-width: 60px;
+	min-height:10px;
+	min-width:10px;
+}
+#battle .myuse {
+	position: absolute;
+	top: 45%;
+	left: 45%;
+}

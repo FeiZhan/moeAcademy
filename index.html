@@ -12,6 +12,8 @@
 	<script src="src/moequest.js"></script>
 	<link rel="stylesheet" type="text/css" href="src/moeillustra.css" />
 	<script src="src/moeillustra.js"></script>
+	<link rel="stylesheet" type="text/css" href="src/moebattle.css" />
+	<script src="src/moebattle.js"></script>
 </head>
 <body>
 	<img src="resources/logo.jpeg" alt="logo" width="7%" height="7%" />
@@ -24,6 +26,7 @@
 	<div id="content">
 		<div id="quest" class="inactive"></div>
 		<div id="illustra" class="active"></div>
+		<div id="battle" class="inactive"></div>
 	</div>
 </body>
 <script>
@@ -44,6 +47,9 @@ $(function() {
 			break;
 		case "quest":
 			MOEQUEST.run("quest");
+			break;
+		case "battle":
+			MOEBATTLE.run("battle");
 			break;
 		default:
 			console.warn("no active page", choice);
