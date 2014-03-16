@@ -66,7 +66,38 @@ MOEBATTLE.showFrame = function () {
 					card = val.substring(7);
 				}
 			});
-			MOEBATTLE.useCard(0, card);
+			if (undefined !== MOEBATTLE.cards[card].target) {
+				var y = $("#" + MOEBATTLE.config.canvas + " .id-card" + card).position().top + 80;
+				var x = $("#" + MOEBATTLE.config.canvas + " .id-card" + card).position().left + 60;
+				var arrowFollow = function (event) {
+					var dist = Math.sqrt((event.pageX - x) * (event.pageX - x) + (event.pageY - y) * (event.pageY - y));
+					var newx = (event.pageX + x) / 2 - 25;
+					var newy = (event.pageY + y) / 2 - dist / 2;
+					$("#" + MOEBATTLE.config.canvas + " .id-arrow").height(dist);
+					var angle = Math.atan2(event.pageY - y, event.pageX - x) * 180 / Math.PI + 90;
+					$("#" + MOEBATTLE.config.canvas + " .id-arrow").css({
+						top: newy,
+						left: newx
+					}).css({visibility: "inherit"}).show().css({ WebkitTransform: 'rotate(' + angle + 'deg)' }).css({ '-moz-transform': 'rotate(' + angle + 'deg)' });
+				};
+				$("html").click(function () {
+						$("html").off('mousemove', arrowFollow);
+						$("#" + MOEBATTLE.config.canvas + " .id-arrow").hide();
+						$("#" + MOEBATTLE.config.canvas + ' .id-card' + card).animate({
+							top: '-=100px',
+							left: '-=100px',
+							height: '+=200px',
+							width: '+=200px',
+							opacity: 0,
+						}, "slow", function () {
+							$(this).remove();
+							MOEBATTLE.game.discard.push(card);
+							MOEBATTLE.skillAnimate(card, "");
+						});
+					}).mousemove(arrowFollow);
+			} else {
+				MOEBATTLE.useCard(0, card);
+			}
 		}
     });
 	// append my area and your area
@@ -75,13 +106,30 @@ MOEBATTLE.showFrame = function () {
 		drop: function( event, ui ) {
 		}
     });
-	// append my area and your area
+	// append my usearea and your usearea
 	canvas.append($('<div class="id-myusearea usearea"></div>')).append($('<div class="id-yourusearea usearea"></div>'));
 	$("#" + MOEBATTLE.config.canvas + ' .id-endbutton').click(MOEBATTLE.nextPlayer);
 	canvas.append($('<div class="id-anime"><img src="#" alt="anime" class="" /></div>'));
 	$("#" + MOEBATTLE.config.canvas + " .id-anime img").error(function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
+	canvas.append($('<div class="id-detail"><div class="name"></div><img src="#" alt="photo" class="" /><br /><div class="detail"></div></div>'));
+	$("#" + MOEBATTLE.config.canvas + " .id-detail img").error(function () {
+		$(this).attr("src", "resources/nophoto.jpg");
+	});
+	canvas.append($('<div class="id-arrow"><canvas class="id-arrowcanvas" /></div>'));
+	var arrow = document.getElementsByClassName('id-arrowcanvas')[0].getContext('2d');
+	arrow.fillStyle = 'yellow';
+	arrow.beginPath();
+	arrow.moveTo(150, 0);
+	arrow.lineTo(0, 45);
+	arrow.lineTo(100, 45);
+	arrow.lineTo(100, 150);
+	arrow.lineTo(200, 150);
+	arrow.lineTo(200, 45);
+	arrow.lineTo(300, 45);
+	arrow.closePath();
+	arrow.fill();
 };
 MOEBATTLE.game = {
 	orders: [0, 1],
@@ -120,10 +168,16 @@ MOEBATTLE.startGame = function () {
 	MOEBATTLE.nextPlayer();
 };
 MOEBATTLE.nextPlayer = function () {
+	$("#battle .turn").removeClass("turn").css("border-color", "#98bf21");
 	++ MOEBATTLE.game.current;
 	if (MOEBATTLE.game.current >= MOEBATTLE.players.length) {
 		MOEBATTLE.game.current %= MOEBATTLE.players.length;
 		++ MOEBATTLE.game.round_count;
+	}
+	if (0 == MOEBATTLE.game.current) {
+		$("#battle .id-myarea").addClass("turn").css("border-color", "red");
+	} else {
+		$("#battle .id-yourarea").addClass("turn").css("border-color", "red");
 	}
 	MOEBATTLE.dealCards(1, MOEBATTLE.game.orders[MOEBATTLE.game.current]);
 };
@@ -152,6 +206,50 @@ MOEBATTLE.dealCards = function (num, player) {
 			left: "45%",
 		}, "slow", function () {
 			$(this).removeClass("deck").addClass("myhand");
+			var timer;
+			$(this).hover(function () {
+				$(this).css("z-index", 1);
+				$(this).animate({ height: "+=20px", width: "+=20px", left: "-=10px", top: "-=10px" }, "fast");
+				var card;
+				$($(this).attr('class').split(' ')).each(function (i, val) {
+					if (val.substring(0, 7) == "id-card") {
+						card = val.substring(7);
+					}
+				});
+				if (! timer) {
+					timer = setTimeout(function () {
+						timer = null;
+						if (undefined !== MOEBATTLE.cards[card]) {
+							$("#" + MOEBATTLE.config.canvas + " .id-detail .name").html(MOEBATTLE.cards[card].name);
+							if (undefined !== MOEBATTLE.cards[card].photo) {
+								$("#" + MOEBATTLE.config.canvas + " .id-detail img").attr("src", MOEBATTLE.cards[card].photo);
+							} else {
+								$("#" + MOEBATTLE.config.canvas + " .id-detail img").attr("src", "");
+							}
+							if (undefined !== MOEBATTLE.cards[card].detail) {
+								$("#" + MOEBATTLE.config.canvas + " .id-detail .detail").html(MOEBATTLE.cards[card].detail);
+							} else {
+								$("#" + MOEBATTLE.config.canvas + " .id-detail .detail").html("");
+							}
+							$("#" + MOEBATTLE.config.canvas + " .id-detail").hide().css({visibility: "inherit"}).slideDown("slow");
+						}
+					}, 1000);
+				}
+			}, function () {
+				$(this).css("z-index", 0);
+				$(this).animate({ height: "-=20px", width: "-=20px", left: "+=10px", top: "+=10px" }, "fast");
+				if (timer) {
+					clearTimeout(timer);
+					timer = null;
+				}
+				else {
+					$("#" + MOEBATTLE.config.canvas + " .id-detail").slideUp('slow', function () {
+						$("#" + MOEBATTLE.config.canvas + " .id-detail .name").html("");
+						$("#" + MOEBATTLE.config.canvas + " .id-detail .detail").html("");
+						$("#" + MOEBATTLE.config.canvas + " .id-detail img").attr("src", "");
+					});
+				}
+			});
 			MOEBATTLE.obtainCard(card);
 		});
 	}
@@ -169,23 +267,15 @@ MOEBATTLE.useCard = function (from, card, to) {
 		break;
 	default:
 		$("#" + MOEBATTLE.config.canvas + ' .id-card' + card).animate({
-			top: '-=30px',
-			left: '-=30px',
-			height: '+=60px',
-			width: '+=60px',
+			top: '-=100px',
+			left: '-=100px',
+			height: '+=200px',
+			width: '+=200px',
+			opacity: 0,
 		}, "slow", function () {
-			$(this).fadeOut("slow", function () {
-				$(this).remove();
-				MOEBATTLE.game.discard.push(card);
-				var ran = Math.floor( (Math.random() * 6) + 1 );
-				$("#" + MOEBATTLE.config.canvas + ' .id-anime img').attr("src", "resources/senjougahara-hitagi/" + ran + ".gif");
-				$("#" + MOEBATTLE.config.canvas + ' .id-anime').addClass("active").fadeIn("fast").show();
-				setTimeout(function () {
-					$("#" + MOEBATTLE.config.canvas + ' .id-anime').fadeOut("slow", function () {
-						$(this).removeClass("active");
-					});
-				}, 3000);
-			});
+			$(this).remove();
+			MOEBATTLE.game.discard.push(card);
+			MOEBATTLE.skillAnimate(card, "");
 		});
 		break;
 	}
@@ -235,9 +325,24 @@ MOEBATTLE.addToUseArea = function (card, player) {
 				$(obj.currentTarget).css({ '-moz-transform': 'rotate(0deg)' });
 		});
 		$("#" + MOEBATTLE.config.canvas + ' .id-icon' + card).hide().css({visibility: "inherit"}).fadeIn("fast");
+		MOEBATTLE.skillAnimate(card, "skill0");
 	});
 };
-
+MOEBATTLE.skillAnimate = function (card, skill) {
+	if (! (card in MOEBATTLE.cards) || undefined === MOEBATTLE.cards[card].anime || undefined === MOEBATTLE.cards[card].anime[skill]) {
+		return;
+	}
+	var ani_list = MOEBATTLE.cards[card].anime[skill];
+	var ran = Math.floor( (Math.random() * ani_list.length) );
+	$("#" + MOEBATTLE.config.canvas + ' .id-anime img').attr("src", ani_list[ran]);
+	$("#" + MOEBATTLE.config.canvas + ' .id-anime').addClass("active").fadeIn("fast").show();
+	setTimeout(function () {
+		$("#" + MOEBATTLE.config.canvas + ' .id-anime').fadeOut("slow", function () {
+			$(this).removeClass("active");
+			$("#" + MOEBATTLE.config.canvas + ' .id-anime img').attr("src", "");
+		});
+	}, 3000);
+}
 
 
 
