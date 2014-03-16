@@ -97,7 +97,14 @@ MOEILLUSTRA.showIllustra = function (illustra) {
 		// append link
 		else if ("link" == i) {
 			$("#" + MOEILLUSTRA.config.canvas + " .id-pagelink").attr("href", illustra["link"]);
+		}
+		else if ("firstp" == i || "catlinks" == i) {
+			// ignore
 		} else { // append an attribute
+			var th = i;
+			if ("name" == th) {
+				th = "名字";
+			}
 			var td = illustra[i];
 			// stringify a json
 			if (typeof illustra[i] == "array" || typeof illustra[i] == "object") {
@@ -107,7 +114,7 @@ MOEILLUSTRA.showIllustra = function (illustra) {
 			if (td.length > 30) {
 				//td = td.substring(0, 30) + "...";
 			}
-			table.append($('<tr><td>' + i + '</td><td>' + td + '</td></tr>'));
+			table.append($('<tr><td>' + th + '</td><td>' + td + '</td></tr>'));
 		}
 	}
 	// fade in

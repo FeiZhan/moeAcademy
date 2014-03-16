@@ -239,7 +239,7 @@ MOEQUEST.createMoegirlQuest = function () {
 		}
 	}
 	// attributes for question
-	var QUEST_ATTR = ["photo", '发色', '瞳色', '声优', '年龄', '身高'];
+	var QUEST_ATTR = ["photo", '发色', '瞳色', '声优', '生日', '年龄', '身高', '体重'];
 	// choose an attribute by random
 	var ran = Math.floor( (Math.random() * QUEST_ATTR.length) );
 	// a list of moegirls with valid attribute
@@ -283,11 +283,14 @@ MOEQUEST.createMoegirlQuest = function () {
 		quest.question = "该图片是哪位萌娘？";
 		quest.question_img = MOEQUEST.moegirls[good_choices[answer]].photo;
 		break;
+	// '发色', '瞳色', '声优', '生日', '年龄', '身高', '体重'
 	case '发色':
 	case '瞳色':
 	case '声优':
+	case '生日':
 	case '年龄':
 	case '身高':
+	case '体重':
 		quest.question = '哪位萌娘的<em>' + QUEST_ATTR[ran] + '</em>是<strong>' + MOEQUEST.moegirls[good_choices[answer]][QUEST_ATTR[ran]] + "</strong>？";
 		break;
 	default:
