@@ -1,9 +1,27 @@
 [
 {
 	"name": "蓝白碗",
+	"type": "character",
 	"photo": "http://static.mengniang.org/thumb/2/2e/The_Bowl.jpg/250px-The_Bowl.jpg"
 }, {
 	"name": "哥特式金属私生子",
+	"type": "character",
+	"photo": ""
+}, {
+	"name": "哥特式金属私生子",
+	"type": "",
+	"photo": ""
+}, {
+	"name": "哥特式金属私生子",
+	"type": "",
+	"photo": ""
+}, {
+	"name": "哥特式金属私生子",
+	"type": "",
+	"photo": ""
+}, {
+	"name": "哥特式金属私生子",
+	"type": "",
 	"photo": ""
 }
 ]

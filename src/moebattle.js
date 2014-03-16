@@ -73,14 +73,20 @@ MOEBATTLE.showFrame = function () {
 	canvas.append($('<div class="id-myarea area"><a href="#" class="id-endbutton button">结束</a></div>')).append($('<div class="id-yourarea area"></div>'));
 	$("#" + MOEBATTLE.config.canvas + ' .id-myarea').droppable({
 		drop: function( event, ui ) {
-			console.log("dropped back to me", event, ui);
 		}
     });
+	// append my area and your area
+	canvas.append($('<div class="id-myusearea usearea"></div>')).append($('<div class="id-yourusearea usearea"></div>'));
 	$("#" + MOEBATTLE.config.canvas + ' .id-endbutton').click(MOEBATTLE.nextPlayer);
+	canvas.append($('<div class="id-anime"><img src="#" alt="anime" class="" /></div>'));
+	$("#" + MOEBATTLE.config.canvas + " .id-anime img").error(function () {
+		$(this).attr("src", "resources/nophoto.jpg");
+	});
 };
 MOEBATTLE.game = {
 	orders: [0, 1],
 	deck: new Array(),
+	discard: new Array(),
 	round_count: 0,
 	shuffle_count: 0,
 	current: -1,
@@ -91,10 +97,12 @@ MOEBATTLE.players = [
 		name: "me",
 		order: 0,
 		hands: [],
+		use: [],
 	}, {
 		name: "opponent",
 		order: 1,
 		hands: [],
+		use: [],
 	}
 ];
 MOEBATTLE.startGame = function () {
@@ -144,10 +152,45 @@ MOEBATTLE.dealCards = function (num, player) {
 			left: "45%",
 		}, "slow", function () {
 			$(this).removeClass("deck").addClass("myhand");
+			MOEBATTLE.obtainCard(card);
 		});
 	}
 };
+MOEBATTLE.obtainCard = function (card) {
+}
 MOEBATTLE.useCard = function (from, card, to) {
+	var index = MOEBATTLE.players[from].hands.indexOf(card);
+	if (index > -1) {
+		MOEBATTLE.players[from].hands.splice(index, 1);
+	}
+	switch(MOEBATTLE.cards[card].type) {
+	case "character":
+		MOEBATTLE.addToUseArea(card, from);
+		break;
+	default:
+		$("#" + MOEBATTLE.config.canvas + ' .id-card' + card).animate({
+			top: '-=30px',
+			left: '-=30px',
+			height: '+=60px',
+			width: '+=60px',
+		}, "slow", function () {
+			$(this).fadeOut("slow", function () {
+				$(this).remove();
+				MOEBATTLE.game.discard.push(card);
+				var ran = Math.floor( (Math.random() * 6) + 1 );
+				$("#" + MOEBATTLE.config.canvas + ' .id-anime img').attr("src", "resources/senjougahara-hitagi/" + ran + ".gif");
+				$("#" + MOEBATTLE.config.canvas + ' .id-anime').addClass("active").fadeIn("fast").show();
+				setTimeout(function () {
+					$("#" + MOEBATTLE.config.canvas + ' .id-anime').fadeOut("slow", function () {
+						$(this).removeClass("active");
+					});
+				}, 3000);
+			});
+		});
+		break;
+	}
+}
+MOEBATTLE.addToUseArea = function (card, player) {
 	var height = $("#" + MOEBATTLE.config.canvas + " .id-card" + card + " img").height();
 	var width = $("#" + MOEBATTLE.config.canvas + " .id-card" + card + " img").width();
 	if (height > 60) {
@@ -171,7 +214,7 @@ MOEBATTLE.useCard = function (from, card, to) {
 		width: width + "px",
 	}, "slow", function () {
 		$(this).remove();
-		$("#" + MOEBATTLE.config.canvas).append('<div class="id-icon' + card + ' icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"><span></span><img src="" alt="icon" class="" /></div>');
+		$("#" + MOEBATTLE.config.canvas + ' .id-myusearea').append('<div class="id-icon' + card + ' icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"><span></span><img src="" alt="icon" class="" /></div>');
 		$("#" + MOEBATTLE.config.canvas + " .id-icon" + card + " img").attr("src", MOEBATTLE.cards[card].photo).error(function () {
 			$(this).attr("src", "resources/nophoto.jpg");
 		});
@@ -187,6 +230,7 @@ MOEBATTLE.useCard = function (from, card, to) {
 				rotate(obj.currentTarget);
 			}, function (obj) {
 				clearTimeout(timer);
+				degree = 0;
 				$(obj.currentTarget).css({ WebkitTransform: 'rotate(0deg)' });
 				$(obj.currentTarget).css({ '-moz-transform': 'rotate(0deg)' });
 		});
