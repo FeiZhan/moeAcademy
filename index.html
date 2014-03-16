@@ -17,10 +17,9 @@
 	<img src="resources/logo.jpeg" alt="logo" width="7%" height="7%" />
 	<h2 id="heading">MoeGirl<br />Project</h2>
 	<div id="sidebar">
-		<ul>
-			<li id="li-illustra" class="active">萌娘图鉴</li>
-			<li id="li-quest">萌娘问答</li>
-		</ul>
+		<a href="#" id="li-illustra" class="active">萌娘图鉴</a>
+		<a href="#" id="li-quest" class="">萌娘问答</a>
+		<a href="#" id="li-battle" class="">萌娘对战</a>
 	</div>
 	<div id="content">
 		<div id="quest" class="inactive"></div>
@@ -30,7 +29,7 @@
 <script>
 $(function() {
 	function run(choice) {
-		var active = $("#sidebar ul .active");
+		var active = $("#sidebar .active");
 		active.removeClass("active");
 		$("#sidebar #li-" + choice).addClass("active");
 		$("#content div").removeClass("active");
@@ -44,14 +43,14 @@ $(function() {
 			MOEILLUSTRA.run("illustra");
 			break;
 		case "quest":
-			MOEQUEST.run("quest", "ans");
+			MOEQUEST.run("quest");
 			break;
 		default:
 			console.warn("no active page", choice);
 			break;
 		}
 	}
-	$("#sidebar li").click(function () {
+	$("#sidebar a").click(function () {
 		run($(this).attr("id").substring(3));
 	});
 	var urlparam = function () {
@@ -76,10 +75,10 @@ $(function() {
 		}
 		return query_string;
 	} ();
-	if (undefined !== urlparam.status) {
-		run(urlparam.status);
+	if (undefined !== urlparam.view) {
+		run(urlparam.view);
 	} else {
-		run($("#sidebar ul .active").attr("id").substring(3));
+		run($("#sidebar .active").attr("id").substring(3));
 	}
 });
 </script>

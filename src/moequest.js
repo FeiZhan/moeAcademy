@@ -37,7 +37,7 @@ $(function() {
 	MOEQUEST.init();
 });
 // main function
-MOEQUEST.run = function (canvas, ans) {
+MOEQUEST.run = function (canvas) {
 	if (undefined === canvas || $("#" + canvas).length == 0) {
 		console.error("undefined canvas", canvas);
 		return;
@@ -97,6 +97,7 @@ MOEQUEST.showFrame = function () {
 			$(this).find("span").toggleClass("checked");
 		});
 	}
+	canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
 };
 // show the quest
 MOEQUEST.showQuest = function () {

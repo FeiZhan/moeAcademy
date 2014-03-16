@@ -69,6 +69,7 @@ MOEILLUSTRA.showFrame = function () {
 	$("#" + MOEILLUSTRA.config.canvas + " .id-randombutton").click(MOEILLUSTRA.showRandom);
 	// create an empty table for information
 	canvas.append($('<table class="id-table" border="0"></table>'));
+	canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
 };
 // show a random illustra
 MOEILLUSTRA.showRandom = function () {
