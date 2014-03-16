@@ -4,7 +4,6 @@ var MOEQUEST = MOEQUEST || new Object();
 MOEQUEST.config = {
 	files: ['data/moegirls.json'],
 	canvas: undefined,
-	ans_canvas: undefined,
 	// 4 options for a question
 	option_num: 4,
 	quest: new Object(),
@@ -45,7 +44,6 @@ MOEQUEST.run = function (canvas, ans) {
 	}
 	// save canvas id
 	MOEQUEST.config.canvas = canvas;
-	MOEQUEST.config.ans_canvas = ans;
 	MOEQUEST.showFrame();
 	MOEQUEST.waitLoad();
 };
@@ -71,11 +69,7 @@ MOEQUEST.showFrame = function () {
 	// append the last result
 	canvas.append($('<img border="0" src="resources/correct.ico" alt="result" width="10%" class="id-lastresult lastresult" />'));
 	// append submit button
-	canvas.append($('<button type="button" class="id-submitbutton button submitbutton">Answer</button>'));
-	$("#" + MOEQUEST.config.canvas + " .id-submitbutton").click(MOEQUEST.submitQuest);
-	// append clear button
-	/*canvas.append($('<button type="button" class="id-clearbutton button clearbutton">Clear</button>'));
-	$("#" + MOEQUEST.config.canvas + " .id-clearbutton").click(MOEQUEST.clearChecked);*/
+	canvas.append($('<a href="#" class="id-submitbutton submitbutton">Answer</a>'));
 
 	// append options
 	canvas.append($('<div class="id-optionsection optionsection" />'));
@@ -84,34 +78,42 @@ MOEQUEST.showFrame = function () {
 	for (var i = 0; i < MOEQUEST.config.option_num; ++ i) {
 		html.append($('<div class="id-option' + i + ' option" />'));
 		var html2 = $("#" + MOEQUEST.config.canvas + " .id-option" + i);
-		// append a checkbox
-		html2.append('<input type="checkbox" name="check' + i + '" value="' + i + '" class="id-check' + i + ' check" />').append('<span></span><img src="" alt="question" class="" />');
+		// append a span and img for question
+		html2.append('<span></span><img src="" alt="option' + i + '" class="" />');
 		$("#" + MOEQUEST.config.canvas + " .id-option" + i + " img").error(function () {
 			$(this).attr("src", "resources/nophoto.jpg");
 		});
-		// append click event for span, clicking the words has the same effect with checkbox
-		$("#" + MOEQUEST.config.canvas + " .id-option" + i + " span").click(function () {
-			var check = $(this).prev();
-			check.trigger('click'); 
+		// append click event for div
+		$("#" + MOEQUEST.config.canvas + " .id-option" + i).hover(function () {
+			if (! $(this).hasClass("checked")) {
+				$( this ).find("span").addClass( "hover" );
+			}
+		}, function() {
+			$( this ).find("span").removeClass( "hover" );
 		});
-	}
-
-	// for answer canvas
-	canvas = $("#" + MOEQUEST.config.ans_canvas);
-	canvas.empty();
-	canvas.append($('<div class="id-question question"><span></span></div>'));
-	canvas.append($('<div class="id-optionsection optionsection" />'));
-	html = $("#" + MOEQUEST.config.ans_canvas + " .id-optionsection");
-	for (var i = 0; i < 4; ++ i) {
-		html.append($('<div class="id-option' + i + ' option" />'));
-		var html2 = $("#" + MOEQUEST.config.ans_canvas + " .id-option" + i);
-		html2.append('<span></span>');
+		// append click event for span
+		$("#" + MOEQUEST.config.canvas + " .id-option" + i + "").click(function () {
+			//$(this).find("input").trigger('click');
+			$(this).find("span").toggleClass("checked");
+		});
 	}
 };
 // show the quest
 MOEQUEST.showQuest = function () {
 	// create a quest
 	quest = MOEQUEST.createQuest();
+	MOEQUEST.clearChecked();
+	// hide last result image
+	$("#" + MOEQUEST.config.canvas + " .id-lastresult").hide();
+	// change button callback
+	$("#" + MOEQUEST.config.canvas + " .id-submitbutton").off('click').on('click', function () {
+		MOEQUEST.checkAnswer();
+		// if the max number has reached
+		if (false) {
+			console.log("game over");
+			return;
+		}
+	}).html('Answer');
 	// show question
 	$("#" + MOEQUEST.config.canvas + " .id-question span").html(quest.question);
 	// show question image
@@ -124,6 +126,7 @@ MOEQUEST.showQuest = function () {
 	}
 	// for each option
 	for (var i = 0; i < quest.options.length; ++ i) {
+		$("#" + MOEQUEST.config.canvas + " .id-option" + i).removeClass("correct");
 		var option = $("#" + MOEQUEST.config.canvas + " .id-option" + i + " span");
 		if (option.length == 0) {
 			console.warn("option canvas not enough", i, quest.options);
@@ -146,66 +149,27 @@ MOEQUEST.showQuest = function () {
 };
 // show the answer
 MOEQUEST.showAnswer = function (quest) {
-	if (undefined === MOEQUEST.config.ans_canvas || $("#" + MOEQUEST.config.ans_canvas).length == 0) {
-		return;
-	}
-	$("#" + MOEQUEST.config.ans_canvas + " .id-question span").text(quest.question);
-	for (var i = 0; i < quest.options.length; ++ i) {
-		var option = $("#" + MOEQUEST.config.ans_canvas + " .id-option" + i + " span");
-		if (option.length == 0) {
-			console.warn("option canvas not enough", i, quest.options);
-			break;
-		}
-		option.text(quest.options[i]);
-		$("#" + MOEQUEST.config.ans_canvas + " .id-option" + i).removeClass( "correct" );
-	}
 	for (var i in quest.correct) {
-		 var correct = $("#" + MOEQUEST.config.ans_canvas + " .id-option" + quest.correct[i]);
+		var correct = $("#" + MOEQUEST.config.canvas + " .id-option" + quest.correct[i]);
 		if (correct.length == 0) {
 			console.warn("correct answer does not exist", i);
 			continue;
 		}
 		correct.addClass( "correct" );
 	}
-	var clone = $("#" + MOEQUEST.config.canvas).clone().appendTo($("#" + MOEQUEST.config.canvas).parent());
-	clone.html("")/*.css('z-index', -10)*/;
-	var ans = $("#" + MOEQUEST.config.ans_canvas);
-	clone.animate({
-		width: ans.width(),
-		height: ans.height(),
-		top: ans.position().top,
-		left: ans.position().left,
-	}, "slow", function () {
-		$(this).remove();
-		$("#" + MOEQUEST.config.ans_canvas).hide().css({visibility: "inherit"}).fadeIn("slow");
-	});
-};
-// submit a quest
-MOEQUEST.submitQuest = function () {
-	MOEQUEST.checkAnswer();
-	// if the max number has reached
-	if (false) {
-		console.log("game over");
-		return;
-	}
-	MOEQUEST.clearChecked();
-	// show the next one
-	MOEQUEST.showQuest();
+	$("#" + MOEQUEST.config.canvas + " .id-submitbutton").off('click').on('click', function () {
+		// show the next one
+		MOEQUEST.showQuest();
+	}).html('Next');
 };
 // check if the answer is correct
 MOEQUEST.checkAnswer = function () {
 	var quest = MOEQUEST.config.quest;
 	var ans = new Array();
 	// get user's answer
-	$("#" + MOEQUEST.config.canvas + " .id-optionsection .check").each(function (index, value) {
-		var check = $(value)[0];
-		var val = parseInt($(value).attr('value'));
-		if (! (val in quest.options)) {
-			console.warn("invalid answer", val);
-			return;
-		}
-		if (check.checked) {
-			ans.push(val);
+	$("#" + MOEQUEST.config.canvas + " .id-optionsection .option").each(function (index, value) {
+		if ($(value).find("span").hasClass("checked")) {
+			ans.push(index);
 		}
 	});
 	var wrong_flag = false;
@@ -228,15 +192,19 @@ MOEQUEST.checkAnswer = function () {
 	$("#" + MOEQUEST.config.canvas + " .id-lastresult").attr("src",'resources/' + (wrong_flag ? "incorrect" : "correct") + '.ico').hide().css({visibility: "inherit"}).fadeIn("slow");
 	MOEQUEST.showAnswer(quest);
 };
-// clear checked checkboxes
+// clear checked options
 MOEQUEST.clearChecked = function () {
-	$("#" + MOEQUEST.config.canvas + " .id-optionsection .check").each(function (index, value) {
-		$(value).attr('checked', false); 
+	$("#" + MOEQUEST.config.canvas + " .id-optionsection .checked").each(function (index, value) {
+		$(value).removeClass("checked");
 	});
 };
 // create a quest
 MOEQUEST.createQuest = function () {
-	MOEQUEST.config.quest = MOEQUEST.createMoegirlQuest();
+	var q = undefined;
+	while (undefined == q) {
+		q = MOEQUEST.createMoegirlQuest();
+	}
+	MOEQUEST.config.quest = q;
 	window["peek"] = MOEQUEST.config.quest.correct;
 	return MOEQUEST.config.quest;
 }
@@ -264,13 +232,13 @@ MOEQUEST.createMoegirlQuest = function () {
 		while (choices.length < MOEQUEST.config.option_num) {
 			var ran = Math.floor( (Math.random() * MOEQUEST.moegirls.length) );
 			// check if duplicate
-			if (choices.indexOf(ran) <= -1) {
+			if (choices.indexOf(ran) == -1) {
 				choices.push(ran);
 			}
 		}
 	}
 	// attributes for question
-	var QUEST_ATTR = ["photo", '发色', '瞳色', '声优', '身高'];
+	var QUEST_ATTR = ["photo", '发色', '瞳色', '声优', '年龄', '身高'];
 	// choose an attribute by random
 	var ran = Math.floor( (Math.random() * QUEST_ATTR.length) );
 	// a list of moegirls with valid attribute
@@ -315,16 +283,11 @@ MOEQUEST.createMoegirlQuest = function () {
 		quest.question_img = MOEQUEST.moegirls[good_choices[answer]].photo;
 		break;
 	case '发色':
-		quest.question = "哪位萌娘的发色是<strong>" + MOEQUEST.moegirls[good_choices[answer]]['发色'] + "</strong>？";
-		break;
 	case '瞳色':
-		quest.question = "哪位萌娘的瞳色是<strong>" + MOEQUEST.moegirls[good_choices[answer]]['瞳色'] + "</strong>？";
-		break;
 	case '声优':
-		quest.question = "哪位萌娘的声优是<strong>" + MOEQUEST.moegirls[good_choices[answer]]['声优'] + "</strong>？";
-		break;
+	case '年龄':
 	case '身高':
-		quest.question = "哪位萌娘的身高是<strong>" + MOEQUEST.moegirls[good_choices[answer]]['身高'] + "</strong>？";
+		quest.question = '哪位萌娘的<em>' + QUEST_ATTR[ran] + '</em>是<strong>' + MOEQUEST.moegirls[good_choices[answer]][QUEST_ATTR[ran]] + "</strong>？";
 		break;
 	default:
 		quest.question = "答案是哪位萌娘？";

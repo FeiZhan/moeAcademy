@@ -51,21 +51,10 @@ body #content .inactive {
 }
 #quest {
 	background-color: LightGreen;
-	/*height: 60%;*/
 	width: 60%;
 	position: absolute;
-	top: 25%;
+	top: 15%;
 	left: 20%;
-	border: 8px inset #98bf21;
-	padding: 3px;
-}
-#ans {
-	background-color: LightGreen;
-	height: 15%;
-	width: 50%;
-	position: absolute;
-	top: 1%;
-	left: 25%;
 	border: 8px inset #98bf21;
 	padding: 3px;
 }

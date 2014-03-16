@@ -65,7 +65,7 @@ MOEILLUSTRA.showFrame = function () {
 	canvas.append($('<a href="#" class="id-pagelink pagelink" target="_blank"><img border="0" src="resources/nophoto.jpg" alt="photo" width="20%" class="id-photo photo" /></a>'));
 	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").hide();
 	// create random button
-	canvas.append($('<button type="button" class="id-randombutton button randombutton">随机</button>'));
+	canvas.append($('<a href="#" class="id-randombutton randombutton">Random</a>'));
 	$("#" + MOEILLUSTRA.config.canvas + " .id-randombutton").click(MOEILLUSTRA.showRandom);
 	// create an empty table for information
 	canvas.append($('<table class="id-table" border="0"></table>'));

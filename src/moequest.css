@@ -3,7 +3,6 @@
 	margin-left: auto;
 	margin-right: auto;
 	width: 80%;
-	/*height: 35%;*/
 	text-align: center;
 }
 #quest .id-lastresult {
@@ -14,7 +13,7 @@
 }
 #quest .id-submitbutton {
 	position: absolute;
-	top: 8%;
+	top: 0%;
 	left: 1%;
 }
 #quest .id-clearbutton {
@@ -24,14 +23,16 @@
 }
 #quest .id-question img {
 	vertical-align: middle;
-	height: 0%;
-	width: 0%;
+	height: 50%;
+	width: 1%;
 	max-width: 240px;
 	max-height: 240px;
+	visibility: hidden;
 }
 #quest .id-question .show {
 	height: auto;
 	width: auto;
+	visibility: visible;
 }
 #quest .id-optionsection {
 	align: center;
@@ -40,12 +41,14 @@
 	width: 96%;
 	height: 65%;
 }
+#quest .id-optionsection .correct {
+	background-color: pink;
+}
 #quest .option {
 	width: 49.6%;
 	height: 49%;
 	float: left;
 	text-align: center;
-	/*margin: 20px 0px;*/
 }
 #quest .option img {
 	vertical-align: middle;
@@ -60,33 +63,55 @@
 	width: auto;
 	visibility: visible;
 }
+#quest .option .hover {
+	background-color: GreenYellow;
+}
+#quest .option .checked {
+	background-color: Orange;
+}
 
-#ans .id-question {
-	align: center;
-	margin-left: auto;
-	margin-right: auto;
-	width: 90%;
-	height: 35%;
-	text-align: center;
+/* This button was generated using CSSButtonGenerator.com */
+.id-submitbutton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
+	box-shadow:inset 0px 1px 0px 0px #c1ed9c;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #9dce2c), color-stop(1, #8cb82b) );
+	background:-moz-linear-gradient( center top, #9dce2c 5%, #8cb82b 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#9dce2c', endColorstr='#8cb82b');
+	background-color:#9dce2c;
+	-webkit-border-top-left-radius:6px;
+	-moz-border-radius-topleft:6px;
+	border-top-left-radius:6px;
+	-webkit-border-top-right-radius:6px;
+	-moz-border-radius-topright:6px;
+	border-top-right-radius:6px;
+	-webkit-border-bottom-right-radius:6px;
+	-moz-border-radius-bottomright:6px;
+	border-bottom-right-radius:6px;
+	-webkit-border-bottom-left-radius:6px;
+	-moz-border-radius-bottomleft:6px;
+	border-bottom-left-radius:6px;
+	text-indent:0;
+	border:1px solid #83c41a;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	font-style:normal;
+	height:30px;
+	line-height:30px;
+	width:75px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #689324;
 }
-#ans .id-optionsection {
-	align: center;
-	margin-left: auto;
-	margin-right: auto;
-	width: 96%;
-	height: 65%;
-}
-#ans .option {
-	width: 24.6%;
-	height: 100%;
-	float: left;
-	text-align: center;
-}
-#ans .correct {
-	background-color: pink;
-}
-#ans .incorrect {
-}
-#ans .id-question span {
-	font-size: small;
+.id-submitbutton:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8cb82b), color-stop(1, #9dce2c) );
+	background:-moz-linear-gradient( center top, #8cb82b 5%, #9dce2c 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8cb82b', endColorstr='#9dce2c');
+	background-color:#8cb82b;
+}.id-submitbutton:active {
+	position:relative;
+	top:1px;
 }
