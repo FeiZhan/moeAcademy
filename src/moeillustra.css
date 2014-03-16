@@ -1,0 +1,24 @@
+#illustra img {
+	position: relative;
+	top: 70px;
+	left: 0%;
+}
+#illustra .id-randombutton {
+	position: absolute;
+	top: 0%;
+	left: 5%;
+}
+#illustra .id-table {
+	width: 80%;
+	align: center;
+	float: right;
+}
+#illustra .id-table td {
+	text-align: center;
+}
+#illustra .id-table .id-th0 {
+	width: 30%;
+}
+#illustra .id-table .id-th1 {
+	width: 70%;
+}

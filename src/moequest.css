@@ -1,5 +1,4 @@
 #quest .id-question {
-	/*border: 1px solid black;*/
 	align: center;
 	margin-left: auto;
 	margin-right: auto;
@@ -23,6 +22,17 @@
 	top: 22%;
 	left: 1%;
 }
+#quest .id-question img {
+	vertical-align: middle;
+	height: 0%;
+	width: 0%;
+	max-width: 240px;
+	max-height: 240px;
+}
+#quest .id-question .show {
+	height: auto;
+	width: auto;
+}
 #quest .id-optionsection {
 	align: center;
 	margin-left: auto;
@@ -35,8 +45,20 @@
 	height: 49%;
 	float: left;
 	text-align: center;
+	/*margin: 20px 0px;*/
 }
-#quest span {
+#quest .option img {
+	vertical-align: middle;
+	height: 10%;
+	width: 1%;
+	max-width: 180px;
+	max-height: 180px;
+	visibility: hidden;
+}
+#quest .option .show {
+	height: auto;
+	width: auto;
+	visibility: visible;
 }
 
 #ans .id-question {
