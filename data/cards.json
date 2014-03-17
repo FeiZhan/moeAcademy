@@ -5,7 +5,11 @@
 	"photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/8/86/Senjougahara_Hitagi.jpg/250x341x250px-Senjougahara_Hitagi.jpg.pagespeed.ic.UGrCyF46_K.webp",
 	"anime": {
 		"skill0": ["resources/senjougahara-hitagi/1.gif", "resources/senjougahara-hitagi/2.gif", "resources/senjougahara-hitagi/3.gif", "resources/senjougahara-hitagi/4.gif", "resources/senjougahara-hitagi/5.gif", "resources/senjougahara-hitagi/6.gif"]
-	}
+	},
+	"hp": 10,
+	"atk": 8,
+	"def": 2,
+	"cost": 5
 }, {
 	"name": "蓝白碗",
 	"type": "tool",
