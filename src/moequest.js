@@ -44,6 +44,7 @@ MOEQUEST.run = function (canvas) {
 	}
 	// save canvas id
 	MOEQUEST.config.canvas = canvas;
+	$("#" + canvas).addClass("moequest");
 	MOEQUEST.showFrame();
 	MOEQUEST.waitLoad();
 };
@@ -62,39 +63,35 @@ MOEQUEST.showFrame = function () {
 	// clear the canvas
 	canvas.empty();
 	// append the question
-	canvas.append($('<div class="id-question question"><span></span><img src="" alt="question" class="" /></div>'));
-	$("#" + MOEQUEST.config.canvas + " .id-question img").error(function () {
+	canvas.append($('<div class="question"><span></span><img src="" alt="question" class="" /></div>'));
+	$("#" + MOEQUEST.config.canvas + " .question img").error(function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
 	// append the last result
-	canvas.append($('<img border="0" src="resources/correct.ico" alt="result" width="10%" class="id-lastresult lastresult" />'));
+	canvas.append($('<img border="0" src="resources/correct.ico" alt="result" width="10%" class="result" />'));
 	// append submit button
-	canvas.append($('<a href="#" class="id-submitbutton submitbutton">Answer</a>'));
+	canvas.append($('<a href="#" class="submitbutton">Answer</a>'));
 
 	// append options
-	canvas.append($('<div class="id-optionsection optionsection" />'));
-	html = $("#" + MOEQUEST.config.canvas + " .id-optionsection");
+	canvas.append($('<div class="optionsection" />'));
+	html = $("#" + MOEQUEST.config.canvas + " .optionsection");
 	// for each option
 	for (var i = 0; i < MOEQUEST.config.option_num; ++ i) {
-		html.append($('<div class="id-option' + i + ' option" />'));
-		var html2 = $("#" + MOEQUEST.config.canvas + " .id-option" + i);
-		// append a span and img for question
-		html2.append('<span></span><img src="" alt="option' + i + '" class="" />');
-		$("#" + MOEQUEST.config.canvas + " .id-option" + i + " img").error(function () {
+		html.append($('<div id="option' + i + '" class="option" ><a href="#" class="inactive" target="_blank"><span></span><img src="" alt="option' + i + '" class="" /></a></div>'));
+		$("#" + MOEQUEST.config.canvas + " #option" + i + " img").error(function () {
 			$(this).attr("src", "resources/nophoto.jpg");
 		});
-		// append click event for div
-		$("#" + MOEQUEST.config.canvas + " .id-option" + i).hover(function () {
+		// append hover event for div
+		$("#" + MOEQUEST.config.canvas + " #option" + i).hover(function () {
 			if (! $(this).hasClass("checked")) {
-				$( this ).find("span").addClass( "hover" );
+				$( this ).addClass( "hover" );
 			}
 		}, function() {
-			$( this ).find("span").removeClass( "hover" );
+			$( this ).removeClass( "hover" );
 		});
-		// append click event for span
-		$("#" + MOEQUEST.config.canvas + " .id-option" + i + "").click(function () {
-			//$(this).find("input").trigger('click');
-			$(this).find("span").toggleClass("checked");
+		// append click event for div
+		$("#" + MOEQUEST.config.canvas + " #option" + i).click(function () {
+			$(this).toggleClass("checked");
 		});
 	}
 	canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
@@ -104,10 +101,10 @@ MOEQUEST.showQuest = function () {
 	// create a quest
 	quest = MOEQUEST.createQuest();
 	MOEQUEST.clearChecked();
-	// hide last result image
-	$("#" + MOEQUEST.config.canvas + " .id-lastresult").hide();
+	// hide result image
+	$("#" + MOEQUEST.config.canvas + " .result").hide();
 	// change button callback
-	$("#" + MOEQUEST.config.canvas + " .id-submitbutton").off('click').on('click', function () {
+	$("#" + MOEQUEST.config.canvas + " .submitbutton").off('click').on('click', function () {
 		MOEQUEST.checkAnswer();
 		// if the max number has reached
 		if (false) {
@@ -116,19 +113,23 @@ MOEQUEST.showQuest = function () {
 		}
 	}).html('Answer');
 	// show question
-	$("#" + MOEQUEST.config.canvas + " .id-question span").html(quest.question);
+	$("#" + MOEQUEST.config.canvas + " .question span").html(quest.question);
 	// show question image
 	if (undefined !== quest.question_img) {
-		$("#" + MOEQUEST.config.canvas + " .id-question img").attr("src", quest.question_img);
-		$("#" + MOEQUEST.config.canvas + " .id-question img").addClass("show");
+		$("#" + MOEQUEST.config.canvas + " .question img").attr("src", quest.question_img);
+		$("#" + MOEQUEST.config.canvas + " .question img").addClass("show");
+		$("#" + MOEQUEST.config.canvas + " .option").addClass("bottom");
 	} else { // hide image
-		$("#" + MOEQUEST.config.canvas + " .id-question img").attr("src", "");
-		$("#" + MOEQUEST.config.canvas + " .id-question img").removeClass("show");
+		$("#" + MOEQUEST.config.canvas + " .question img").attr("src", "");
+		$("#" + MOEQUEST.config.canvas + " .question img").removeClass("show");
+		$("#" + MOEQUEST.config.canvas + " .option").removeClass("bottom");
 	}
+	$("#" + MOEQUEST.config.canvas + " .option").removeClass("correct");
+	$("#" + MOEQUEST.config.canvas + " .option a").addClass("inactive");
 	// for each option
 	for (var i = 0; i < quest.options.length; ++ i) {
-		$("#" + MOEQUEST.config.canvas + " .id-option" + i).removeClass("correct");
-		var option = $("#" + MOEQUEST.config.canvas + " .id-option" + i + " span");
+		var option = $("#" + MOEQUEST.config.canvas + " #option" + i + " span");
+		// invalid option element
 		if (option.length == 0) {
 			console.warn("option canvas not enough", i, quest.options);
 			break;
@@ -137,39 +138,44 @@ MOEQUEST.showQuest = function () {
 		option.html(quest.options[i]);
 		// show option image
 		if (undefined !== quest.option_img && undefined !== quest.option_img[i]) {
-			$("#" + MOEQUEST.config.canvas + " .id-option" + i + " img").attr("src",quest.option_img[i]);
-			$("#" + MOEQUEST.config.canvas + " .id-option" + i + " img").addClass("show");
+			$("#" + MOEQUEST.config.canvas + " #option" + i + " img").attr("src",quest.option_img[i]);
+			$("#" + MOEQUEST.config.canvas + " #option" + i + " img").addClass("show");
 		} else { // hide image
-			$("#" + MOEQUEST.config.canvas + " .id-option" + i + " img").attr("src","");
-			$("#" + MOEQUEST.config.canvas + " .id-option" + i + " img").removeClass("show");
+			$("#" + MOEQUEST.config.canvas + " #option" + i + " img").attr("src","");
+			$("#" + MOEQUEST.config.canvas + " #option" + i + " img").removeClass("show");
 		}
 	}
 	// fade in
-	$("#" + MOEQUEST.config.canvas + " .id-question").hide().css({visibility: "inherit"}).fadeIn("slow");
+	$("#" + MOEQUEST.config.canvas + " .question").hide().css({visibility: "inherit"}).fadeIn("slow");
 	$("#" + MOEQUEST.config.canvas + " .option").hide().css({visibility: "inherit"}).fadeIn("slow");
 };
 // show the answer
 MOEQUEST.showAnswer = function (quest) {
+	MOEQUEST.clearChecked();
 	for (var i in quest.correct) {
-		var correct = $("#" + MOEQUEST.config.canvas + " .id-option" + quest.correct[i]);
+		var correct = $("#" + MOEQUEST.config.canvas + " #option" + quest.correct[i]);
 		if (correct.length == 0) {
 			console.warn("correct answer does not exist", i);
 			continue;
 		}
 		correct.addClass( "correct" );
 	}
-	$("#" + MOEQUEST.config.canvas + " .id-submitbutton").off('click').on('click', function () {
+	$("#" + MOEQUEST.config.canvas + " .submitbutton").off('click').on('click', function () {
 		// show the next one
 		MOEQUEST.showQuest();
 	}).html('Next');
+	$("#" + MOEQUEST.config.canvas + ' .option a').each(function (index, value) {
+		$(this).attr("href", quest.option_link[index]);
+		$(this).removeClass("inactive");
+	})
 };
 // check if the answer is correct
 MOEQUEST.checkAnswer = function () {
 	var quest = MOEQUEST.config.quest;
 	var ans = new Array();
 	// get user's answer
-	$("#" + MOEQUEST.config.canvas + " .id-optionsection .option").each(function (index, value) {
-		if ($(value).find("span").hasClass("checked")) {
+	$("#" + MOEQUEST.config.canvas + " .optionsection .option").each(function (index, value) {
+		if ($(value).hasClass("checked")) {
 			ans.push(index);
 		}
 	});
@@ -189,13 +195,13 @@ MOEQUEST.checkAnswer = function () {
 	}
 	// append to result list
 	MOEQUEST.config.results.push(! wrong_flag);
-	// show last result image
-	$("#" + MOEQUEST.config.canvas + " .id-lastresult").attr("src",'resources/' + (wrong_flag ? "incorrect" : "correct") + '.ico').hide().css({visibility: "inherit"}).fadeIn("slow");
+	// show result image
+	$("#" + MOEQUEST.config.canvas + " .result").attr("src",'resources/' + (wrong_flag ? "incorrect" : "correct") + '.ico').hide().css({visibility: "inherit"}).fadeIn("slow");
 	MOEQUEST.showAnswer(quest);
 };
 // clear checked options
 MOEQUEST.clearChecked = function () {
-	$("#" + MOEQUEST.config.canvas + " .id-optionsection .checked").each(function (index, value) {
+	$("#" + MOEQUEST.config.canvas + " .optionsection .checked").each(function (index, value) {
 		$(value).removeClass("checked");
 	});
 };
@@ -218,6 +224,7 @@ MOEQUEST.createMoegirlQuest = function () {
 		question_img: undefined,
 		options: [],
 		option_img: [],
+		option_link: [],
 		correct: []
 	};
 	// choose some moegirls as options
@@ -274,8 +281,9 @@ MOEQUEST.createMoegirlQuest = function () {
 	for (var i in choices) {
 		quest.options.push(MOEQUEST.moegirls[choices[i]].name);
 		if ("photo" != QUEST_ATTR[ran]) {
-			quest.option_img.push(MOEQUEST.moegirls[choices[i]].photo);
+			quest.option_img.push(MOEQUEST.moegirls[choices[i]].photo || "");
 		}
+		quest.option_link.push(MOEQUEST.moegirls[choices[i]].link || "");
 	}
 	// assign question sentence
 	switch (QUEST_ATTR[ran]) {

@@ -32,13 +32,11 @@ body {
 	width: 85%;
 }
 #quest {
-	background-color: LightGreen;
-	width: 60%;
+	width: 75%;
+	min-height: 65%;
 	position: absolute;
 	top: 15%;
-	left: 20%;
-	border: 8px inset #98bf21;
-	padding: 3px;
+	left: 13%;
 }
 #illustra {
 	background-color: LightGreen;
@@ -94,7 +92,7 @@ body {
 	background-color:#8cb82b;
 }
 #sidebar a:active {
-	position:relative;
+	//position:relative;
 	top:1px;
 }
 /* activated view button */
@@ -140,6 +138,6 @@ body {
 	background-color:#5cb811;
 }
 #sidebar a.active:active {
-	position:relative;
+	//position:relative;
 	top:1px;
 }

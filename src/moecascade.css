@@ -45,6 +45,7 @@
 	margin-bottom: 5px;
 }
 .moecascade .pin p {
+	text-align: center;
 	font: 12px/18px Arial, sans-serif;
 	color: #333;
 	margin: 0;
@@ -90,6 +91,8 @@
 	width: 80%;
 	min-height: 70%;
 	overflow: auto;
+	/*margin-left: auto;
+	margin-right: auto;*/
 }
 .moecascade #detail img {
 	max-width: 50%;
@@ -109,22 +112,22 @@
 	width: 50%;
 	margin: 10px 0px;
 }
-#cascade #detail table {
+.moecascade #detail table {
 	width: 50%;
 	min-width: 300px;
 	position: absolute;
 	top: 35px;
 	left: 50%;
 }
-#cascade #detail table td {
+.moecascade #detail table td {
 	text-align: center;
 	border-top: 1px Gray solid;
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
-#cascade #detail table th:first-child {
+.moecascade #detail table th:first-child {
 	width: 30%;
 }
-#cascade #detail table th:last-child {
+.moecascade #detail table th:last-child {
 	width: 70%;
 }

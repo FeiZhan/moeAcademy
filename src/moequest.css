@@ -1,77 +1,122 @@
-#quest .id-question {
-	align: center;
-	margin-left: auto;
-	margin-right: auto;
-	width: 80%;
-	text-align: center;
+.moequest {
+	display: inline-block;
+	background: #FEFEFE;
+	border: 2px solid #FAFAFA;
+	box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+	margin: 0 2px 15px;
+	-webkit-column-break-inside: avoid;
+	-moz-column-break-inside: avoid;
+	column-break-inside: avoid;
+	padding: 15px;
+	padding-bottom: 5px;
+	background: -webkit-linear-gradient(45deg, #FFF, #F9F9F9);
+	opacity: 1;
+	-webkit-transition: all .2s ease;
+	-moz-transition: all .2s ease;
+	-o-transition: all .2s ease;
+	transition: all .2s ease;
 }
-#quest .id-lastresult {
+.moequest .result {
 	position: absolute;
 	top: 2%;
 	left: 90%;
 	visibility: hidden;
 }
-#quest .id-submitbutton {
+.moequest .submitbutton {
 	position: absolute;
-	top: 0%;
+	top: 5%;
 	left: 1%;
 }
-#quest .id-clearbutton {
+.moequest .clearbutton {
 	position: absolute;
 	top: 22%;
 	left: 1%;
 }
-#quest .id-question img {
-	vertical-align: middle;
-	height: 50%;
-	width: 1%;
-	max-width: 240px;
-	max-height: 240px;
-	visibility: hidden;
-}
-#quest .id-question .show {
-	height: auto;
-	width: auto;
-	visibility: visible;
-}
-#quest .id-optionsection {
-	align: center;
+.moequest .question {
 	margin-left: auto;
 	margin-right: auto;
-	width: 96%;
-	height: 65%;
-}
-#quest .id-optionsection .correct {
-	background-color: pink;
-}
-#quest .option {
-	width: 49.6%;
-	height: 49%;
-	float: left;
+	margin-top: 20px;
+	margin-bottom: 20px;
 	text-align: center;
 }
-#quest .option img {
+.moequest .question span {
+	font-size: large;
+}
+.moequest .question img {
+	vertical-align: top;
+	height: 1%;
+	width: 1%;
+	visibility: hidden;
+}
+.moequest .question img.show {
+	height: auto;
+	width: auto;
+	visibility: inherit;
+}
+.moequest .optionsection {
+}
+.moequest .option {
+	width: 24%;
+	height: 75%;
+	position: absolute;
+	top: 20%;
+	margin: 10px;
+	text-align: center;
+	overflow: hidden;
+}
+.moequest .option.bottom {
+	top: 85%;
+	height: 10%;
+}
+.moequest .option.correct {
+	background-color: pink;
+}
+.moequest #option0 {
+	left: 0%;
+}
+.moequest #option1 {
+	left: 25%;
+}
+.moequest #option2 {
+	left: 50%;
+}
+.moequest #option3 {
+	left: 75%;
+}
+.moequest .option span {
+	width: 100%;
+}
+.moequest .option a {
+	text-decoration: none;
+	color: Blue;
+}
+.moequest .option a.inactive {
+	pointer-events: none;
+	cursor: default;
+	color: inherit;
+}
+.moequest .option img {
 	vertical-align: middle;
 	height: 10%;
 	width: 1%;
-	max-width: 180px;
-	max-height: 180px;
 	visibility: hidden;
 }
-#quest .option .show {
+.moequest .option img.show {
 	height: auto;
 	width: auto;
-	visibility: visible;
+	max-height: 90%;
+	max-width: 90%;
+	visibility: inherit;
 }
-#quest .option .hover {
+.moequest .option.hover {
 	background-color: GreenYellow;
 }
-#quest .option .checked {
+.moequest .option.checked {
 	background-color: Orange;
 }
 
 /* This button was generated using CSSButtonGenerator.com */
-.id-submitbutton {
+.moequest .submitbutton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
 	box-shadow:inset 0px 1px 0px 0px #c1ed9c;
@@ -106,12 +151,13 @@
 	text-align:center;
 	text-shadow:1px 1px 0px #689324;
 }
-.id-submitbutton:hover {
+.moequest .submitbutton:hover {
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8cb82b), color-stop(1, #9dce2c) );
 	background:-moz-linear-gradient( center top, #8cb82b 5%, #9dce2c 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8cb82b', endColorstr='#9dce2c');
 	background-color:#8cb82b;
-}.id-submitbutton:active {
-	position:relative;
-	top:1px;
+}
+.moequest .submitbutton:active {
+	//position:relative;
+	//top:1px;
 }
