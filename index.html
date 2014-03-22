@@ -21,31 +21,29 @@
 	<img src="resources/logo.jpeg" alt="logo" width="7%" height="7%" />
 	<h2 id="heading">MoeGirl<br />Project</h2>
 	<div id="sidebar">
-		<a href="#" id="li-illustra" class="">萌娘图鉴</a>
-		<a href="#" id="li-cascade" class="active">萌娘瀑布流</a>
+		<a href="#" id="li-cascade" class="active">萌娘图鉴</a>
 		<a href="#" id="li-quest" class="">萌娘问答</a>
 		<a href="#" id="li-battle" class="">萌娘对战</a>
 	</div>
 	<div id="content">
 		<div id="cascade" class=""></div>
 		<div id="quest" class=""></div>
-		<div id="illustra" class=""></div>
 		<div id="battle" class=""></div>
+		<div id="illustra" class=""></div>
 	</div>
 </body>
 <script>
 $(function() {
 	function run(choice) {
-		var active = $("#sidebar .active");
+		var active = $("#sidebar a.active");
 		active.removeClass("active");
 		$("#sidebar #li-" + choice).addClass("active");
-		$("#content div").removeClass("active");
-		$("#content div").addClass("inactive");
 		$("#content div").hide();
-		$("#content #" + choice).removeClass("inactive");
-		$("#content #" + choice).addClass("active");
 		$("#content #" + choice).show();
 		switch (choice) {
+		case "cascade":
+			MOEPROJECT.run("cascade");
+			break;
 		case "illustra":
 			MOEILLUSTRA.run("illustra");
 			break;
@@ -54,9 +52,6 @@ $(function() {
 			break;
 		case "battle":
 			//MOEBATTLE.run("battle");
-			break;
-		case "cascade":
-			MOEPROJECT.run("cascade");
 			break;
 		default:
 			console.warn("no active page", choice);
