@@ -48,6 +48,13 @@ body {
 	border: 8px inset #98bf21;
 	padding: 3px;
 }
+#battle {
+	position: absolute;
+	top: 0%;
+	left: 90px;
+	right: 0%;
+	height: 99%;
+}
 
 /* This button was generated using CSSButtonGenerator.com */
 #sidebar a {
@@ -92,7 +99,7 @@ body {
 	background-color:#8cb82b;
 }
 #sidebar a:active {
-	//position:relative;
+	/*position:relative;*/
 	top:1px;
 }
 /* activated view button */
@@ -138,6 +145,6 @@ body {
 	background-color:#5cb811;
 }
 #sidebar a.active:active {
-	//position:relative;
+	/*position:relative;*/
 	top:1px;
 }
