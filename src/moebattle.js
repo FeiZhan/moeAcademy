@@ -377,7 +377,7 @@ MOEBATTLE.addToArea = function (card, player) {
 	}, "slow", function () {
 		$(this).remove();
 		// add an icon in area
-		MOEBATTLE.createIcon(card, height, width);
+		MOEBATTLE.createIcon(player, card, height, width);
 		MOEBATTLE.skillAnimate(card, "skill0");
 	});
 };
@@ -411,6 +411,13 @@ MOEBATTLE.dropCard = function (card) {
 		});
 		return;
 	}
+	var player = 0;
+	if (card_jq.hasClass("inmyhand")) {
+		player = 0;
+	}
+	else if (card_jq.hasClass("inyourhand")) {
+		player = 1;
+	}
 	// put out of myhand canvas
 	var top = card_jq.position().top + card_jq.parent().position().top;
 	var left = card_jq.position().left + card_jq.parent().position().left;
@@ -422,39 +429,9 @@ MOEBATTLE.dropCard = function (card) {
 	});
 	// if having target
 	if (undefined !== MOEBATTLE.cards[card].target) {
-		// card center position
-		var card_jq = $("#" + MOEBATTLE.config.canvas + " .card" + card);
-		var y = card_jq.position().top + card_jq.height() / 2;
-		var x = card_jq.position().left + card_jq.width() / 2;
-		// draw an arrow following mouse
-		var arrowFollow = function (event) {
-			var pagex = event.pageX - card_jq.parent().offset().left;
-			var pagey = event.pageY - card_jq.parent().offset().top;
-			var dist = Math.sqrt((pagex - x) * (pagex - x) + (pagey - y) * (pagey - y));
-			var newx = (pagex + x) / 2 - 25;
-			var newy = (pagey + y) / 2 - dist / 2;
-			// the length is the dist
-			$("#" + MOEBATTLE.config.canvas + " .arrow").height(dist);
-			var angle = Math.atan2(pagey - y, pagex - x) * 180 / Math.PI + 90;
-			$("#" + MOEBATTLE.config.canvas + " .arrow").css({
-				top: newy,
-				left: newx
-			})
-			// rotate
-			.css({ WebkitTransform: 'rotate(' + angle + 'deg)' }).css({ '-moz-transform': 'rotate(' + angle + 'deg)' })
-			.css({visibility: "inherit"}).show();
-		};
-		// set arrow to follow mouse
-		$("html").on("mousemove", arrowFollow)
-		// click anywhere to stop the arrow
-		.click(function () {
-			// remove arrow
-			$("html").off('mousemove', arrowFollow);
-			$("#" + MOEBATTLE.config.canvas + " .arrow").hide();
-			MOEBATTLE.useCardDirectly(card);
-		});
+		MOEBATTLE.arrowFollow(card, MOEBATTLE.useCardDirectly);
 	} else { // use directly
-		MOEBATTLE.useCard(0, card);
+		MOEBATTLE.useCard(player, card);
 	}
 }
 // create a card
@@ -499,9 +476,20 @@ MOEBATTLE.createCard = function (card) {
 	});
 	return $("#" + MOEBATTLE.config.canvas + " .card" + card);
 };
+MOEBATTLE.selectedIcon = undefined;
 // animation when creating an icon
-MOEBATTLE.createIcon = function (card, height, width) {
-	$("#" + MOEBATTLE.config.canvas + ' .myarea').append('<div class="icon' + card + ' icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"><span></span><img src="" alt="icon" class="" /><div class="cost"></div><div class="def"></div><div class="atk"></div><div class="card-hp"></div></div>');
+MOEBATTLE.createIcon = function (player, card, height, width) {
+	var area_jq;
+	switch (player) {
+	case 1:
+		area_jq = $("#" + MOEBATTLE.config.canvas + ' .yourarea');
+		break;
+	case 0:
+	default:
+		area_jq = $("#" + MOEBATTLE.config.canvas + ' .myarea');
+		break;
+	}
+	area_jq.append('<div class="icon' + card + ' icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"><span></span><img src="" alt="icon" class="" /><div class="cost"></div><div class="def"></div><div class="atk"></div><div class="card-hp"></div></div>');
 	$("#" + MOEBATTLE.config.canvas + " .icon" + card + " img").attr("src", MOEBATTLE.cards[card].photo).error(function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
@@ -520,6 +508,7 @@ MOEBATTLE.createIcon = function (card, height, width) {
 	}
 	var icon_jq = $("#" + MOEBATTLE.config.canvas + " .icon" + card);
 	icon_jq.hover(function (obj) {
+		MOEBATTLE.selectedIcon = card;
 		$(this).css("z-index", 1);
 		var detail_jq = MOEBATTLE.showDetail(card);
 		if (undefined === detail_jq) {
@@ -535,6 +524,7 @@ MOEBATTLE.createIcon = function (card, height, width) {
 			}, 1000);
 		}*/
 	}, function (obj) {
+		MOEBATTLE.selectedIcon = undefined;
 		$(this).css("z-index", 0);
 		$("#" + MOEBATTLE.config.canvas + " .detail")
 		.animate({
@@ -554,6 +544,37 @@ MOEBATTLE.createIcon = function (card, height, width) {
 			timer2 = null;
 		}*/
 	});
+	icon_jq.on("click", function () {
+		if (undefined === MOEBATTLE.selectedIcon) {
+			return;
+		}
+		//actions.push({type: "strike", from: card, to: MOEBATTLE.selectedIcon});
+		MOEBATTLE.arrowFollow(card, function (from, to) {
+			if (undefined === from || undefined === to) {
+				return;
+			}
+			var from_jq = $("#" + MOEBATTLE.config.canvas + " .icon" + from);
+			var to_jq = $("#" + MOEBATTLE.config.canvas + " .icon" + to);
+			if (0 == from_jq.length || 0 == to_jq.length) {
+				return;
+			}
+			var from_pos = from_jq.position();
+			var from_parent_pos = from_jq.parent().offset();
+			var to_pos = to_jq.position();
+			var to_parent_pos = to_jq.parent().offset();
+			from_jq.animate({ 
+				top: to_pos.top + to_parent_pos.top - from_parent_pos.top,
+				left: to_pos.left + to_parent_pos.left - from_parent_pos.left,
+			}, "fast", function () {
+				from_jq.animate({ 
+					top: from_pos.top,
+					left: from_pos.left,
+				}, "fast", function () {
+				});
+			});
+		});
+		
+	})
 	$("#" + MOEBATTLE.config.canvas + ' .icon' + card).hide().css({visibility: "inherit"}).fadeIn("fast");
 	return $("#" + MOEBATTLE.config.canvas + ' .icon' + card);
 };
@@ -655,13 +676,74 @@ MOEBATTLE.showDetail = function (card, dir) {
 	return $("#" + MOEBATTLE.config.canvas + " .detail");
 }
 //@deprecated hide detail canvas
-MOEBATTLE.hideDetail =function () {
+MOEBATTLE.hideDetail = function () {
 	$("#" + MOEBATTLE.config.canvas + " .detail").slideUp('slow', function () {
 		$("#" + MOEBATTLE.config.canvas + " .detail .name").html("");
 		$("#" + MOEBATTLE.config.canvas + " .detail .detail").html("");
 		$("#" + MOEBATTLE.config.canvas + " .detail img").attr("src", "");
 	});
 	MOEBATTLE.detail_lock = false;
+}
+MOEBATTLE.arrow = {
+	status: "idle",
+};
+MOEBATTLE.arrowFollow = function (card, func) {
+	if ("follow" == MOEBATTLE.arrow.status) {
+		return;
+	}
+	// card center position
+	var card_jq = $("#" + MOEBATTLE.config.canvas + " .card" + card);
+	if (0 == card_jq.length) {
+		card_jq = $("#" + MOEBATTLE.config.canvas + " .icon" + card);
+	}
+	if (0 == card_jq.length) {
+		return;
+	}
+	MOEBATTLE.arrow.status = "follow";
+	var y = card_jq.position().top + card_jq.height() / 2;
+	var x = card_jq.position().left + card_jq.width() / 2;
+	var parent = card_jq.parent();
+	while (undefined !== parent && parent.attr('id') != MOEBATTLE.config.canvas) {
+		x += parent.position().left;
+		y += parent.position().top;
+		parent = parent.parent();
+	}
+	// draw an arrow following mouse
+	var arrow_follow = function (event) {
+		var pagex = event.pageX - $("#" + MOEBATTLE.config.canvas).offset().left;
+		var pagey = event.pageY - $("#" + MOEBATTLE.config.canvas).offset().top;
+		var dist = Math.sqrt((pagex - x) * (pagex - x) + (pagey - y) * (pagey - y));
+		var newx = (pagex + x) / 2 - 25;
+		var newy = (pagey + y) / 2 - dist / 2;
+		// the length is the dist
+		$("#" + MOEBATTLE.config.canvas + " .arrow").height(dist);
+		var angle = Math.atan2(pagey - y, pagex - x) * 180 / Math.PI + 90;
+		$("#" + MOEBATTLE.config.canvas + " .arrow").css({
+			top: newy,
+			left: newx
+		})
+		// rotate
+		.css({ WebkitTransform: 'rotate(' + angle + 'deg)' }).css({ '-moz-transform': 'rotate(' + angle + 'deg)' })
+		.css({visibility: "inherit"}).show();
+	};
+	var page_click_use_card = function () {
+		if (card == MOEBATTLE.selectedIcon) {
+			return;
+		}
+		if (undefined === MOEBATTLE.selectedIcon) {
+		}
+		// remove arrow
+		$("html").off('mousemove', arrow_follow).off("click", page_click_use_card);
+		$("#" + MOEBATTLE.config.canvas + " .arrow").hide();
+		MOEBATTLE.arrow.status = "idle";
+		if (typeof func == "function") {
+			func(card, MOEBATTLE.selectedIcon);
+		}
+	};
+	// set arrow to follow mouse
+	$("html").on("mousemove", arrow_follow)
+	// click anywhere to stop the arrow
+	.on("click", page_click_use_card);
 }
 // animate for a skill
 MOEBATTLE.skillAnimate = function (card, skill) {
