@@ -153,12 +153,48 @@ MOEBATTLE.nextAction = function () {
 		return;
 	}
 	switch (MOEBATTLE.actions[0].type) {
+	case "GameOver":
+		break;
+	case "WinGame":
+		break;
+	case "LoseGame":
+		break;
+	case "DrawGame":
+		break;
+	case "ShufflePlayers":
+		break;
+	case "ShuffleDeck":
+		break;
 	case "DrawCard":
 		// get a card from deck
 		var card = MOEBATTLE.game.deck.pop();
 		// give to a player
 		MOEBATTLE.players[MOEBATTLE.actions[0].player].hands.push(card);
 		MOEBATTLE.drawCardAnima(MOEBATTLE.actions[0].player, card, MOEBATTLE.actions[0].from);
+		break;
+	case "UseCard":
+		break;
+	case "Discard":
+		break;
+	case "AddToArea":
+		break;
+	case "CharDie":
+		break;
+	case "GainEquip":
+		break;
+	case "LoseEquip":
+		break;
+	case "LoseHealth":
+		break;
+	case "GainHealth":
+		break;
+	case "LoseMana":
+		break;
+	case "GainMana":
+		break;
+	case "LoseStatus":
+		break;
+	case "GainStatus":
 		break;
 	default:
 		break;
