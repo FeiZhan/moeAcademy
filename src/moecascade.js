@@ -69,7 +69,7 @@ MOEPROJECT.showFrame = function () {
 	$("#" + MOEPROJECT.config.canvas + " #detail").click(function( event ) {
 		event.stopPropagation();
 	});
-	$('html').click(function (evt) {
+	var page_click = function (evt) {
 		switch (MOEPROJECT.config.show_detail) {
 		case true:
 			// when clicking out of detail div, detail disappears
@@ -88,9 +88,10 @@ MOEPROJECT.showFrame = function () {
 		default:
 			break;
 		}
-	});
+	}
+	$('html').off("click").on("click", page_click);
 	// check if scrolling
-	$(window).scroll(function() {
+	var page_scroll = function() {
 		clearTimeout($.data(this, 'scrollTimer'));
 		$.data(this, 'scrollTimer', setTimeout(function() {
 			// if scroll to buttom
@@ -100,7 +101,8 @@ MOEPROJECT.showFrame = function () {
 				}
 			}
 		}, 250));
-	});
+	}
+	$(window).off("scroll").on("scroll", page_scroll);
 	$("#" + MOEPROJECT.config.canvas).hide().css({visibility: "inherit"}).fadeIn("slow");
 }
 MOEPROJECT.moegirls = new Array();
