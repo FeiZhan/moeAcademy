@@ -44,18 +44,6 @@ MOEBATTLE.run = function (canvas) {
 	MOEBATTLE.showFrame();
 	MOEBATTLE.waitLoad();
 };
-// wait for loading files
-MOEBATTLE.waitLoad = function () {
-	if ((typeof MOEBATTLE.cards != "array" && typeof MOEBATTLE.cards != "object") || MOEBATTLE.cards.length == 0) {
-		console.log("loading");
-		setTimeout(MOEBATTLE.waitLoad, 300);
-		return;
-	}
-	MOEBATTLE.gameStart();
-	setInterval(function () {
-		console.debug(MOEBATTLE.AnimaCount)
-	}, 500);
-};
 // show the framework
 MOEBATTLE.showFrame = function () {
 	var canvas = $("#" + MOEBATTLE.config.canvas);
@@ -116,6 +104,18 @@ MOEBATTLE.showFrame = function () {
 	// hp mp fields
 	canvas.append($('<div class="myhp hp"><span>0</span> / <span>0</span></div>')).append($('<div class="yourhp hp"><span>0</span> / <span>0</span></div>'));
 	canvas.append($('<div class="mymp mp"><span>0</span> / <span>0</span></div>')).append($('<div class="yourmp mp"><span>0</span> / <span>0</span></div>'));
+};
+// wait for loading files
+MOEBATTLE.waitLoad = function () {
+	if ((typeof MOEBATTLE.cards != "array" && typeof MOEBATTLE.cards != "object") || MOEBATTLE.cards.length == 0) {
+		console.log("loading");
+		setTimeout(MOEBATTLE.waitLoad, 300);
+		return;
+	}
+	MOEBATTLE.actions.push({ type: "GameStart" });
+	setInterval(function () {
+		MOEBATTLE.nextAction();
+	}, 50);
 };
 MOEBATTLE.game = {
 	// orders for each player
@@ -178,11 +178,12 @@ MOEBATTLE.ACTION_CALLBACK = {
 	"PlayerLoseEquip" : undefined,
 	"PlayerGainEquip" : undefined,
 	// card
+	"CardsDraw" : "MOEBATTLE.cardsDraw",
 	"CardDraw" : "MOEBATTLE.cardDraw",
 	"CardUse" : "MOEBATTLE.cardUse",
 	"CardDiscard" : undefined,
 	"CardUseWithTarget" : undefined,
-	"CardUseWithoutTarget" : "MOEBATTLE.CardUseWithoutTarget",
+	"CardUseWithoutTarget" : "MOEBATTLE.cardUseWithoutTarget",
 	"CardAddToArea" : "MOEBATTLE.cardAddToArea",
 	// character
 	"CharCreate" : undefined,
@@ -195,7 +196,7 @@ MOEBATTLE.ACTION_CALLBACK = {
 };
 MOEBATTLE.actions = new Array();
 MOEBATTLE.nextAction = function () {
-	if (0 == MOEBATTLE.actions.length) {
+	if (0 == MOEBATTLE.actions.length || MOEBATTLE.AnimaCount > 0) {
 		return;
 	}
 	if (undefined === MOEBATTLE.actions[0].type) {
@@ -203,12 +204,34 @@ MOEBATTLE.nextAction = function () {
 		return;
 	}
 	switch (MOEBATTLE.actions[0].type) {
-	case "DrawCard":
-		// get a card from deck
-		var card = MOEBATTLE.game.deck.pop();
-		// give to a player
-		MOEBATTLE.players[MOEBATTLE.actions[0].player].hands.push(card);
-		MOEBATTLE.cardDrawAnima(MOEBATTLE.actions[0].player, card, MOEBATTLE.actions[0].from);
+	case "GameStart":
+		MOEBATTLE.gameStart();
+		break;
+	// deck
+	case "DeckShuffle":
+		MOEBATTLE.deckShuffle();
+		break;
+	case "PlayersShuffle":
+		MOEBATTLE.playersShuffle();
+		break;
+	case "PlayerEnd":
+		MOEBATTLE.playerEnd();
+		break;
+	// card
+	case "CardsDraw":
+		MOEBATTLE.cardsDraw(MOEBATTLE.actions[0].number, MOEBATTLE.actions[0].target);
+		break;
+	case "CardDraw":
+		MOEBATTLE.cardDraw(MOEBATTLE.actions[0].player, MOEBATTLE.actions[0].from);
+		break;
+	case "CardUse":
+		MOEBATTLE.cardUse(MOEBATTLE.actions[0].from, MOEBATTLE.actions[0].card);
+		break;
+	case "CardAddToArea":
+		MOEBATTLE.cardAddToArea(MOEBATTLE.actions[0].card, MOEBATTLE.actions[0].from);
+		break;
+	case "CardUseWithoutTarget":
+		MOEBATTLE.cardUseWithoutTarget(MOEBATTLE.actions[0].card);
 		break;
 	default:
 		break;
@@ -230,13 +253,20 @@ MOEBATTLE.gameStart = function () {
 		MOEBATTLE.game.deck.push(i);
 	}
 	MOEBATTLE.shuffle(MOEBATTLE.game.deck);
-	MOEBATTLE.playersShuffle();
+	
+	MOEBATTLE.actions.push({type: "PlayersShuffle"});
 	// deal initial cards
 	for (var i in MOEBATTLE.game.orders) {
-		MOEBATTLE.cardDraw(1, MOEBATTLE.game.orders[i]);
+		MOEBATTLE.actions.push({
+			type: "CardsDraw",
+			number: 1,
+			target: MOEBATTLE.game.orders[i]
+		});
 	}
 	// the first player
-	setTimeout(MOEBATTLE.playerEnd, 500);
+	setTimeout(function () {
+		MOEBATTLE.actions.push({ type: "PlayerEnd" });
+	}, 500);
 };
 
 // deck
@@ -255,7 +285,7 @@ MOEBATTLE.shuffle = function (arr) {
 MOEBATTLE.deckPrepare = function () {
 	MOEBATTLE.game.deck = MOEBATTLE.game.deck.concat(MOEBATTLE.game.discard);
 	MOEBATTLE.game.discard = new Array();
-	MOEBATTLE.deckShuffle();
+	MOEBATTLE.actions.push({ type: "DeckShuffle" });
 }
 
 // player
@@ -273,21 +303,24 @@ MOEBATTLE.playersShuffle = function () {
 }
 // switch to next player
 MOEBATTLE.playerEnd = function () {
-	MOEBATTLE.nextAction();
 	// add current player number by one
 	++ MOEBATTLE.game.current;
 	if (MOEBATTLE.game.current >= MOEBATTLE.players.length) {
 		MOEBATTLE.game.current %= MOEBATTLE.players.length;
 		++ MOEBATTLE.game.round_count;
 	}
-	MOEBATTLE.cardDraw(1, MOEBATTLE.game.current);
+	MOEBATTLE.actions.push({
+		type: "CardsDraw",
+		number: 1,
+		target: MOEBATTLE.game.current
+	});
 	MOEBATTLE.playerEndAnima();
 };
 
 // card
 
 // draw card
-MOEBATTLE.cardDraw = function (num, player, from) {
+MOEBATTLE.cardsDraw = function (num, player, from) {
 	// invalid
 	if (num <= 0 || player < 0 || player >= MOEBATTLE.players.length) {
 		return;
@@ -303,22 +336,36 @@ MOEBATTLE.cardDraw = function (num, player, from) {
 	// for each card
 	for (var i = 0; i < num; ++ i) {
 		MOEBATTLE.actions.push({
-			type: "DrawCard",
+			type: "CardDraw",
 			player: player,
 			from: from,
 		});
 	}
 };
+MOEBATTLE.cardDraw = function (target, from) {
+	// get a card from deck
+	var card = MOEBATTLE.game.deck.pop();
+	// give to a player
+	MOEBATTLE.players[target].hands.push(card);
+	MOEBATTLE.cardDrawAnima(target, card, from);
+}
 // use a card
 MOEBATTLE.cardUse = function (from, card, to) {
 	// remove card from player
 	MOEBATTLE.players[from].hands.splice(MOEBATTLE.players[from].hands.indexOf(card), 1);
 	switch(MOEBATTLE.cards[card].type) {
 	case "character": // put into player's area
-		MOEBATTLE.cardAddToArea(card, from);
+		MOEBATTLE.actions.push({
+			type: "CardAddToArea",
+			card: card,
+			from: from,
+		});
 		break;
 	default: // use immediately
-		MOEBATTLE.CardUseWithoutTarget(card);
+		MOEBATTLE.actions.push({
+			type: "CardUseWithoutTarget",
+			card: card,
+		});
 		break;
 	}
 }
@@ -327,9 +374,9 @@ MOEBATTLE.cardAddToArea = function (card, player) {
 	MOEBATTLE.players[player].area.push(card);
 	MOEBATTLE.cardAddToAreaAnima(card, player);
 };
-MOEBATTLE.CardUseWithoutTarget = function (card) {
+MOEBATTLE.cardUseWithoutTarget = function (card) {
 	MOEBATTLE.game.discard.push(card);
-	MOEBATTLE.CardUseWithoutTargetAnima(card);
+	MOEBATTLE.cardUseWithoutTargetAnima(card);
 }
 
 
@@ -552,10 +599,16 @@ MOEBATTLE.playerEndAnima = function () {
 	}
     // click event for endbutton
 	if (0 == MOEBATTLE.game.current) {
-		$("#" + MOEBATTLE.config.canvas + ' .endbutton').removeClass("disable").on("click", MOEBATTLE.playerEnd);
+		$("#" + MOEBATTLE.config.canvas + ' .endbutton').removeClass("disable").on("click", function () {
+			MOEBATTLE.actions.push({ type: "PlayerEnd" });
+		});
 	} else {
-		$("#" + MOEBATTLE.config.canvas + ' .endbutton').addClass("disable").off("click", MOEBATTLE.playerEnd);
-		setTimeout(MOEBATTLE.playerEnd, 1000);
+		$("#" + MOEBATTLE.config.canvas + ' .endbutton').addClass("disable").off("click", function () {
+			MOEBATTLE.actions.push({ type: "PlayerEnd" });
+		});
+		setTimeout(function () {
+			MOEBATTLE.actions.push({ type: "PlayerEnd" });
+		}, 1000);
 	}
 	-- MOEBATTLE.AnimaCount;
 }
@@ -598,9 +651,18 @@ MOEBATTLE.dropCard = function (card) {
 	});
 	// if having target
 	if (undefined !== MOEBATTLE.cards[card].target) {
-		MOEBATTLE.arrowFollow(card, MOEBATTLE.CardUseWithoutTarget);
+		MOEBATTLE.arrowFollow(card, function () {
+		MOEBATTLE.actions.push({
+			type: "CardUseWithoutTarget",
+			card: card,
+		});
+		});
 	} else { // use directly
-		MOEBATTLE.cardUse(player, card);
+		MOEBATTLE.actions.push({
+			type: "CardUse",
+			from: player,
+			card: card,
+		});
 	}
 	-- MOEBATTLE.AnimaCount;
 }
@@ -663,7 +725,6 @@ MOEBATTLE.cardDrawAnima = function (player, card, from) {
 				$(that).fadeOut("slow", function () {
 					$(this).find(".card-detail").css({visibility: "inherit"}).show();
 					MOEBATTLE.detail_lock = false;
-					MOEBATTLE.nextAction();
 				});
 				card_jquery.hide().css({visibility: "inherit"}).fadeIn("slow", function () {
 					-- MOEBATTLE.AnimaCount;
@@ -688,7 +749,7 @@ MOEBATTLE.moveToAreaAnima = function (card, player, height, width) {
 		-- MOEBATTLE.AnimaCount;
 	});
 }
-MOEBATTLE.CardUseWithoutTargetAnima = function (card) {
+MOEBATTLE.cardUseWithoutTargetAnima = function (card) {
 	++ MOEBATTLE.AnimaCount;
 	// expand and disappear
 	$("#" + MOEBATTLE.config.canvas + ' .card' + card).animate({
