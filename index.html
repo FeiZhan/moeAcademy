@@ -16,13 +16,16 @@
 	<script src="src/moeillustra.js"></script>
 	<link rel="stylesheet" type="text/css" href="src/moebattle.css" />
 	<script src="src/moebattle.js"></script>
+	<link rel="stylesheet" type="text/css" href="src/moecraft.css" />
+	<script src="src/moecraft.js"></script>
 </head>
 <body>
-	<img src="resources/logo.jpeg" alt="logo" width="7%" height="7%" />
+	<img id="logo" src="resources/logo.jpeg" alt="logo" width="7%" height="7%" />
 	<h2 id="heading">MoeGirl<br />Project</h2>
 	<div id="sidebar">
 		<a href="#" id="li-cascade" class="active">萌娘图鉴</a>
 		<a href="#" id="li-quest" class="">萌娘问答</a>
+		<a href="#" id="li-craft" class="">萌娘合成</a>
 		<a href="#" id="li-battle" class="">萌娘对战</a>
 	</div>
 	<div id="content">
@@ -30,6 +33,7 @@
 		<div id="quest" class=""></div>
 		<div id="battle" class=""></div>
 		<div id="illustra" class=""></div>
+		<div id="craft" class=""></div>
 	</div>
 </body>
 <script>
@@ -52,6 +56,9 @@ $(function() {
 			break;
 		case "battle":
 			MOEBATTLE.run("battle");
+			break;
+		case "craft":
+			MOECRAFT.run("craft");
 			break;
 		default:
 			console.warn("no active page", choice);

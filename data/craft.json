@@ -1,0 +1,6 @@
+{
+	"formula" : [{
+		"input" : ["a", "b"],
+		"output" : ["c"]
+	}]
+}
