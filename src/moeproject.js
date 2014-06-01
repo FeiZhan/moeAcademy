@@ -60,7 +60,7 @@ MOEPROJ.run = function (choice) {
 		MOEQUEST.load("quest");
 		break;
 	case "battle":
-		MOEBATTLE.run("battle");
+		MOEBATTLE.load("battle");
 		break;
 	case "craft":
 		MOECRAFT.load("craft");
@@ -85,6 +85,10 @@ MOEPROJ.load = function (config, run_func, data_func) {
 		canvas.empty();
 		// append html
 		canvas.append($(MOEPROJ.config.html));
+		// when image loading in error
+		$("#" + MOEPROJ.config.canvas + " img").error(function () {
+			$(this).attr("src", "resources/nophoto.jpg");
+		});
 		canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
 	}
 	if ("code" in config) {
