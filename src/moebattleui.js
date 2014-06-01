@@ -7,9 +7,7 @@ MOEBATTLEUI.html = ' \
 <div id="board"></div> \
 <div id="myhand" class="hand"></div> \
 <div id="yourhand" class="hand"></div> \
-<a href="#" id="endbutton" class="button">结束</a> \
-<div id="myarea" class="area"></div> \
-<div id="yourarea" class="area"></div> \
+<a href="#" id="endbutton" class="button disable">结束</a> \
 <div id="myhead" class="head"> \
 	<img src="#" alt="photo" class="" /> \
 	<div class="hp"> \
@@ -28,6 +26,11 @@ MOEBATTLEUI.html = ' \
 		<span>0</span> / <span>0</span> \
 	</div> \
 </div> \
+<div id="myarea" class="area"></div> \
+<div id="yourarea" class="area"></div> \
+<div id="arrow"> \
+	<canvas /> \
+</div> \
 <div id="anime"> \
 	<img src="#" alt="anime" class="" /> \
 </div> \
@@ -39,9 +42,6 @@ MOEBATTLEUI.html = ' \
 	<div class="card-hp"></div> \
 	<img src="#" alt="photo" class="" /> \
 	<div class="card-detail"></div> \
-</div> \
-<div id="arrow"> \
-	<canvas /> \
 </div> \
 ';
 MOEBATTLEUI.init = function (canvas) {
@@ -59,29 +59,18 @@ MOEBATTLEUI.load = function () {
 					card = val.substring(4);
 				}
 			});
-			if (undefined !== card) {
-				MOEBATTLE.dropCard(card);
+			if (card in MOEBATTLE.cards) {
+				MOEBATTLEUI.dropCard(card);
 			}
-		}
-    });
+		},
+		out: function (event, ui) {
+		},
+	});
 	// drop event for myhand
 	$("#" + MOEPROJ.config.canvas + ' #myhand').droppable({
 		drop: function( event, ui ) {
 		}
-    });
-    
-	$("#" + MOEPROJ.config.canvas + ' #endbutton').removeClass("disable").on("click", function () {
-		MOEBATTLE.actions.push({ type: "PlayerEnd" });
 	});
-	// append my area and your area
-	$("#" + MOEPROJ.config.canvas + " #anime img").error(function () {
-		$(this).attr("src", "resources/nophoto.jpg");
-	});
-	// detail canvas
-	$("#" + MOEPROJ.config.canvas + " #detail img").error(function () {
-		$(this).attr("src", "resources/nophoto.jpg");
-	});
-	//$("html").mousedown(MOEBATTLE.hideDetail).mousemove(MOEBATTLE.hideDetail).click(MOEBATTLE.hideDetail);
 	// arrow canvas
 	var arrow = $("#" + MOEPROJ.config.canvas + " #arrow canvas")[0].getContext('2d');
 	// draw an arrow
@@ -99,13 +88,13 @@ MOEBATTLEUI.load = function () {
 };
 
 MOEBATTLEUI.AnimaCount = 0;
-MOEBATTLE.detail_lock = false;
+MOEBATTLEUI.detail_lock = false;
 // show detail canvas
-MOEBATTLE.showDetail = function (card, dir) {
-	if (MOEBATTLE.detail_lock) {
+MOEBATTLEUI.showDetail = function (card, dir) {
+	if (MOEBATTLEUI.detail_lock) {
 		return;
 	}
-	MOEBATTLE.detail_lock = true;
+	MOEBATTLEUI.detail_lock = true;
 	$("#" + MOEPROJ.config.canvas + " #detail .name").html(MOEBATTLE.cards[card].name);
 	$("#" + MOEPROJ.config.canvas + " #detail .cost").html("cost: " + (MOEBATTLE.cards[card].cost || 0));
 	$("#" + MOEPROJ.config.canvas + " #detail .atk").html("moe point: " + (MOEBATTLE.cards[card].atk || 0));
@@ -207,21 +196,21 @@ MOEBATTLE.showDetail = function (card, dir) {
 	return $("#" + MOEPROJ.config.canvas + " #detail");
 }
 //@deprecated hide detail canvas
-MOEBATTLE.hideDetail = function () {
+MOEBATTLEUI.hideDetail = function () {
 	++ MOEBATTLEUI.AnimaCount;
 	$("#" + MOEPROJ.config.canvas + " #detail").slideUp('slow', function () {
 		$("#" + MOEPROJ.config.canvas + " #detail .name").html("");
 		$("#" + MOEPROJ.config.canvas + " #detail .detail").html("");
 		$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", "");
 	});
-	MOEBATTLE.detail_lock = false;
+	MOEBATTLEUI.detail_lock = false;
 	-- MOEBATTLEUI.AnimaCount;
 }
-MOEBATTLE.arrow = {
+MOEBATTLEUI.arrow = {
 	status: "idle",
 };
-MOEBATTLE.arrowFollow = function (card, func) {
-	if ("follow" == MOEBATTLE.arrow.status) {
+MOEBATTLEUI.arrowFollow = function (card, func) {
+	if ("follow" == MOEBATTLEUI.arrow.status) {
 		return;
 	}
 	// card center position
@@ -233,7 +222,7 @@ MOEBATTLE.arrowFollow = function (card, func) {
 		return;
 	}
 	++ MOEBATTLEUI.AnimaCount;
-	MOEBATTLE.arrow.status = "follow";
+	MOEBATTLEUI.arrow.status = "follow";
 	var y = card_jq.position().top + card_jq.height() / 2;
 	var x = card_jq.position().left + card_jq.width() / 2;
 	var parent = card_jq.parent();
@@ -269,7 +258,7 @@ MOEBATTLE.arrowFollow = function (card, func) {
 		// remove arrow
 		$("html").off('mousemove', arrow_follow).off("click", page_click_use_card);
 		$("#" + MOEPROJ.config.canvas + " #arrow").hide();
-		MOEBATTLE.arrow.status = "idle";
+		MOEBATTLEUI.arrow.status = "idle";
 		if (typeof func == "function") {
 			func(card, MOEBATTLE.selectedIcon);
 		}
@@ -289,21 +278,22 @@ MOEBATTLEUI.gameOver = function () {
 
 // player
 
-MOEBATTLE.playerPrepare = function (player) {
+// prepare player layout
+MOEBATTLEUI.playerPrepare = function (player) {
 	++ MOEBATTLEUI.AnimaCount;
 	if (0 == player) {
-		var span = $("#" + MOEPROJ.config.canvas + ' .myhp span');
+		var span = $("#" + MOEPROJ.config.canvas + ' #myhead .hp span');
 		$(span[0]).html(MOEBATTLE.players[player].hp);
 		$(span[1]).html(MOEBATTLE.players[player].maxhp);
-		span = $("#" + MOEPROJ.config.canvas + ' .mymp span');
+		span = $("#" + MOEPROJ.config.canvas + ' #myhead .mp span');
 		$(span[0]).html(MOEBATTLE.players[player].mp);
 		$(span[1]).html(MOEBATTLE.players[player].maxmp);
 	}
 	else if (1 == player) {
-		var span = $("#" + MOEPROJ.config.canvas + ' .yourhp span');
+		var span = $("#" + MOEPROJ.config.canvas + ' #yourhead .hp span');
 		$(span[0]).html(MOEBATTLE.players[player].hp);
 		$(span[1]).html(MOEBATTLE.players[player].maxhp);
-		span = $("#" + MOEPROJ.config.canvas + ' .yourmp span');
+		span = $("#" + MOEPROJ.config.canvas + ' #yourhead .mp span');
 		$(span[0]).html(MOEBATTLE.players[player].mp);
 		$(span[1]).html(MOEBATTLE.players[player].maxmp);
 	}
@@ -336,8 +326,52 @@ MOEBATTLEUI.playerEnd = function () {
 
 // card
 
+// create a card
+MOEBATTLE.createCard = function (card) {
+	++ MOEBATTLEUI.AnimaCount;
+	$("#" + MOEPROJ.config.canvas).append('<div class="card' + card + ' card"><div><span></span><img src="" alt="card" class="" /><div class="card-detail"></div></div><div class="cost param"></div><div class="def param"></div><div class="atk param"></div><div class="card-hp param"></div></div>');
+	var card_jq = $("#" + MOEPROJ.config.canvas + " .card" + card);
+	card_jq.draggable();
+	// assign content
+	$("#" + MOEPROJ.config.canvas + " .card" + card + " div span").html(MOEBATTLE.cards[card].name);
+	$("#" + MOEPROJ.config.canvas + " .card" + card + " div img").attr("src", MOEBATTLE.cards[card].photo)
+	$("#" + MOEPROJ.config.canvas + " .card" + card + " div .card-detail").html(MOEBATTLE.cards[card].detail)
+	.error(function () {
+		$(this).attr("src", "resources/nophoto.jpg");
+	});
+	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.cost").html(MOEBATTLE.cards[card].cost || 0);
+	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.def").html(MOEBATTLE.cards[card].def || 0);
+	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.atk").html(MOEBATTLE.cards[card].atk || 0);
+	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.card-hp").html(MOEBATTLE.cards[card].hp || 0);
+	card_jq.hover(function () {
+		// move to front
+		$(this).css("z-index", 1);
+		// expand
+		//$(this).animate({ height: "+=20px", width: "+=20px", left: "-=10px", top: "-=10px" }, "fast");
+		var detail_jq = MOEBATTLEUI.showDetail(card);
+		if (undefined === detail_jq) {
+			console.warn("fail to drawCardAnima");
+			return;
+		}
+	}, function () {
+		// move back
+		$(this).css("z-index", 0);
+		//$(this).animate({ height: "-=20px", width: "-=20px", left: "+=10px", top: "+=10px" }, "fast");
+		$("#" + MOEPROJ.config.canvas + " #detail")
+		.animate({
+			top: '+=400px',
+			height: '0px',
+		}, "fast", function () {
+			$(this).hide();
+		MOEBATTLEUI.detail_lock = false;
+			
+		});
+	});
+	-- MOEBATTLEUI.AnimaCount;
+	return $("#" + MOEPROJ.config.canvas + " .card" + card);
+};
 // drop a card into board
-MOEBATTLE.dropCard = function (card) {
+MOEBATTLEUI.dropCard = function (card) {
 	++ MOEBATTLEUI.AnimaCount;
 	var card_jq = $("#" + MOEPROJ.config.canvas + " .card" + card);
 	// if not my turn, put card back
@@ -372,7 +406,7 @@ MOEBATTLE.dropCard = function (card) {
 	});
 	// if having target
 	if (undefined !== MOEBATTLE.cards[card].target) {
-		MOEBATTLE.arrowFollow(card, function () {
+		MOEBATTLEUI.arrowFollow(card, function () {
 		MOEBATTLE.actions.push({
 			type: "cardUseWithoutTarget",
 			card: card,
@@ -394,7 +428,7 @@ MOEBATTLEUI.cardDraw = function (player, card, from) {
 		return;
 	}
 	// animation for drawing a card
-	var detail_jq = MOEBATTLE.showDetail(card);
+	var detail_jq = MOEBATTLEUI.showDetail(card);
 	if (undefined === detail_jq) {
 		console.warn("fail to drawCardAnima");
 		return;
@@ -445,7 +479,7 @@ MOEBATTLEUI.cardDraw = function (player, card, from) {
 				});
 				$(that).fadeOut("slow", function () {
 					$(this).find(".card-detail").css({visibility: "inherit"}).show();
-					MOEBATTLE.detail_lock = false;
+					MOEBATTLEUI.detail_lock = false;
 				});
 				card_jquery.hide().css({visibility: "inherit"}).fadeIn("slow", function () {
 					-- MOEBATTLEUI.AnimaCount;
@@ -508,50 +542,6 @@ MOEBATTLEUI.cardAddToArea = function (card, player) {
 	MOEBATTLE.moveToAreaAnima(card, player, height, width);
 	-- MOEBATTLEUI.AnimaCount;
 }
-// create a card
-MOEBATTLE.createCard = function (card) {
-	++ MOEBATTLEUI.AnimaCount;
-	$("#" + MOEPROJ.config.canvas).append('<div class="card' + card + ' card"><div><span></span><img src="" alt="card" class="" /><div class="card-detail"></div></div><div class="cost param"></div><div class="def param"></div><div class="atk param"></div><div class="card-hp param"></div></div>');
-	var card_jq = $("#" + MOEPROJ.config.canvas + " .card" + card);
-	card_jq.draggable();
-	// assign content
-	$("#" + MOEPROJ.config.canvas + " .card" + card + " div span").html(MOEBATTLE.cards[card].name);
-	$("#" + MOEPROJ.config.canvas + " .card" + card + " div img").attr("src", MOEBATTLE.cards[card].photo)
-	$("#" + MOEPROJ.config.canvas + " .card" + card + " div .card-detail").html(MOEBATTLE.cards[card].detail)
-	.error(function () {
-		$(this).attr("src", "resources/nophoto.jpg");
-	});
-	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.cost").html(MOEBATTLE.cards[card].cost || 0);
-	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.def").html(MOEBATTLE.cards[card].def || 0);
-	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.atk").html(MOEBATTLE.cards[card].atk || 0);
-	$("#" + MOEPROJ.config.canvas + " .card" + card + " div.card-hp").html(MOEBATTLE.cards[card].hp || 0);
-	card_jq.hover(function () {
-		// move to front
-		$(this).css("z-index", 1);
-		// expand
-		//$(this).animate({ height: "+=20px", width: "+=20px", left: "-=10px", top: "-=10px" }, "fast");
-		var detail_jq = MOEBATTLE.showDetail(card);
-		if (undefined === detail_jq) {
-			console.warn("fail to drawCardAnima");
-			return;
-		}
-	}, function () {
-		// move back
-		$(this).css("z-index", 0);
-		//$(this).animate({ height: "-=20px", width: "-=20px", left: "+=10px", top: "+=10px" }, "fast");
-		$("#" + MOEPROJ.config.canvas + " #detail")
-		.animate({
-			top: '+=400px',
-			height: '0px',
-		}, "fast", function () {
-			$(this).hide();
-		MOEBATTLE.detail_lock = false;
-			
-		});
-	});
-	-- MOEBATTLEUI.AnimaCount;
-	return $("#" + MOEPROJ.config.canvas + " .card" + card);
-};
 
 // character
 
@@ -590,7 +580,7 @@ MOEBATTLE.createIcon = function (player, card, height, width) {
 	icon_jq.hover(function (obj) {
 		MOEBATTLE.selectedIcon = card;
 		$(this).css("z-index", 1);
-		var detail_jq = MOEBATTLE.showDetail(card);
+		var detail_jq = MOEBATTLEUI.showDetail(card);
 		if (undefined === detail_jq) {
 			console.warn("fail to drawCardAnima");
 			return;
@@ -600,7 +590,7 @@ MOEBATTLE.createIcon = function (player, card, height, width) {
 			// show detail after hovering
 			timer2 = setTimeout(function () {
 				timer2 = null;
-				MOEBATTLE.showDetail(card);
+				MOEBATTLEUI.showDetail(card);
 			}, 1000);
 		}*/
 	}, function (obj) {
@@ -612,7 +602,7 @@ MOEBATTLE.createIcon = function (player, card, height, width) {
 			width: '0px'
 		}, "fast", function () {
 			$(this).hide();
-			MOEBATTLE.detail_lock = false;
+			MOEBATTLEUI.detail_lock = false;
 		});
 		/*clearTimeout(timer);
 		// move back
@@ -629,7 +619,7 @@ MOEBATTLE.createIcon = function (player, card, height, width) {
 			return;
 		}
 		//actions.push({type: "strike", from: card, to: MOEBATTLE.selectedIcon});
-		MOEBATTLE.arrowFollow(card, function (from, to) {
+		MOEBATTLEUI.arrowFollow(card, function (from, to) {
 			if (undefined === from || undefined === to) {
 				return;
 			}

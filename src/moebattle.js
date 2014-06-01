@@ -89,7 +89,7 @@ MOEBATTLE.nextAction = function () {
 MOEBATTLE.gameStart = function (action) {
 	// prepare players
 	for (var i in MOEBATTLE.players) {
-		MOEBATTLE.playerPrepare(i);
+		MOEBATTLEUI.playerPrepare(i);
 	}
 	// prepare discard deck
 	MOEBATTLE.game.discard = new Array();
