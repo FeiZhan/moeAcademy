@@ -6,10 +6,9 @@ var MOECRAFT = MOEPROJ.MOECRAFT;
 MOECRAFT.ui;
 MOECRAFT.data = ['data/craft.json'];
 MOECRAFT.load = function (canvas) {
-	document.title = "萌娘合成";
 	// set ui
 	MOECRAFT.ui = MOEPROJ.MOECRAFTUI;
-	$("#" + canvas).addClass("moecraft");
+	MOECRAFT.ui.init(canvas);
 	MOEPROJ.load({
 		canvas: canvas,
 		html: MOECRAFT.ui.html,
@@ -142,6 +141,10 @@ MOECRAFTUI.html = ' \
 	<button id="craftbutton" type="button">craft</button> \
 	<button id="drawbutton" type="button">draw cards</button> \
 ';
+MOECRAFTUI.init = function (canvas) {
+	document.title = "萌娘合成";
+	$("#" + canvas).addClass("moecraft");
+};
 MOECRAFTUI.load = function () {
 	// drop callback for table
 	$("#" + MOEPROJ.config.canvas + ' #table').droppable({

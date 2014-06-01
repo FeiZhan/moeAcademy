@@ -13,28 +13,28 @@
 	top: 5%;
 	left: 1%;
 }
-.moequest .clearbutton {
+.moequest #clearbutton {
 	position: absolute;
 	top: 22%;
 	left: 1%;
 }
-.moequest .question {
+.moequest #question {
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 20px;
 	margin-bottom: 20px;
 	text-align: center;
 }
-.moequest .question span {
+.moequest #question span {
 	font-size: large;
 }
-.moequest .question img {
+.moequest #question img {
 	vertical-align: top;
 	height: 1%;
 	width: 1%;
 	visibility: hidden;
 }
-.moequest .question img.show {
+.moequest #question img.show {
 	height: auto;
 	width: auto;
 	visibility: inherit;

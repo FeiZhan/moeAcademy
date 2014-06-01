@@ -57,7 +57,7 @@ MOEPROJ.run = function (choice) {
 		MOEILLUSTRA.run("illustra");
 		break;
 	case "quest":
-		MOEQUEST.run("quest");
+		MOEQUEST.load("quest");
 		break;
 	case "battle":
 		MOEBATTLE.run("battle");
@@ -83,8 +83,9 @@ MOEPROJ.load = function (config, run_func, data_func) {
 		var canvas = $("#" + MOEPROJ.config.canvas);
 		// clear the canvas
 		canvas.empty();
-		// append table
+		// append html
 		canvas.append($(MOEPROJ.config.html));
+		canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
 	}
 	if ("code" in config) {
 		if (typeof config.code == "array" || typeof config.code == "object") {
