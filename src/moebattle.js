@@ -21,59 +21,6 @@ MOEBATTLE.loadData = function (data) {
 };
 // run when loading completes
 MOEBATTLE.run = function () {
-	MOEBATTLE.ACTION_CALLBACK = {
-		// game
-		"gameStart" : MOEBATTLE.gameStart,
-		"GamePause" : undefined,
-		"GameOver" : undefined,
-		"GameWin" : undefined,
-		"GameLose" : undefined,
-		"GameDraw" : undefined,
-		// deck
-		"deckShuffle" : MOEBATTLE.deckShuffle,
-		"DeckPrepare" : "MOEBATTLE.deckPrepare",
-		// player
-		"PlayersShuffle" : "MOEBATTLE.playersShuffle",
-		"playerStart" : MOEBATTLE.playerStart,
-		"playerEnd" : MOEBATTLE.playerEnd,
-		"PlayerChange" : undefined,
-		"PlayerDie" : undefined,
-		"PlayerRevive" : undefined,
-		"PlayerLoseHP" : undefined,
-		"PlayerGainHP" : undefined,
-		"PlayerLoseMP" : undefined,
-		"PlayerGainMP" : undefined,
-		"PlayerLoseStatus" : undefined,
-		"PlayerGainStatus" : undefined,
-		"PlayerLoseEquip" : undefined,
-		"PlayerGainEquip" : undefined,
-		// card
-		"cardsDraw" : function (action) {
-			MOEBATTLE.cardsDraw(action.number, action.target);
-		},
-		"cardDraw" : function (action) {
-			MOEBATTLE.cardDraw(action.player, action.from);
-		},
-		"cardUse" : function (action) {
-			MOEBATTLE.cardUse(action.from, action.card);
-		},
-		"CardDiscard" : undefined,
-		"CardUseWithTarget" : undefined,
-		"cardUseWithoutTarget" : function (action) {
-			MOEBATTLE.cardUseWithoutTarget(action.card);
-		},
-		"cardAddToArea" : function (action) {
-			MOEBATTLE.cardAddToArea(action.card, action.from);
-		},
-		// character
-		"CharCreate" : undefined,
-		"CharDie" : undefined,
-		"CharAct" : undefined,
-		"CharLoseHP" : undefined,
-		"CharGainHP" : undefined,
-		"CharLoseStatus" : undefined,
-		"CharGainStatus" : undefined,
-	};
 	MOEBATTLE.ui.load();
 	// execute based on action list
 	MOEBATTLE.actions.push({ type: "gameStart" });
@@ -118,7 +65,6 @@ MOEBATTLE.players = [
 	}
 ];
 
-MOEBATTLE.ACTION_CALLBACK = new Object();
 MOEBATTLE.actions = new Array();
 // execute the next action
 MOEBATTLE.nextAction = function () {
@@ -126,19 +72,15 @@ MOEBATTLE.nextAction = function () {
 	if (0 == MOEBATTLE.actions.length || MOEBATTLEUI.AnimaCount > 0) {
 		return;
 	}
+	var action = MOEBATTLE.actions.shift();
 	// invalid action
-	if (undefined === MOEBATTLE.actions[0].type) {
-		MOEBATTLE.actions.shift();
+	if (undefined === action.type) {
 		return;
 	}
-	console.debug(MOEBATTLE.actions[0].type)
-	if ("function" == typeof MOEBATTLE[MOEBATTLE.actions[0].type]) {
-		MOEBATTLE[MOEBATTLE.actions[0].type] (MOEBATTLE.actions[0]);
+	console.debug(action.type)
+	if ("function" == typeof MOEBATTLE[action.type]) {
+		MOEBATTLE[action.type] (action);
 	}
-	else if ("function" == typeof MOEBATTLE.ACTION_CALLBACK[MOEBATTLE.actions[0].type]) {
-		MOEBATTLE.ACTION_CALLBACK[MOEBATTLE.actions[0].type](MOEBATTLE.actions[0]);
-	}
-	MOEBATTLE.actions.shift();
 }
 
 // game
@@ -158,25 +100,37 @@ MOEBATTLE.gameStart = function (action) {
 	}
 	MOEBATTLE.shuffle(MOEBATTLE.game.deck);
 
-	MOEBATTLE.actions.push({type: "PlayersShuffle"});
+	var new_actions = new Array();
+	new_actions.push({
+		type: "playersShuffle"
+	});
 	// deal initial cards
 	for (var i in MOEBATTLE.game.orders) {
-		MOEBATTLE.actions.push({
+		new_actions.push({
 			type: "cardsDraw",
 			number: 1,
 			target: MOEBATTLE.game.orders[i]
 		});
 	}
-	setTimeout(function () {
-		// the first player
-		MOEBATTLE.actions.push({
-			type: "playerStart",
-		});
-	}, 500);
+	MOEBATTLE.actions = new_actions.concat(MOEBATTLE.actions);
+	// the first player
+	MOEBATTLE.actions.push({
+		type: "playerStart",
+	});
 };
 // game over
 MOEBATTLE.gameOver = function (action) {
 	MOEBATTLE.ui.gameOver();
+}
+MOEBATTLE.gamePause = function (action) {
+}
+MOEBATTLE.gamePause = function (action) {
+}
+MOEBATTLE.gameWin = function (action) {
+}
+MOEBATTLE.gameLose = function (action) {
+}
+MOEBATTLE.gameDraw = function (action) {
 }
 
 // deck
@@ -196,7 +150,9 @@ MOEBATTLE.shuffle = function (arr) {
 MOEBATTLE.deckPrepare = function (action) {
 	MOEBATTLE.game.deck = MOEBATTLE.game.deck.concat(MOEBATTLE.game.discard);
 	MOEBATTLE.game.discard = new Array();
-	MOEBATTLE.actions.push({ type: "deckShuffle" });
+	MOEBATTLE.actions.unshift({
+		type: "deckShuffle"
+	});
 };
 
 // player
@@ -233,6 +189,26 @@ MOEBATTLE.playerEnd = function (action) {
 		type: "playerStart",
 	});
 };
+MOEBATTLE.playerChange = function (action) {
+}
+MOEBATTLE.playerDie = function (action) {
+}
+MOEBATTLE.playerRevive = function (action) {
+}
+MOEBATTLE.playerLoseHP = function (action) {
+}
+MOEBATTLE.playerGainHP = function (action) {
+}
+MOEBATTLE.playerLoseMP = function (action) {
+}
+MOEBATTLE.playerGainMP = function (action) {
+}
+MOEBATTLE.playerLoseStatus = function (action) {
+}
+MOEBATTLE.playerGainStatus = function (action) {
+}
+MOEBATTLE.playerGainEquip = function (action) {
+}
 
 // card
 
@@ -255,7 +231,7 @@ MOEBATTLE.cardsDraw = function (action) {
 	}
 	// for each card
 	for (var i = 0; i < action.number; ++ i) {
-		MOEBATTLE.actions.push({
+		MOEBATTLE.actions.unshift({
 			type: "cardDraw",
 			target: action.target,
 			from: action.from,
@@ -270,20 +246,22 @@ MOEBATTLE.cardDraw = function (action) {
 	MOEBATTLE.players[action.target].hands.push(card);
 	MOEBATTLE.ui.cardDraw(action.target, card, action.from);
 }
+MOEBATTLE.cardDiscard = function (action) {
+}
 // use a card
 MOEBATTLE.cardUse = function (action) {
 	// remove card from player
 	MOEBATTLE.players[action.from].hands.splice(MOEBATTLE.players[action.from].hands.indexOf(action.card), 1);
 	switch(MOEBATTLE.cards[action.card].type) {
 	case "character": // put into player's area
-		MOEBATTLE.actions.push({
+		MOEBATTLE.actions.unshift({
 			type: "cardAddToArea",
 			card: action.card,
 			from: action.from,
 		});
 		break;
 	default: // use immediately
-		MOEBATTLE.actions.push({
+		MOEBATTLE.actions.unshift({
 			type: "cardUseWithoutTarget",
 			card: action.card,
 		});
@@ -300,12 +278,5 @@ MOEBATTLE.cardUseWithoutTarget = function (action) {
 	MOEBATTLE.game.discard.push(action.card);
 	MOEBATTLE.ui.cardUseWithoutTarget(action.card);
 }
-
-
-
-
-
-
-
-
-
+MOEBATTLE.cardUseWithTarget = function (action) {
+}
