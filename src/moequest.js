@@ -68,9 +68,9 @@ MOEQUEST.showFrame = function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
 	// append the last result
-	canvas.append($('<img border="0" src="resources/correct.ico" alt="result" width="10%" class="result" />'));
+	canvas.append($('<img border="0" src="resources/correct.ico" alt="result" width="10%" id="result" />'));
 	// append submit button
-	canvas.append($('<a href="#" class="submitbutton">Answer</a>'));
+	canvas.append($('<a href="#" id="submitbutton">Answer</a>'));
 
 	// append options
 	canvas.append($('<div class="optionsection" />'));
@@ -102,9 +102,9 @@ MOEQUEST.showQuest = function () {
 	quest = MOEQUEST.createQuest();
 	MOEQUEST.clearChecked();
 	// hide result image
-	$("#" + MOEQUEST.config.canvas + " .result").hide();
+	$("#" + MOEQUEST.config.canvas + " #result").hide();
 	// change button callback
-	$("#" + MOEQUEST.config.canvas + " .submitbutton").off('click').on('click', function () {
+	$("#" + MOEQUEST.config.canvas + " #submitbutton").off('click').on('click', function () {
 		MOEQUEST.checkAnswer();
 		// if the max number has reached
 		if (false) {
@@ -160,7 +160,7 @@ MOEQUEST.showAnswer = function (quest) {
 		}
 		correct.addClass( "correct" );
 	}
-	$("#" + MOEQUEST.config.canvas + " .submitbutton").off('click').on('click', function () {
+	$("#" + MOEQUEST.config.canvas + " #submitbutton").off('click').on('click', function () {
 		// show the next one
 		MOEQUEST.showQuest();
 	}).html('Next');
@@ -196,7 +196,7 @@ MOEQUEST.checkAnswer = function () {
 	// append to result list
 	MOEQUEST.config.results.push(! wrong_flag);
 	// show result image
-	$("#" + MOEQUEST.config.canvas + " .result").attr("src",'resources/' + (wrong_flag ? "incorrect" : "correct") + '.ico').hide().css({visibility: "inherit"}).fadeIn("slow");
+	$("#" + MOEQUEST.config.canvas + " #result").attr("src",'resources/' + (wrong_flag ? "incorrect" : "correct") + '.ico').hide().css({visibility: "inherit"}).fadeIn("slow");
 	MOEQUEST.showAnswer(quest);
 };
 // clear checked options

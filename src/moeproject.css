@@ -2,15 +2,18 @@ body {
 	background-image: url('../resources/background.jpg');
 }
 #logo {
+	text-align: center;
+	width: 95px;
+}
+#logo img {
+	width: 100%;
 	box-shadow: 5px 5px 2px #888888;
 }
-#heading {
-	position: absolute;
-	top: 0%;
-	left: 8%;
+#logo span {
+	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
 }
-/* sidebar */
+
 #sidebar {
 	height: 100%;
 	width: 90px;
@@ -29,7 +32,7 @@ body {
 	top: 2%;
 	left: 4px;
 }
-/* content */
+
 #content {
 	height: 100%;
 	width: 85%;

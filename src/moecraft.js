@@ -1,117 +1,197 @@
 // moegirl craft
 
-var MOECRAFT = MOECRAFT || new Object();
-MOECRAFT.config = {
-	files: ['data/craft.json'],
-	canvas: undefined,
-};
-// initialize by loading json files
-MOECRAFT.init = function () {
-	function loadJson(file, func) {
-		$.getJSON(file, function(data, textStatus, jqXHR) {
-			console.log("loaded", file);
-			if (typeof func == "function") {
-				func(data);
-			}
-		})
-		.fail(function(jqXHR, textStatus, errorThrown) {
-			console.error("data load error", textStatus, errorThrown);
-		})
-		.always(function(data, textStatus, jqXHR) {
-		});
-	}
-	// load craft files
-	for (var i in MOECRAFT.config.files) {
-		loadJson(MOECRAFT.config.files[i], function (data) {
-			MOECRAFT.craft = MOECRAFT.craft.concat(data.formula);
-			for (var j in data.formula)
-			{
-				for (var k in data.formula[j])
-				{
-					if ("input" == k)
-					{
-						MOECRAFT.cards = MOECRAFT.cards.concat(data.formula[j][k]);
-					}
-				}
-			}
-		});
-	}
-};
-// init when page loaded
-$(function() {
-	MOECRAFT.init();
-});
-// main function
-MOECRAFT.run = function (canvas) {
-	if (undefined === canvas || $("#" + canvas).length == 0) {
-		console.error("undefined canvas", canvas);
-		return;
-	}
-	// save canvas id
-	MOECRAFT.config.canvas = canvas;
+MOEPROJ.MOECRAFT = MOEPROJ.MOECRAFT || new Object();
+var MOECRAFT = MOEPROJ.MOECRAFT;
+
+MOECRAFT.ui;
+MOECRAFT.data = ['data/craft.json'];
+MOECRAFT.load = function (canvas) {
+	document.title = "萌娘合成";
+	// set ui
+	MOECRAFT.ui = MOEPROJ.MOECRAFTUI;
 	$("#" + canvas).addClass("moecraft");
-	MOECRAFT.showFrame();
-	MOECRAFT.waitLoad();
+	MOEPROJ.load({
+		canvas: canvas,
+		html: MOECRAFT.ui.html,
+		data: MOECRAFT.data,
+	}, MOECRAFT.run, MOECRAFT.loadData);
 };
-// show the framework
-MOECRAFT.showFrame = function () {
-	var canvas = $("#" + MOECRAFT.config.canvas);
-	// clear the canvas
-	canvas.empty();
-	canvas.droppable({
-		drop: function( event, ui ) {
-			var card = $(ui.draggable[0]).text();
-			var index = MOECRAFT.table.input.indexOf(card);
-			if (index > -1) {
-				//MOECRAFT.table.input.splice(index, 1);
+// callback for loading json data
+MOECRAFT.loadData = function (data) {
+	MOECRAFT.craft = MOECRAFT.craft.concat(data.formula);
+	// extract card list from inputs and outputs of formulas
+	for (var j in data.formula)
+	{
+		for (var k in data.formula[j])
+		{
+			if ("input" == k)
+			{
+				MOECRAFT.cards = MOECRAFT.cards.concat(data.formula[j][k]);
+			}
+			else if ("output" == k)
+			{
+				MOECRAFT.cards = MOECRAFT.cards.concat(data.formula[j][k]);
 			}
 		}
-    });
-	// append table
-	canvas.append($('<div class="table"></div>'));
-	// drop callback for table
-	$("#" + MOECRAFT.config.canvas + ' .table').droppable({
-		drop: function( event, ui ) {
-			var card = $(ui.draggable[0]).text();
-			MOECRAFT.table.input.push(card);
-		}
-    });
-	// append deck
-	canvas.append($('<div class="deck"></div>'));
-	canvas.append($('<button id="button" type="button">craft</button>'));
-	$("button").click(function () {
-		MOECRAFT.doCraft();
-	});
-};
-// wait for loading files
-MOECRAFT.waitLoad = function () {
-	if ((typeof MOECRAFT.craft != "array" && typeof MOECRAFT.craft != "object") || MOECRAFT.craft.length == 0) {
-		console.log("loading");
-		setTimeout(MOECRAFT.waitLoad, 300);
-		return;
 	}
+};
+// run when loading completes
+MOECRAFT.run = function () {
+	// sort formulas
+	for (var i in MOECRAFT.craft) {
+		if ("input" in MOECRAFT.craft[i]) {
+			MOECRAFT.craft[i].input.sort();
+		}
+		if ("output" in MOECRAFT.craft[i]) {
+			MOECRAFT.craft[i].output.sort();
+		}
+	}
+	// prepare ui
+	MOECRAFT.ui.load();
+	// game starts
 	for (var i = 0; i < 5; ++ i)
 	{
 		MOECRAFT.drawRandom();
 	}
 };
+// craft formulas
 MOECRAFT.craft = new Array();
+// all cards
 MOECRAFT.cards = new Array();
-MOECRAFT.table = {
-	input: new Array(),
-	output: new Array()
-};
-MOECRAFT.deck = new Array();
+// cards on the table
+MOECRAFT.table = new Array();
+// the last of card id
+MOECRAFT.lastId = 0;
+// cards on the hand
+MOECRAFT.myCards = new Object();
+// draw a random card
 MOECRAFT.drawRandom = function () {
 	var r = Math.random();
 	var num = Math.floor(r * MOECRAFT.cards.length);
-	MOECRAFT.deck.push(MOECRAFT.cards[num]);
-	MOECRAFT.drawCard(MOECRAFT.cards[num]);
+	var card = {
+		id: ++ MOECRAFT.lastId,
+		num: num,
+		name: MOECRAFT.cards[num],
+		status: "hand",
+	};
+	MOECRAFT.myCards[card.id] = card;
+	MOECRAFT.ui.drawCard(card);
+	return card;
 }
-MOECRAFT.drawCard = function (card) {
-	$("#" + MOECRAFT.config.canvas + ' .deck').append('<div class="card">' + card + '</div>');
-	$("#" + MOECRAFT.config.canvas + ' .deck .card').draggable();
+MOECRAFT.putCardOnTable = function (card_id) {
+	card_id = parseInt(card_id.substr(5));
+	MOECRAFT.myCards[card_id].status = "table";
+	MOECRAFT.table.push(card_id);
 }
+MOECRAFT.takeCardBack = function (card_id) {
+	card_id = parseInt(card_id.substr(5));
+	var index = MOECRAFT.table.indexOf(card_id);
+	MOECRAFT.table.splice(index, 1);
+	MOECRAFT.myCards[card_id].status = "hand";
+}
+// do the crafting
 MOECRAFT.doCraft = function () {
-	console.debug(MOECRAFT.table.input);
+	// sort the input cards
+	var inputs = new Array();
+	for (var i in MOECRAFT.table) {
+		inputs.push(MOECRAFT.myCards[ MOECRAFT.table[i] ].name);
+	}
+	inputs.sort();
+	// find a suitable formula
+	for (var i in MOECRAFT.craft)
+	{
+		if (MOECRAFT.craft[i].input.length != inputs.length) {
+			continue;
+		}
+		var flag = true;
+		for (var j in MOECRAFT.craft[i].input) {
+			if (MOECRAFT.craft[i].input[j] != inputs[j]) {
+				flag = false;
+				break;
+			}
+		}
+		// find
+		if (flag) {
+			var input = $.extend(true, [], MOECRAFT.table);
+			MOECRAFT.table = new Array();
+			// the cards on the table become the output cards
+			for (var j in MOECRAFT.craft[i].output) {
+				var card = {
+					id: ++ MOECRAFT.lastId,
+					num: -1,
+					name: MOECRAFT.craft[i].output[j],
+					status: "table",
+				};
+				MOECRAFT.myCards[card.id] = card;
+				MOECRAFT.table.push(card.id);
+			}
+			MOECRAFT.ui.doCraft(input, MOECRAFT.table);
+			break;
+		}
+	}
+};
+
+// moegirl craft ui
+
+MOEPROJ.MOECRAFTUI = MOEPROJ.MOECRAFTUI || new Object();
+var MOECRAFTUI = MOEPROJ.MOECRAFTUI;
+
+MOECRAFTUI.html = ' \
+	<div id="table"></div> \
+	<div id="hand"></div> \
+	<button id="craftbutton" type="button">craft</button> \
+	<button id="drawbutton" type="button">draw cards</button> \
+';
+MOECRAFTUI.load = function () {
+	// drop callback for table
+	$("#" + MOEPROJ.config.canvas + ' #table').droppable({
+		drop: function( event, ui ) {
+			MOECRAFT.putCardOnTable(ui.draggable[0].id);
+			// move card to table
+			var element = $(ui.draggable[0]).detach();
+			$("#" + MOEPROJ.config.canvas + ' #table').append(element);
+		},
+		out: function(event, ui) {
+			MOECRAFT.takeCardBack(ui.draggable[0].id);
+		},
+    });
+    // craft button callback
+	$("#craftbutton").click(function () {
+		MOECRAFT.doCraft();
+	});
+    // draw button callback
+	$("#drawbutton").click(function () {
+		MOECRAFT.drawRandom();
+	});
+};
+MOECRAFTUI.drawCard = function (card) {
+	$("#" + MOEPROJ.config.canvas + ' #hand').append('<div id="card-' + card.id + '" class="card">' + card.name + '</div>');
+	var card_jq = $("#" + MOEPROJ.config.canvas + ' #card-' + card.id);
+	card_jq.draggable({
+		stop: function (evt, ui) {
+			card_id = evt.target.id.substr(5);
+			if ("hand" == MOECRAFT.myCards[card_id].status) {
+				// move card to hand
+				var element = $(evt.target).detach();
+				$("#" + MOEPROJ.config.canvas + ' #hand').append(element);
+			}
+			// move back, no matter where it belongs
+			$(evt.target).css({
+				top: '0px',
+				left: '0px',
+			});
+		}
+	});
+	return card_jq;
+};
+MOECRAFTUI.doCraft = function (input, output) {
+	// remove inputs
+	$('.moecraft #table .card').remove();
+	// generate output cards
+	for (var j in output) {
+		var jq = MOECRAFTUI.drawCard( MOECRAFT.myCards[output[j]] );
+		// move card to table
+		var element = jq.detach();
+		$("#" + MOEPROJ.config.canvas + ' #table').append(element);
+	}
 };

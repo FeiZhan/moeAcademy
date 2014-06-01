@@ -1,15 +1,14 @@
 .moequest {
 	background: -webkit-linear-gradient(45deg, #FFF, #F0F0F0);
-	border: 2px solid #FAFAFA;
-	box-shadow: 0 5px 10px rgba(34, 25, 25, 0.4);
+	box-shadow: 15px 10px 3px 0px #888888;
 }
-.moequest .result {
+.moequest #result {
 	position: absolute;
 	top: 2%;
 	left: 90%;
 	visibility: hidden;
 }
-.moequest .submitbutton {
+.moequest #submitbutton {
 	position: absolute;
 	top: 5%;
 	left: 1%;
@@ -103,7 +102,7 @@
 }
 
 /* This button was generated using CSSButtonGenerator.com */
-.moequest .submitbutton {
+.moequest #submitbutton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
 	box-shadow:inset 0px 1px 0px 0px #c1ed9c;
@@ -138,13 +137,13 @@
 	text-align:center;
 	text-shadow:1px 1px 0px #689324;
 }
-.moequest .submitbutton:hover {
+.moequest #submitbutton:hover {
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8cb82b), color-stop(1, #9dce2c) );
 	background:-moz-linear-gradient( center top, #8cb82b 5%, #9dce2c 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8cb82b', endColorstr='#9dce2c');
 	background-color:#8cb82b;
 }
-.moequest .submitbutton:active {
+.moequest #submitbutton:active {
 	/*position:relative;
 	top:1px;*/
 }

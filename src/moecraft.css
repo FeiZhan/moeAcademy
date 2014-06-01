@@ -1,110 +1,48 @@
-html, body {
-	/*overflow: hidden;*/
-}
 .moecraft {
 }
-.moecraft .table {
+.moecraft #table {
 	position: absolute;
 	top: 10%;
-	left: 10%;
+	left: 20%;
 	height: 50%;
 	width: 50%;
-	border: 1px solid black;
-}
-
-.moecraft .deck {
 	background: -webkit-linear-gradient(45deg, #FFF, #F0F0F0);
-	border: 5px inset #98bf21;
-	box-shadow: 0 5px 10px rgba(34, 25, 25, 0.4);
+	box-shadow: 15px 10px 3px 0px #888888;
+}
+.moecraft #hand {
 	position: absolute;
 	top: 72%;
 	left: 15%;
 	height: 160px;
 	width: 70%;
+	border: 1px solid black;
+	box-shadow: 15px 10px 3px 0px #888888;
 }
-.moecraft #button {
+.moecraft #craftbutton {
 	position: absolute;
-	top: 42%;
-	left: 90%;
+	top: 35%;
+	left: 80%;
+}
+.moecraft #drawbutton {
+	position: absolute;
+	top: 45%;
+	left: 80%;
 }
 .moecraft .card {
-	border: 1px solid Black;
-	height: 150px;
-	width: 100px;
-	margin: 5px 5px;
-	background-color: White;
-	text-align: center;
-	position: absolute;
-
 	position: relative;
 	top: 0px;
 	left: 0px;
 	float: left;
-}
-.moecraft .card div {
-	text-align: center;
-}
-.moecraft .card div:nth-child(1) {
 	height: 150px;
 	width: 100px;
-	overflow: hidden;
-	/* center it */
-	margin-left: auto;
-	margin-right: auto;
+	border: 1px solid Black;
+	margin: 5px 5px;
+	background-color: White;
+	text-align: center;
 }
 .moecraft .card span {
 }
 .moecraft .card img {
 	max-height: 85%;
 	max-width: 100%;
-}
-.moecraft .card div.card-detail {
-	display: none;
-}
-.moecraft .card div.param {
-	min-width: 20px;
-	background-color:rgba(255, 255, 255, 0.8);
-	-moz-border-radius: 10px; 
-	-webkit-border-radius: 10px; 
-	border-radius: 10px;
-}
-.moecraft .card div.cost {
-	position: absolute;
-	top: -5%;
-	left: -10%;
-}
-.moecraft .card div.def {
-	position: absolute;
-	top: -5%;
-	left: 92%;
-}
-.moecraft .card div.atk {
-	position: absolute;
-	top: 90%;
-	left: -10%;
-}
-.moecraft .card div.card-hp {
-	position: absolute;
-	top: 90%;
-	left: 92%;
-}
-.moecraft .card.deck {
-	position: absolute;
-	top: 20%;
-	left: 50%;
-	height: 500px;
-	width: 300px;
-}
-/* card in hand */
-.moecraft .card.inhand {
-	position: relative;
-	top: 0px;
-	left: 0px;
-	float: left;
-}
-.moecraft .card.inmyhand {
-}
-.moecraft .card.inyourhand {
-	height: 100%;
-	width: auto;
 }
