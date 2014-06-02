@@ -53,6 +53,8 @@ MOEBATTLE.players = [
 		mp: 0,
 		hands: [],
 		area: [],
+		status: [],
+		equip: [],
 	}, {
 		name: "opponent",
 		order: 1,
@@ -62,14 +64,16 @@ MOEBATTLE.players = [
 		mp: 0,
 		hands: [],
 		area: [],
+		status: [],
+		equip: [],
 	}
 ];
 
 MOEBATTLE.actions = new Array();
 // execute the next action
 MOEBATTLE.nextAction = function () {
-	// no more actions
-	if (0 == MOEBATTLE.actions.length || MOEBATTLEUI.AnimaCount > 0) {
+	// no more actions or locked
+	if (0 == MOEBATTLE.actions.length || MOEBATTLE.ui.AnimaCount > 0) {
 		return;
 	}
 	var action = MOEBATTLE.actions.shift();
@@ -89,7 +93,7 @@ MOEBATTLE.nextAction = function () {
 MOEBATTLE.gameStart = function (action) {
 	// prepare players
 	for (var i in MOEBATTLE.players) {
-		MOEBATTLEUI.playerPrepare(i);
+		MOEBATTLE.ui.playerPrepare(i);
 	}
 	// prepare discard deck
 	MOEBATTLE.game.discard = new Array();
@@ -176,6 +180,19 @@ MOEBATTLE.playerStart = function (action) {
 		MOEBATTLE.game.current %= MOEBATTLE.players.length;
 		++ MOEBATTLE.game.round_count;
 	}
+	MOEBATTLE.ui.playerStart();
+	if (MOEBATTLE.players[MOEBATTLE.game.current].maxmp < 10) {
+		MOEBATTLE.actions.unshift({
+			type: "playerGainMP",
+			target: MOEBATTLE.game.current,
+			number: 1,
+		});
+		MOEBATTLE.actions.unshift({
+			type: "playerChangeMaxMP",
+			target: MOEBATTLE.game.current,
+			number: MOEBATTLE.players[MOEBATTLE.game.current].maxmp + 1,
+		});
+	}
 	MOEBATTLE.actions.push({
 		type: "cardsDraw",
 		number: 1,
@@ -196,16 +213,40 @@ MOEBATTLE.playerDie = function (action) {
 MOEBATTLE.playerRevive = function (action) {
 }
 MOEBATTLE.playerLoseHP = function (action) {
+	MOEBATTLE.players[action.target].hp -= action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
 }
 MOEBATTLE.playerGainHP = function (action) {
+	MOEBATTLE.players[action.target].hp += action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
+}
+MOEBATTLE.playerChangeMaxHP = function (action) {
+	MOEBATTLE.players[action.target].maxhp = action.number;
+	MOEBATTLE.ui.playerChangeMaxHP(action.target, action.number);
 }
 MOEBATTLE.playerLoseMP = function (action) {
+	MOEBATTLE.players[action.target].mp -= action.number;
+	MOEBATTLE.ui.playerChangeMP(action.target, MOEBATTLE.players[action.target].mp);
 }
 MOEBATTLE.playerGainMP = function (action) {
+	MOEBATTLE.players[action.target].mp += action.number;
+	MOEBATTLE.ui.playerChangeMP(action.target, MOEBATTLE.players[action.target].mp);
+}
+MOEBATTLE.playerChangeMaxMP = function (action) {
+	MOEBATTLE.players[action.target].maxmp = action.number;
+	MOEBATTLE.ui.playerChangeMaxMP(action.target, action.number);
 }
 MOEBATTLE.playerLoseStatus = function (action) {
+	MOEBATTLE.players[action.target].status.splice(MOEBATTLE.players[action.target].status.indexOf(action.status), 1);
+	MOEBATTLE.ui.playerLoseStatus(action.target, action.status);
 }
 MOEBATTLE.playerGainStatus = function (action) {
+	// duplicate status
+	if ( MOEBATTLE.players[action.target].status.indexOf(action.status) >= 0 ) {
+		//return;
+	}
+	MOEBATTLE.players[action.target].status.push(action.status);
+	MOEBATTLE.ui.playerGainStatus(action.target, action.status);
 }
 MOEBATTLE.playerGainEquip = function (action) {
 }
@@ -260,9 +301,11 @@ MOEBATTLE.cardUse = function (action) {
 			from: action.from,
 		});
 		break;
+	case "effect":
 	default: // use immediately
 		MOEBATTLE.actions.unshift({
 			type: "cardUseWithoutTarget",
+			from: action.from,
 			card: action.card,
 		});
 		break;
@@ -275,8 +318,45 @@ MOEBATTLE.cardAddToArea = function (action) {
 };
 // use a card without target
 MOEBATTLE.cardUseWithoutTarget = function (action) {
+	if ("skill" in MOEBATTLE.cards[action.card]) {
+		var func = MOEPROJ.getFunctionFromString( MOEBATTLE.cards[action.card].skill );
+		if ("function" == typeof func) {
+			func(action);
+		}
+	}
 	MOEBATTLE.game.discard.push(action.card);
 	MOEBATTLE.ui.cardUseWithoutTarget(action.card);
 }
 MOEBATTLE.cardUseWithTarget = function (action) {
+	if ("skill" in MOEBATTLE.cards[action.card]) {
+		var func = MOEPROJ.getFunctionFromString( MOEBATTLE.cards[action.card].skill );
+		if ("function" == typeof func) {
+			func(action);
+		}
+	}
+	MOEBATTLE.game.discard.push(action.card);
+	MOEBATTLE.ui.cardUseWithoutTarget(action.card);
+};
+
+// character
+
+MOEBATTLE.charLoseHP = function (action) {
+	MOEBATTLE.players[action.target].hp -= action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
+}
+MOEBATTLE.charGainHP = function (action) {
+	MOEBATTLE.players[action.target].hp += action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
+}
+MOEBATTLE.charLoseStatus = function (action) {
+	MOEBATTLE.players[action.target].status.splice(MOEBATTLE.players[action.target].status.indexOf(action.status), 1);
+	MOEBATTLE.ui.playerLoseStatus(action.target, action.status);
+}
+MOEBATTLE.charGainStatus = function (action) {
+	// duplicate status
+	if ( MOEBATTLE.players[action.target].status.indexOf(action.status) >= 0 ) {
+		//return;
+	}
+	MOEBATTLE.players[action.target].status.push(action.status);
+	MOEBATTLE.ui.playerGainStatus(action.target, action.status);
 }

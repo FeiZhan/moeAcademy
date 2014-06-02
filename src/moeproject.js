@@ -174,3 +174,16 @@ MOEPROJ.loadJson = function (file, func) {
 	.always(function(data, textStatus, jqXHR) {
 	});
 };
+// Get function from string, with or without scopes (by Nicolas Gauthier)
+MOEPROJ.getFunctionFromString = function (string) {
+    var scope = window;
+    var scopeSplit = string.split('.');
+    for (i = 0; i < scopeSplit.length - 1; i++)
+    {
+        scope = scope[scopeSplit[i]];
+
+        if (scope == undefined) return;
+    }
+
+    return scope[scopeSplit[scopeSplit.length - 1]];
+}
