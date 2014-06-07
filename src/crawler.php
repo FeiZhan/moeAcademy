@@ -1,7 +1,7 @@
 <?php
 require_once('../lib/simplehtmldom/simple_html_dom.php');
 $URL_HEAD = 'http://zh.moegirl.org';
-$FRONT_PAGE = '/%E5%88%9D%E6%98%A5%E9%A5%B0%E5%88%A9';
+$FRONT_PAGE = '/%E8%B4%BE%E5%85%8B%E4%B8%9D';
 $PARSE_NUM = 500;
 
 $url_done = array();
@@ -35,6 +35,12 @@ function parsePage($page)
 	if (count($span) > 0)
 	{
 		$info["name"] = $span[0]->innertext;
+	}
+	else
+	{
+		$d = $dom->find('p');
+		echo $d[0]->innertext;
+		return;
 	}
 	// parse first paragraph
 	$div = $dom->find('#mw-content-text');
