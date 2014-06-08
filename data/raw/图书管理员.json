@@ -4,7 +4,7 @@
     "firstp": [
         "图书管理员"
     ],
-    "photo": "//static.mengniang.org/thumb/4/40/33797654.jpg/250px-33797654.jpg",
+    "photo": "//static.mengniang.org/common/thumb/4/40/33797654.jpg/250px-33797654.jpg",
     "萌属性名称": " 图书管理员 ",
     "萌属性别称": " <span lang=\"ja\">図書委員、司書</span> ",
     "萌属性类别": " 身份职业类 ",
@@ -12,5 +12,6 @@
     "相关萌属性": "文学少女",
     "catlinks": [
         "定型角色"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/4/40/33797654.jpg/250px-33797654.jpg"
 }

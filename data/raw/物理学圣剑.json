@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E6%92%AC%E6%A3%8D",
     "name": "物理学圣剑",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/f/fe/27612735_big_p2.png/250px-27612735_big_p2.png",
+    "photo": "//st250px-27612735_big_p2.png",
     "神器名称": " 撬棍 ",
     "神器别名": " 物理学之杖、物理学圣剑、物理学圣杖 ",
     "神器种类": " 工具、棍棒 ",
@@ -10,5 +10,6 @@
     "登场作品": " 《半条命》、《潜行吧奈亚子》等 ",
     "catlinks": [
         "事物"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/f/fe/27612735_big_p2.png/250px-27612735_big_p2.png"
 }

@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E9%BA%BB%E5%B0%86%E9%83%A8",
     "name": "麻将部",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/6/6f/Saki_Mahjongbu.jpg/250px-Saki_Mahjongbu.jpg",
+    "photo": "//static.mengniang.org/common/thumb/6/6f/Saki_Mahjongbu.jpg/250px-Saki_Mahjongbu.jpg",
     "组织名称": " 麻将部 ",
     "组织别名": " 麻雀部、麻将社等 ",
     "组织种类": " 竞技类社团 ",
@@ -11,5 +11,6 @@
     "登场作品": "天才麻将少女",
     "catlinks": [
         "学校社团"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/6/6f/Saki_Mahjongbu.jpg/250px-Saki_Mahjongbu.jpg"
 }

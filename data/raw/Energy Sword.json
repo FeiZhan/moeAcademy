@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/Energy_Sword",
     "name": "Energy Sword",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/4/42/Nergy_Sword.jpg/250px-Nergy_Sword.jpg",
+    "photo": "//static.mengniang.org/common/thumb/4/42/Nergy_Sword.jpg/250px-Nergy_Sword.jpg",
     "神器名称": " Energy Sword ",
     "神器别名": " 能源光剑/精英光剑 ",
     "神器种类": " 近战武器 ",
@@ -10,5 +10,6 @@
     "登场作品": " 《HALO》系列 ",
     "catlinks": [
         "光环"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/4/42/Nergy_Sword.jpg/250px-Nergy_Sword.jpg"
 }

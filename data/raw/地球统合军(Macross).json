@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E5%9C%B0%E7%90%83%E7%BB%9F%E5%90%88%E5%86%9B(Macross)",
     "name": "地球统合军(Macross)",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/7/7d/UN_Spacy_logo.jpg/250px-UN_Spacy_logo.jpg",
+    "photo": "//static.mengniang.org/common/thumb/7/7d/UN_Spacy_logo.jpg/250px-UN_Spacy_logo.jpg",
     "组织名称": " 地球统合军 ",
     "组织别名": " U.N. Spacy ",
     "组织种类": " 武装力量 ",
@@ -11,5 +11,6 @@
     "登场作品": "《超时空要塞》系列",
     "catlinks": [
         "Macross Series"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/7/7d/UN_Spacy_logo.jpg/250px-UN_Spacy_logo.jpg"
 }

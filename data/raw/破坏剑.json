@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E7%A0%B4%E5%9D%8F%E5%89%91",
     "name": "破坏剑",
     "firstp": [],
-    "photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/1/15/250x691xPohuaijian.jpg.pagespeed.ic.6Cj1mSFr2k.jpg",
+    "photo": "://static.mengniang.org/1/15/250x691xPohuaijian.jpg",
     "神器名称": " 破坏剑 ",
     "神器别名": " 破坏之剑 ",
     "神器种类": " 大剑 ",
@@ -10,5 +10,6 @@
     "登场作品": " [最终幻想7系列] ",
     "catlinks": [
         "最终幻想系列"
-    ]
+    ],
+    "old_photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/1/15/250x691xPohuaijian.jpg.pagespeed.ic.6Cj1mSFr2k.jpg"
 }

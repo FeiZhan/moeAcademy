@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E5%85%AC%E8%BD%A6",
     "name": "公车",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/e/ea/Caren.jpg/250px-Caren.jpg",
+    "photo": "//static.mengniang.org/common/thumb/e/ea/Caren.jpg/250px-Caren.jpg",
     "萌属性名称": " 公车女 ",
     "萌属性别称": " 肉便器 ",
     "萌属性类别": " 身份（非职业） ",
@@ -10,5 +10,6 @@
     "catlinks": [
         "R-15",
         "萌属性"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/e/ea/Caren.jpg/250px-Caren.jpg"
 }

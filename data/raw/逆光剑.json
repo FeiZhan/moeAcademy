@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E9%80%86%E5%85%89%E5%89%91",
     "name": "逆光剑",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/a/a3/%E9%80%86%E5%85%89%E5%89%91.jpg/250px-%E9%80%86%E5%85%89%E5%89%91.jpg",
+    "photo": "//static.mengniang.org/common/thumb/a/a3/%E9%80%86%E5%85%89%E5%89%91.jpg/250px-%E9%80%86%E5%85%89%E5%89%91.jpg",
     "神器名称": " 逆光剑 ",
     "神器别名": " 佛拉格拉克、斩り抉る戦神の剣、后出先至之剑 ",
     "神器种类": " 剑、飞行道具 ",
@@ -10,5 +10,6 @@
     "登场作品": " Fate/Hollow Ataraxia、Fate/Unlimited Codes ",
     "catlinks": [
         "月世界"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/a/a3/%E9%80%86%E5%85%89%E5%89%91.jpg/250px-%E9%80%86%E5%85%89%E5%89%91.jpg"
 }

@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/SCP%E5%A7%AC%E9%87%91%E4%BC%9A",
     "name": "SCP姬金会",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/2/21/Scps.jpg/250px-Scps.jpg",
+    "photo": "//static.mengniang.org/common/thumb/2/21/Scps.jpg/250px-Scps.jpg",
     "组织名称": " SCP姬金会 (SCP Moedation) ",
     "组织别名": " SCP ",
     "组织种类": " 全球性秘密组织 ",
@@ -11,5 +11,6 @@
     "登场作品": " “SCP基金会” ",
     "catlinks": [
         "SCP姬金会"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/2/21/Scps.jpg/250px-Scps.jpg"
 }

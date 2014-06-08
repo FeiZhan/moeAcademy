@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E5%A4%AA%E9%98%B3%E7%B3%BB%E8%88%B0%E9%98%9F",
     "name": "太阳系舰队",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/e/e6/Solar-system_Space_Force.jpg/250px-Solar-system_Space_Force.jpg",
+    "photo": "//static.mengniang.org/common/thumb/e/e6/Solar-system_Space_Force.jpg/250px-Solar-system_Space_Force.jpg",
     "组织名称": " 太阳系舰队 ",
     "组织别名": " 联合舰队 ",
     "组织种类": " 军队 ",
@@ -10,5 +10,6 @@
     "登场作品": "三体",
     "catlinks": [
         "三体"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/e/e6/Solar-system_Space_Force.jpg/250px-Solar-system_Space_Force.jpg"
 }

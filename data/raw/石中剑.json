@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E7%9F%B3%E4%B8%AD%E5%89%91",
     "name": "石中剑",
     "firstp": [],
-    "photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/7/71/Caliburn.jpg/250x200x250px-Caliburn.jpg.pagespeed.ic.EPkIKoOD0K.jpg",
+    "photo": "http://static.mengniang.org/common/thumb/7/71/Caliburn.jpg/250px-Caliburn.jpg",
     "神器名称": " 石中剑(Caliburn) ",
     "神器别名": " 选王之剑 ",
     "神器种类": " 剑 ",
@@ -10,5 +10,6 @@
     "登场作品": "Fate系列",
     "catlinks": [
         "传说事物"
-    ]
+    ],
+    "old_photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/7/71/Caliburn.jpg/250x200x250px-Caliburn.jpg.pagespeed.ic.EPkIKoOD0K.jpg"
 }

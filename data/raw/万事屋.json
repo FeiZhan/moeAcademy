@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E4%B8%87%E4%BA%8B%E5%B1%8B",
     "name": "万事屋",
     "firstp": [],
-    "photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/3/3a/01300001050809129105545668420.jpg/250x157x250px-01300001050809129105545668420.jpg.pagespeed.ic.uKIqfSeSFm.jpg",
+    "photo": "http://static.mengniang.org/common/thumb/3/3a/01300001050809129105545668420.jpg/250px-01300001050809129105545668420.jpg",
     "店面名称": " 万事屋 ",
     "店面负责人": "坂田银时",
     "营业内容": " 只要有钱，什么都干 ",
@@ -10,5 +10,6 @@
     "登场作品": "银魂",
     "catlinks": [
         "银魂"
-    ]
+    ],
+    "old_photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/3/3a/01300001050809129105545668420.jpg/250x157x250px-01300001050809129105545668420.jpg.pagespeed.ic.uKIqfSeSFm.jpg"
 }

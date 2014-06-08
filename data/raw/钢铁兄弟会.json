@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E9%92%A2%E9%93%81%E5%85%84%E5%BC%9F%E4%BC%9A",
     "name": "钢铁兄弟会",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/9/9f/Brotherhood_Of_Steel.jpg/250px-Brotherhood_Of_Steel.jpg",
+    "photo": "//static.mengniang.org/common/thumb/9/9f/Brotherhood_Of_Steel.jpg/250px-Brotherhood_Of_Steel.jpg",
     "组织名称": " 钢铁兄弟会 ",
     "组织别名": " Brotherhood Of Steel ",
     "组织种类": " 军事组织 ",
@@ -11,5 +11,6 @@
     "登场作品": " 辐射(异尘余生)系列 ",
     "catlinks": [
         "辐射"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/9/9f/Brotherhood_Of_Steel.jpg/250px-Brotherhood_Of_Steel.jpg"
 }

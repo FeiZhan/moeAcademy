@@ -4,7 +4,7 @@
     "firstp": [
         "英雄传说 轨迹系列"
     ],
-    "photo": "//static.mengniang.org/thumb/1/17/Grace.png/250px-Grace.png",
+    "photo": "//st250px-Grace.png",
     "本名": " 格蕾丝·琳 ",
     "年龄": " 25 ",
     "瞳色": "蓝瞳",
@@ -23,5 +23,6 @@
         "生天目仁美",
         "轨迹系列",
         "记者"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/1/17/Grace.png/250px-Grace.png"
 }

@@ -5,7 +5,7 @@
         "失明",
         "眼睛无法看见东西"
     ],
-    "photo": "//static.mengniang.org/thumb/b/b3/Hewanlu.png/250px-Hewanlu.png",
+    "photo": "//st250px-Hewanlu.png",
     "萌属性名称": " 失明 ",
     "萌属性别称": " 盲人 ",
     "萌属性类别": " 体质类 ",
@@ -13,5 +13,6 @@
     "相关萌属性": "高度近视",
     "catlinks": [
         "萌属性"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/b/b3/Hewanlu.png/250px-Hewanlu.png"
 }

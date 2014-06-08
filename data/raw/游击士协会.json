@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E6%B8%B8%E5%87%BB%E5%A3%AB%E5%8D%8F%E4%BC%9A",
     "name": "游击士协会",
     "firstp": [],
-    "photo": "//static.mengniang.org/6/6b/Bracer_Guild.png",
+    "photo": "atic.mengniang.org/6/6b/Bracer_Guild.png",
     "组织名称": " 游击士协会(Bracer Guild) ",
     "组织种类": " 公会/协会类 ",
     "组织领导人": " 未知 ",
@@ -10,5 +10,6 @@
     "登场作品": "英雄传说 轨迹系列",
     "catlinks": [
         "轨迹系列"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/6/6b/Bracer_Guild.png"
 }

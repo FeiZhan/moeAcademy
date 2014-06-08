@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E8%8E%B1%E7%93%A6%E6%B1%80",
     "name": "莱瓦汀",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/f/f1/Flandre_Laevatain.jpg/250px-Flandre_Laevatain.jpg",
+    "photo": "//static.mengniang.org/common/thumb/f/f1/Flandre_Laevatain.jpg/250px-Flandre_Laevatain.jpg",
     "神器名称": " 莱瓦汀(Laevatain) ",
     "神器别名": " 烈焰之剑、胜利之剑、灾厄之杖 ",
     "神器种类": " 剑 ",
@@ -10,5 +10,6 @@
     "登场作品": "东方Project",
     "catlinks": [
         "传说事物"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/f/f1/Flandre_Laevatain.jpg/250px-Flandre_Laevatain.jpg"
 }

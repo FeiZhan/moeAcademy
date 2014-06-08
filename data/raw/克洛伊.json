@@ -5,7 +5,7 @@
         "<b>Fate/kaleid liner 魔法少女☆伊莉雅</b>",
         "Fate/kaleid liner 魔法少女☆伊莉雅"
     ],
-    "photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/8/8b/Kuroi.jpg/250x405x250px-Kuroi.jpg.pagespeed.ic.SL-jRfSlTi.jpg",
+    "photo": "http://static.mengniang.org/common/thumb/8/8b/Kuroi.jpg/250px-Kuroi.jpg",
     "本名": " クロエ・フォン・アインツベルン (克洛伊·冯·爱因兹贝伦) ",
     "别号": " 小黑 ",
     "瞳色": "红瞳",
@@ -18,5 +18,6 @@
         "红瞳",
         "白发",
         "斋藤千和"
-    ]
+    ],
+    "old_photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/8/8b/Kuroi.jpg/250x405x250px-Kuroi.jpg.pagespeed.ic.SL-jRfSlTi.jpg"
 }

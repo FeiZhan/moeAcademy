@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E4%B8%8D%E8%80%81%E4%B8%8D%E6%AD%BB",
     "name": "不老不死",
     "firstp": [],
-    "photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/a/ae/7135415.jpg/250x216x250px-7135415.jpg.pagespeed.ic.9dKtbKZcqP.jpg",
+    "photo": "http://static.mengniang.org/common/thumb/a/ae/7135415.jpg/250px-7135415.jpg",
     "萌属性名称": " 不老不死 ",
     "萌属性别称": " 长生不老 ",
     "萌属性类别": " 体质类 ",
@@ -10,5 +10,6 @@
     "相关萌属性": "万年萝莉",
     "catlinks": [
         "体质描写用语"
-    ]
+    ],
+    "old_photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/a/ae/7135415.jpg/250x216x250px-7135415.jpg.pagespeed.ic.9dKtbKZcqP.jpg"
 }

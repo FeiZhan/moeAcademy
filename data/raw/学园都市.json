@@ -7,7 +7,7 @@
         "魔法侧",
         "科学势力"
     ],
-    "photo": "//static.mengniang.org/thumb/b/bf/%E5%AD%A6%E5%9B%AD%E9%83%BD%E5%B8%82_%E8%BE%96%E5%8C%BA%E5%9C%B0%E5%9B%BE.png/300px-%E5%AD%A6%E5%9B%AD%E9%83%BD%E5%B8%82_%E8%BE%96%E5%8C%BA%E5%9C%B0%E5%9B%BE.png",
+    "photo": "atic.mengniang.org/common/thumb/b/bf/%E5%AD%A6%E5%9B%AD%E9%83%BD%E5%B8%82_%E8%BE%96%E5%8C%BA%E5%9C%B0%E5%9B%BE.png/300px-%E5%AD%A6%E5%9B%AD%E9%83%BD%E5%B8%82_%E8%BE%96%E5%8C%BA%E5%9C%B0%E5%9B%BE.png",
     "地区名称": " <b>学园都市</b> ",
     "英文表述": " <b>Academy City</b> ",
     "人口": " <b>约230万人</b> ",
@@ -17,5 +17,6 @@
     "信仰": " <b>科学技术</b> ",
     "catlinks": [
         "魔法禁书目录"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/b/bf/%E5%AD%A6%E5%9B%AD%E9%83%BD%E5%B8%82_%E8%BE%96%E5%8C%BA%E5%9C%B0%E5%9B%BE.png/300px-%E5%AD%A6%E5%9B%AD%E9%83%BD%E5%B8%82_%E8%BE%96%E5%8C%BA%E5%9C%B0%E5%9B%BE.png"
 }

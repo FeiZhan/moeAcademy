@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E8%BD%AE%E6%A4%85",
     "name": "轮椅",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/9/95/Mifu21344545432.png/250px-Mifu21344545432.png",
+    "photo": "//st250px-Mifu21344545432.png",
     "萌属性名称": " 轮椅 ",
     "萌属性别称": " <span lang=\"ja\">車椅子</span> ",
     "萌属性类别": " 体质类、交通工具类 ",
@@ -10,5 +10,6 @@
     "相关萌属性": "病弱",
     "catlinks": [
         "萌属性"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/9/95/Mifu21344545432.png/250px-Mifu21344545432.png"
 }

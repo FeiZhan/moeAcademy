@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E4%B8%AD%E5%9B%BD%E4%BA%BA%E6%B0%91%E8%A7%A3%E6%94%BE%E5%86%9B",
     "name": "中国人民解放军",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/0/04/PLA.jpg/250px-PLA.jpg",
+    "photo": "//static.mengniang.org/common/thumb/0/04/PLA.jpg/250px-PLA.jpg",
     "组织名称": " 中国人民解放军(Peoples Liberation Army) ",
     "组织别名": " 解放军、PLA ",
     "组织种类": " 国家武装力量/军事组织 ",
@@ -11,5 +11,6 @@
     "登场作品": "正义红师",
     "catlinks": [
         "现实组织"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/0/04/PLA.jpg/250px-PLA.jpg"
 }

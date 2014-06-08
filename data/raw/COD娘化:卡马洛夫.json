@@ -4,7 +4,7 @@
     "firstp": [
         "<img alt=\"MW1卡马洛夫.jpg\" src=\"//static.mengniang.org/thumb/e/e5/MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg/600px-MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg\" width=\"600\" height=\"424\" srcset=\"//static.mengniang.org/thumb/e/e5/MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg/900px-MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg 1.5x, //static.mengniang.org/e/e5/MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg 2x\"/>"
     ],
-    "photo": "//static.mengniang.org/thumb/e/e5/MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg/250px-MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg",
+    "photo": "//static.mengniang.org/common/thumb/e/e5/MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg/250px-MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg",
     "本名": " Kamarov<br/> <p>卡马洛夫 </p> ",
     "出身地区": " 俄罗斯 ",
     "主要活动范围": " 俄罗斯,捷克 ",
@@ -16,5 +16,6 @@
         "游戏角色萌娘化",
         "COD娘",
         "使命召唤萌娘化project"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/e/e5/MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg/250px-MW1%E5%8D%A1%E9%A9%AC%E6%B4%9B%E5%A4%AB.jpg"
 }

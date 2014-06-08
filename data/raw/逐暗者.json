@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E9%80%90%E6%9A%97%E8%80%85",
     "name": "逐暗者",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/a/a7/%E9%80%90%E6%9A%97%E8%80%85.jpg/250px-%E9%80%90%E6%9A%97%E8%80%85.jpg",
+    "photo": "//static.mengniang.org/common/thumb/a/a7/%E9%80%90%E6%9A%97%E8%80%85.jpg/250px-%E9%80%90%E6%9A%97%E8%80%85.jpg",
     "神器名称": " 逐暗者 ",
     "神器别名": " 龙翔剑 ",
     "神器种类": " 剑 ",
@@ -10,5 +10,6 @@
     "登场作品": "刀剑神域",
     "catlinks": [
         "刀剑神域"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/a/a7/%E9%80%90%E6%9A%97%E8%80%85.jpg/250px-%E9%80%90%E6%9A%97%E8%80%85.jpg"
 }

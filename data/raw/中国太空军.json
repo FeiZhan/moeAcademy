@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E4%B8%AD%E5%9B%BD%E5%A4%AA%E7%A9%BA%E5%86%9B",
     "name": "中国太空军",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/d/d4/PLAS.jpg/250px-PLAS.jpg",
+    "photo": "//static.mengniang.org/common/thumb/d/d4/PLAS.jpg/250px-PLAS.jpg",
     "组织名称": " 中国人民解放军太空军 ",
     "组织种类": " 军队 ",
     "组织领导人": " 常伟思 ",
@@ -10,5 +10,6 @@
     "登场作品": "三体",
     "catlinks": [
         "三体"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/d/d4/PLAS.jpg/250px-PLAS.jpg"
 }

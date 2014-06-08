@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E8%BD%BB%E9%9F%B3%E9%83%A8",
     "name": "轻音部",
     "firstp": [],
-    "photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/b/b5/K-on_movie.jpg/250x305x250px-K-on_movie.jpg.pagespeed.ic.TKTgeyGIBG.jpg",
+    "photo": "http://static.mengniang.org/common/thumb/b/b5/K-on_movie.jpg/250px-K-on_movie.jpg",
     "组织名称": " 轻音部(軽音部) ",
     "组织别名": " 轻音乐部、轻音乐社等 ",
     "组织种类": " 文化艺术类社团 ",
@@ -11,5 +11,6 @@
     "登场作品": "轻音少女",
     "catlinks": [
         "学校社团"
-    ]
+    ],
+    "old_photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/b/b5/K-on_movie.jpg/250x305x250px-K-on_movie.jpg.pagespeed.ic.TKTgeyGIBG.jpg"
 }

@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E9%BB%91%E7%A4%81%E5%95%86%E4%BC%9A",
     "name": "黑礁商会",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/b/b1/Black_Lagoon.jpg/250px-Black_Lagoon.jpg",
+    "photo": "//static.mengniang.org/common/thumb/b/b1/Black_Lagoon.jpg/250px-Black_Lagoon.jpg",
     "组织名称": " 黑礁商会(ラグーン商会) ",
     "组织别名": " 礁石商会 ",
     "组织种类": " 里社会类(非法商会) ",
@@ -11,5 +11,6 @@
     "登场作品": "黑礁",
     "catlinks": [
         "黑礁"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/b/b1/Black_Lagoon.jpg/250px-Black_Lagoon.jpg"
 }

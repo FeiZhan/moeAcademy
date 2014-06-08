@@ -5,7 +5,7 @@
         "远坂凛",
         "Fate/Stay night"
     ],
-    "photo": "//static.mengniang.org/thumb/b/b7/Rin.jpg/250px-Rin.jpg",
+    "photo": "//static.mengniang.org/common/thumb/b/b7/Rin.jpg/250px-Rin.jpg",
     "本名": " <span lang=\"ja\">遠坂 凛(とおさか りん</span>，Tohsaka Rin) ",
     "生日": "2月3日",
     "血型": "O",
@@ -40,5 +40,6 @@
         "小恶魔系",
         "过膝袜",
         "绝对领域"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/b/b7/Rin.jpg/250px-Rin.jpg"
 }

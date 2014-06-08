@@ -5,7 +5,7 @@
         "伊什库尔级舰娘",
         "伊什库尔级舰"
     ],
-    "photo": "//static.mengniang.org/thumb/7/7c/6d6fb3bbgw1dkcu0ykc0rj.jpg/250px-6d6fb3bbgw1dkcu0ykc0rj.jpg",
+    "photo": "//static.mengniang.org/common/thumb/7/7c/6d6fb3bbgw1dkcu0ykc0rj.jpg/250px-6d6fb3bbgw1dkcu0ykc0rj.jpg",
     "本名": " 伊什库尔级舰娘 ",
     "别号": " Ishkur ",
     "出身地区": " 新伊甸 ",
@@ -17,5 +17,6 @@
         "机娘",
         "武器拟人",
         "EVE舰娘"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/7/7c/6d6fb3bbgw1dkcu0ykc0rj.jpg/250px-6d6fb3bbgw1dkcu0ykc0rj.jpg"
 }

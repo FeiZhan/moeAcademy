@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E6%9C%9B%E8%88%92%E5%89%91",
     "name": "望舒剑",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/6/6f/%E6%9C%9B%E8%88%92%E5%89%91.jpg/250px-%E6%9C%9B%E8%88%92%E5%89%91.jpg",
+    "photo": "//static.mengniang.org/common/thumb/6/6f/%E6%9C%9B%E8%88%92%E5%89%91.jpg/250px-%E6%9C%9B%E8%88%92%E5%89%91.jpg",
     "神器名称": " 望舒剑 ",
     "神器别名": " <span class=\"heimu\" title=\"你知道的太多了\">这是剑</span> ",
     "神器种类": " 剑 ",
@@ -10,5 +10,6 @@
     "登场作品": "仙剑奇侠传四",
     "catlinks": [
         "仙剑奇侠传系列"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/6/6f/%E6%9C%9B%E8%88%92%E5%89%91.jpg/250px-%E6%9C%9B%E8%88%92%E5%89%91.jpg"
 }

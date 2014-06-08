@@ -2,7 +2,7 @@
     "link": "http://zh.moegirl.org/%E5%A5%B3%E7%8E%8B(%E8%BA%AB%E4%BB%BD)",
     "name": "女王(身份)",
     "firstp": [],
-    "photo": "//static.mengniang.org/thumb/8/84/Pm4_queen.JPG/250px-Pm4_queen.JPG",
+    "photo": "//st250px-Pm4_queen.JPG",
     "萌属性名称": " 女王 ",
     "萌属性别称": " 女皇等 ",
     "萌属性类别": " 身份类 ",
@@ -10,5 +10,6 @@
     "相关萌属性": "公主",
     "catlinks": [
         "定型角色"
-    ]
+    ],
+    "old_photo": "//static.mengniang.org/thumb/8/84/Pm4_queen.JPG/250px-Pm4_queen.JPG"
 }
