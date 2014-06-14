@@ -5,6 +5,7 @@ var MOEPARSER = MOEPROJ.MOEPARSER || new Object();
 
 var fs = require('fs');
 var jsdom = require("jsdom");
+MOEPARSER.PROJ_ROOT = '../';
 MOEPARSER.ENTRY_URL = [
 // english
 //"http://en.moegirl.org/Amakase_Miharu",
@@ -18,12 +19,13 @@ MOEPARSER.ENTRY_URL = [
 //"http://zh.moegirl.org/%E5%8D%83%E7%9F%B3%E6%8A%9A%E5%AD%90",
 ];
 MOEPARSER.contents = new Object();
-
+// parse all specified pages
 MOEPARSER.parse = function () {
 	for (var i in MOEPARSER.ENTRY_URL) {
 		MOEPARSER.parsePage(MOEPARSER.ENTRY_URL[i]);
 	}
 };
+// parse one page, save to json format
 MOEPARSER.parsePage = function (url) {
 	if (url in MOEPARSER.contents) {
 		return;
@@ -35,56 +37,72 @@ MOEPARSER.parsePage = function (url) {
 				console.error("error parsing url", errors);
 				return;
 			}
+			// create a key for the new url
 			if (undefined === MOEPARSER.contents[url]) {
 				MOEPARSER.contents[url] = new Object();
 			}
+			// moegirl's name
 			MOEPARSER.contents[url].name = MOEPARSER.parseDom(window, "#firstHeading > span");
+			// get error from the webpage
 			if (undefined === MOEPARSER.contents[url].name) {
 				console.warn(window.$("p").html());
 				return;
 			}
+			// first line
 			MOEPARSER.contents[url].first = MOEPARSER.parseDom(window, "#mw-content-text > p:nth-child(4)");
+			// all the links in the content
 			MOEPARSER.contents[url].links = new Array();
 			window.$("#mw-content-text a").each(function () {
 				MOEPARSER.contents[url].links.push(window.$(this).attr("href"));
 			});
+			// photo
 			//#mw-content-text > div.infotemplatebox > table > tbody > tr:nth-child(1) > td > a > img
 			MOEPARSER.contents[url].photo = window.$("#mw-content-text > div.infotemplatebox > table > tr:nth-child(1) > td > a > img").attr('src');
+			// info table
 			MOEPARSER.contents[url].info = new Object();
 			var info = window.$("#mw-content-text > div.infotemplatebox > table > tr");
 			info.each(function (index, value) {
+				// key on the left
 				var key = window.$('#mw-content-text > div.infotemplatebox > table > tr:nth-child(' + index + ') > th').text();
+				// remove invalid symbols
 				key = key.replace(/\s/g, '');
 				if (undefined !== key && "" != key && " " != key) {
+					// content on the right
 					var content = window.$('#mw-content-text > div.infotemplatebox > table > tr:nth-child(' + index + ') > td').text();
+					// remove invalid symbols
 					content = content.replace(/^\s+|\s+$/g,'').replace(/(\r\n|\n|\r)/gm,"");
 					MOEPARSER.contents[url].info[key] = content;
 				}
 			});
+			// category
 			MOEPARSER.contents[url].categories = new Array();
 			var category = window.$("#mw-normal-catlinks > ul > li");
 			category.each(function (index, value) {
 				var text = window.$(this).text();
+				// remove invalid symbols
 				text = text.replace(/^\s+|\s+$/g,'').replace(/(\r\n|\n|\r)/gm,"");
 				MOEPARSER.contents[url].categories.push(text);
 			});
-
+			// filename based on moegirl's name
 			var filename = MOEPARSER.contents[url].name; //.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 			filename = 'data/raw/' + filename + '.json';
+			// write json to file
 			fs.writeFile(filename, JSON.stringify(MOEPARSER.contents[url], null, 4), function (err) {
 				if (err) {
-					console.log("file error", err);
+					console.error("file error", err);
 				} else {
 					console.log("JSON saved to " + filename);
 				}
 			}); 
-			console.log(MOEPARSER.contents[url].name, MOEPARSER.contents[url].info);
+			//console.info(MOEPARSER.contents[url].name, MOEPARSER.contents[url].info);
 		}
 	);
 };
+// parse an element in the DOM
 MOEPARSER.parseDom = function (window, selector) {
 	return window.$(selector).html();
 };
+// return all the elements for the selector in the DOM
 MOEPARSER.parseDomAll = function (window, selector) {
 	var ret = new Array();
 	window.$(selector).each(function () {
@@ -92,14 +110,18 @@ MOEPARSER.parseDomAll = function (window, selector) {
 	});
 	return ret;
 }
+// separate the raw data into each moegirl
 MOEPARSER.separate = function () {
+	// open json file
 	var json = require('../data/raw.json');
 	var count = 0;
 	for (var i in json) {
 		++ count;
 		if ("object" == typeof json[i] && ("name" in json[i])) {
+			// new file name
 			var filename = json[i].name;
 			filename = 'data/raw/' + filename + '.json';
+			// write json to file
 			fs.writeFile(filename, JSON.stringify(json[i], null, 4), function (err) {
 				if (err) {
 					console.error("file error", err);
@@ -109,24 +131,32 @@ MOEPARSER.separate = function () {
 			}); 
 		}
 	}
-	console.log(count);
+	console.info(count);
 }
+// change photo path to the current one
 MOEPARSER.changePhoto = function () {
+	// get file name list
 	MOEPARSER.eachFile("data/raw/", function (err, files) {
+		// for each moegirl file
 		for (var i in files) {
+			// try to load the json file
 			try {
 				var json = require("../" + files[i]);
 			}
 			catch (err) {
+				//@bug usually error
 				//console.error("require error:", err);
 				continue;
 			}
+			// if no photo
 			if (! ("photo" in json)) {
 				continue;
 			}
+			// if no old photo, copy current one to old. if have old photo, don't do twice
 			if (! ("old_photo" in json)) {
 				json.old_photo = json.photo;
 			}
+			// modify the photo file path
 			json.photo = json.old_photo.replace("1-ps.googleusercontent.com/x/zh.moegirl.org/", "").replace("static.mengniang.org/thumb", "static.mengniang.org/common/thumb");
 			var end = json.photo.indexOf(".pagespeed");
 			if (end >= 0) {
@@ -136,7 +166,8 @@ MOEPARSER.changePhoto = function () {
 			var name1 = json.photo.indexOf("250px-");
 			var remove = json.photo.substring(name0 + 5, name1);
 			json.photo = json.photo.replace(remove, "");
-			//console.log(json.photo, " === ", json.old_photo);
+			//console.info(json.photo, " === ", json.old_photo);
+			// write it back
 			fs.writeFile(files[i], JSON.stringify(json, null, 4), function (err) {
 				if (err) {
 					//console.error("file error", err);
@@ -147,36 +178,25 @@ MOEPARSER.changePhoto = function () {
 		}
 	});
 };
-MOEPARSER.saveToMoegirls = function () {
-	var moegirls = new Array();
-	MOEPARSER.eachFile("data/raw/", function (err, files) {
+// put moegirl file paths into filenames.json
+MOEPARSER.saveFileNames = function () {
+	var path = MOEPARSER.PROJ_ROOT + "data/raw/";
+	MOEPARSER.eachFile(path, function (err, files) {
 		for (var i in files) {
-			fs.readFile(files[i], 'utf8', function (err, data) {
-				if (err) {
-					//console.error('Error: ', err);
-					return;
-				}
-				try {
-					data = JSON.parse(data);
-				}
-				catch (err) {
-					//console.error(err);
-					return;
-				}
-				moegirls.push(data);
-			});
+			files[i] = files[i].substr(path.length);
 		}
-	});
-	console.log(moegirls);
-	fs.writeFile("data/moegirls1.json", JSON.stringify(moegirls, null, 4), function (err) {
-		if (err) {
-			console.error("file error", err);
-		} else {
-			console.log("JSON saved to ", "data/moegirls1.json");
-		}
+		// write them back
+		fs.writeFile(MOEPARSER.PROJ_ROOT + "data/filenames.json", JSON.stringify(files, null, 4), function (err) {
+			if (err) {
+				console.error("file error", err);
+			} else {
+				console.log("JSON saved to ", MOEPARSER.PROJ_ROOT + "data/filenames.json");
+			}
+		});
 	});
 };
-MOEPARSER.eachFile = function ( path, callback){
+// return a list of file names
+MOEPARSER.eachFile = function (path, callback) {
  // the callback gets ( err, files) where files is an array of file names
  if( typeof callback !== 'function' ) return
  var
@@ -215,4 +235,4 @@ MOEPARSER.eachFile = function ( path, callback){
 
 //MOEPARSER.parse();
 //MOEPARSER.changePhoto();
-MOEPARSER.saveToMoegirls();
+MOEPARSER.saveFileNames();

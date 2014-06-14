@@ -3,11 +3,11 @@ body {
 }
 #logo {
 	text-align: center;
-	width: 95px;
+	width: 120px;
 }
 #logo img {
 	width: 100%;
-	box-shadow: 5px 5px 2px #888888;
+	box-shadow: 5px 5px 1px #888888;
 }
 #logo span {
 	text-align: center;
@@ -18,18 +18,19 @@ body {
 	height: 100%;
 	width: 90px;
 	position: fixed;
-	top: 18%;
+	top: 20%;
 	left: 0%;
 	border-right: 1px solid green;
 }
 #sidebar a {
 	position: relative;
-	top: 2%;
+	top: 4%;
 	left: 8px;
+	margin-top: 1px;
 }
-#sidebar .active {
+#sidebar a.active {
 	position: relative;
-	top: 2%;
+	top: 4%;
 	left: 4px;
 }
 
@@ -113,7 +114,7 @@ body {
 }
 #sidebar a:active {
 	/*position:relative;*/
-	top:1px;
+	/*top:1px;*/
 }
 /* activated view button */
 #sidebar a.active {

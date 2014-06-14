@@ -2,11 +2,11 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>萌娘计划</title>
+	<title>萌娘学园</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-	<!-- moeproject -->
+	<!-- moe code -->
 	<link rel="stylesheet" type="text/css" href="src/moeproject.css" />
 	<script src="src/moeproject.js"></script>
 	<link rel="stylesheet" type="text/css" href="src/moecascade.css" />
@@ -32,6 +32,8 @@
 		<a href="#" id="li-quest" class="">萌娘问答</a>
 		<a href="#" id="li-craft" class="">萌娘合成</a>
 		<a href="#" id="li-battle" class="">萌娘对战</a>
+		<a href="#" id="" class="">版权申明</a>
+		<a href="#" id="" class="">关于本站</a>
 	</aside>
 	<div id="content">
 		<div id="cascade" class=""></div>
@@ -48,6 +50,7 @@ $(function() {
 	if (undefined !== urlparam.hash && "" != urlparam.hash && " " != urlparam.hash) {
 		MOEPROJ.run(urlparam.hash);
 	} else {
+		// run the default active one
 		MOEPROJ.run($("#sidebar .active").attr("id").substring(3));
 	}
 });

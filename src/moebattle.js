@@ -145,10 +145,8 @@ MOEBATTLE.deckShuffle = function (action) {
 }
 // shuffle array
 MOEBATTLE.shuffle = function (arr) {
-	//console.log(arr);
 	for (var j, x, i = arr.length; i; j = Math.floor(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x)
 	{}
-	//console.log(arr);
 };
 // prepare deck
 MOEBATTLE.deckPrepare = function (action) {
