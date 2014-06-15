@@ -169,6 +169,8 @@ MOEPROJ.loadFile = function (file, func) {
 				return func(script, textStatus);
 			})
 			.fail(function( jqxhr, settings, exception ) {
+				// fail also ready
+				MOEPROJ.config.ready[file] = true;
 				console.error(exception);
 			});
 	}
@@ -189,17 +191,33 @@ MOEPROJ.loadFile = function (file, func) {
 };
 // load a json file
 MOEPROJ.loadJson = function (file, func) {
+	// define a new file index
+	if (! (file in MOEPROJ.config.ready)) {
+		MOEPROJ.config.ready[file] = false;
+	}
 	$.getJSON(file, function(data, textStatus, jqXHR) {
 		// set file as ready
 		MOEPROJ.config.ready[file] = true;
-		console.log("load", file);
+		// don't show moegirls' name
+		if ("data/raw" != file.substr(0, 8)) {
+			console.log("load", file);
+		}
+		// special case: filenames
+		if ("filenames.json" == file.slice(-14)) {
+			for (var i in data) {
+				// load again
+				MOEPROJ.loadJson(file.substring(0, file.length - 14) + "raw/" + data[i], func);
+			}
+		}
 		// call callback func
-		if (typeof func == "function") {
+		else if (typeof func == "function") {
 			func(data);
 		}
 	})
 	.fail(function(jqXHR, textStatus, errorThrown) {
-		console.error("data load error", textStatus, errorThrown);
+		// fail also ready
+		MOEPROJ.config.ready[file] = true;
+		//console.error("data load error", textStatus, errorThrown);
 	})
 	.always(function(data, textStatus, jqXHR) {
 	});

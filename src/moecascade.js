@@ -2,10 +2,10 @@
 MOEPROJ.MOECASC = MOEPROJ.MOECASC || new Object();
 var MOECASC = MOEPROJ.MOECASC;
 MOECASC.ui;
-MOECASC.data = ['data/moegirls.json'];
+MOECASC.data = ['data/filenames.json'];
 MOECASC.moegirls = new Array();
-// the order of each moegirl
-MOECASC.order = new Array();
+// the list of each moegirl to display
+MOECASC.list = new Array();
 // load html and files
 MOECASC.load = function (canvas) {
 	// set ui
@@ -23,53 +23,31 @@ MOECASC.loadData = function (data) {
 };
 // run when loading completes
 MOECASC.run = function () {
-	MOECASC.order = new Array();
-	// nothing happens when clicking detail div
-	$("#" + MOEPROJ.config.canvas + " #detail").click(function( event ) {
-		event.stopPropagation();
-	});
-	$("#" + MOEPROJ.config.canvas + " #detail img").error(function () {
-		$(this).attr("src", "resources/nophoto.jpg");
-	});
-	var page_click = function (evt) {
-		switch (MOECASCUI.show_detail) {
-		case true:
-			// when clicking out of detail div, detail disappears
-			if (evt.target.id != "detail") {
-				$("#" + MOEPROJ.config.canvas + " #detail").fadeOut("slow");
-				$("#" + MOEPROJ.config.canvas + " #columns .pin").removeClass("opaque");
-				MOECASCUI.show_detail = false;
-			}
-			break;
-		case false:
-			break;
-		case "showing":
-			// when clicking moegirls, don't make detail div disappear
-			MOECASCUI.show_detail = true;
-			break;
-		default:
-			break;
-		}
+	// add init moegirls
+	MOECASC.list = MOECASC.shuffleMoegirls(24);
+	for (var i = 0; i < 24; ++ i) {
+		MOECASC.addPin( MOECASC.moegirls[MOECASC.list[i]] );
 	}
-	$('html').off("click").on("click", page_click);
-	// check if scrolling
-	var page_scroll = function() {
-		clearTimeout($.data(this, 'scrollTimer'));
-		$.data(this, 'scrollTimer', setTimeout(function() {
-			// if scroll to buttom
-			if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
-				for (var i = 0; i < 20; ++ i) {
-					MOECASC.addMoegirl();
-				}
-			}
-		}, 250));
-	}
-	$(window).off("scroll").on("scroll", page_scroll);
-	$("#" + MOEPROJ.config.canvas).hide().css({visibility: "inherit"}).fadeIn("slow");
-	for (var i = 0; i < 30; ++ i) {
-		MOECASC.addMoegirl();
-	}
+	MOECASC.ui.load();
 };
+// get a list of shuffled moegirl numbers
+MOECASC.shuffleMoegirls = function (num) {
+	var list = new Array();
+	for (var i = 0; i < num; ++ i) {
+		var ran = Math.floor( Math.random() * MOECASC.moegirls.length );
+		list.push(ran);
+	}
+	return list;
+}
+// get a list of moegirl details
+MOECASC.getMoegirls = function (orders) {
+	var list = new Array();
+	for (var i in orders) {
+		// deep copy
+		list.push( jQuery.extend(true, {}, MOECASC.moegirls[ orders[i] ]) )
+	}
+	return list;
+}
 
 // moegirl battle ui
 
@@ -95,22 +73,64 @@ MOECASCUI.init = function (canvas) {
 	document.title = "萌娘图鉴";
 	$("#" + canvas).addClass("moecascade");
 };
-
-
-
+MOECASCUI.load = function () {
+	// nothing happens when clicking detail div
+	$("#" + MOEPROJ.config.canvas + " #detail").click(function( event ) {
+		event.stopPropagation();
+	});
+	var page_click = function (evt) {
+		switch (MOECASCUI.show_detail) {
+		case true:
+			// when clicking out of detail div, detail disappears
+			if (evt.target.id != "detail") {
+				$("#" + MOEPROJ.config.canvas + " #detail").fadeOut("fast");
+				$("#" + MOEPROJ.config.canvas + " #columns .pin").removeClass("opaque");
+				MOECASCUI.show_detail = false;
+			}
+			break;
+		case false:
+			break;
+		case "showing":
+			// when clicking moegirls, don't make detail div disappear
+			MOECASCUI.show_detail = true;
+			break;
+		default:
+			break;
+		}
+	}
+	// click on the webpage
+	$('html').off("click", page_click).on("click", page_click);
+	var page_scroll = function() {
+		clearTimeout($.data(this, 'scrollTimer'));
+		$.data(this, 'scrollTimer', setTimeout(function() {
+			// if scroll to bottom
+			if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
+				// add new moegirls
+				var last = MOECASC.list.length;
+				MOECASC.list = MOECASC.list.concat(MOECASC.shuffleMoegirls(24));
+				for (var i = 0; i < 24; ++ i) {
+					MOECASC.addPin( MOECASC.moegirls[MOECASC.list[last + i]] );
+				}
+			}
+		}, 250));
+	}
+	// check if scrolling
+	$(window).off("scroll", page_scroll).on("scroll", page_scroll);
+	// fade in
+	$("#" + MOEPROJ.config.canvas).hide().css({visibility: "inherit"}).fadeIn("slow");
+};
 // append a moegirl div to cascade
-MOECASC.addMoegirl = function () {
-	var ran = Math.floor( Math.random() * MOECASC.moegirls.length );
-	var html =
-		'<div class="pin">'
-			+ '<img src="' + MOECASC.moegirls[ran].photo + '" />'
-			+ '<p>' + MOECASC.moegirls[ran].name + '</p>'
-		+ '</div>';
+MOECASC.addPin = function (data) {
+	var html = ' \
+<div class="pin"> \
+	<img src="' + data.photo + '" /> \
+	<p>' + data.name + '</p> \
+</div> \
+	';
 	$("#" + MOEPROJ.config.canvas + " #columns").append(html);
 	$("#" + MOEPROJ.config.canvas + " #columns .pin:last img").error(function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
-	MOECASC.order.push(ran);
 	// when showing detail, make it opaque
 	if (true == MOECASCUI.show_detail) {
 		$("#" + MOEPROJ.config.canvas + " #columns .pin:last").addClass("opaque");
@@ -118,7 +138,7 @@ MOECASC.addMoegirl = function () {
 	// click to show detail div
 	$("#" + MOEPROJ.config.canvas + " #columns .pin:last").click(function () {
 		MOECASCUI.show_detail = "showing";
-		var moegirl = MOECASC.moegirls[MOECASC.order[$(this).prevAll().length]];
+		var moegirl = MOECASC.moegirls[MOECASC.list[$(this).prevAll().length]];
 		MOECASC.showDetail(moegirl);
 	});
 }
@@ -132,7 +152,7 @@ MOECASC.showDetail = function (moegirl) {
 	$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", "resources/nophoto.jpg");
 	var table = $("#" + MOEPROJ.config.canvas + " #detail table");
 	table.empty();
-	table.append($('<tr><th class=""></th><th class=""></th></tr>'));
+	table.append($('<tr><th></th><th></th></tr>'));
 	// for each attribute
 	for (var i in moegirl) {
 		if ("name" == i) {
@@ -168,5 +188,5 @@ MOECASC.showDetail = function (moegirl) {
 			table.append($('<tr><td>' + th + '</td><td>' + td + '</td></tr>'));
 		}
 	}
-	$("#" + MOEPROJ.config.canvas + " #detail").hide().css({visibility: "inherit"}).fadeIn("slow");
+	$("#" + MOEPROJ.config.canvas + " #detail").hide().css({visibility: "inherit"}).fadeIn("fast");
 }
