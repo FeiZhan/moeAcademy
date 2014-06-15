@@ -30,6 +30,7 @@ urlparam["hash"] = window.location.hash.length > 0 ? window.location.hash.substr
 // config parameters
 MOEPROJ.config = {
 	canvas: "",
+	files: new Object(),
 	ready: new Object(),
 };
 // initialize the project
@@ -154,14 +155,28 @@ MOEPROJ.loadFile = function (file, func) {
 	if (! (file in MOEPROJ.config.ready)) {
 		MOEPROJ.config.ready[file] = false;
 	}
-	else {
-		// already done, don't load again
+	else { // already done, don't load again
+		// special case: filenames
+		if ("filenames.json" == file.slice(-14)) {
+			var data = MOEPROJ.config.files[file];
+			for (var i = 0; i < data.length; ++ i) {
+				var file1 = file.substring(0, file.length - 14) + "raw/" + data[i];
+				if (file1 in MOEPROJ.config.files) {
+					// run it again
+					func(MOEPROJ.config.files[file1]);
+				}
+			}
+		}
+		else {
+			func(MOEPROJ.config.files[file]);
+		}
 		return;
 	}
 	if (".js" == file.substr(file.length - 3)) {
 		// load a js script
 		$.getScript(file)
 			.done(function( script, textStatus ) {
+				MOEPROJ.config.files[file] = script;
 				// set file as ready
 				MOEPROJ.config.ready[file] = true;
 				console.log("load", file);
@@ -177,6 +192,7 @@ MOEPROJ.loadFile = function (file, func) {
 	else if (".css" == file.substr(file.length - 4)) {
 		// load a css
 		$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', file) );
+		MOEPROJ.config.files[file] = "css";
 		MOEPROJ.config.ready[file] = true;
 		return func();
 	}
@@ -196,6 +212,7 @@ MOEPROJ.loadJson = function (file, func) {
 		MOEPROJ.config.ready[file] = false;
 	}
 	$.getJSON(file, function(data, textStatus, jqXHR) {
+		MOEPROJ.config.files[file] = data;
 		// set file as ready
 		MOEPROJ.config.ready[file] = true;
 		// don't show moegirls' name
@@ -204,7 +221,7 @@ MOEPROJ.loadJson = function (file, func) {
 		}
 		// special case: filenames
 		if ("filenames.json" == file.slice(-14)) {
-			for (var i in data) {
+			for (var i = 0; i < data.length && i < 700; ++ i) {
 				// load again
 				MOEPROJ.loadJson(file.substring(0, file.length - 14) + "raw/" + data[i], func);
 			}

@@ -1,21 +1,14 @@
 .moequest {
-	background: -webkit-linear-gradient(45deg, #FFF, #F0F0F0);
-	box-shadow: 15px 10px 3px 0px #888888;
 }
 .moequest #result {
 	position: absolute;
-	top: 2%;
+	top: 0%;
 	left: 90%;
 	visibility: hidden;
 }
 .moequest #submitbutton {
 	position: absolute;
 	top: 5%;
-	left: 1%;
-}
-.moequest #clearbutton {
-	position: absolute;
-	top: 22%;
 	left: 1%;
 }
 .moequest #question {

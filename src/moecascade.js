@@ -1,6 +1,8 @@
 // moegirl cascade
+
 MOEPROJ.MOECASC = MOEPROJ.MOECASC || new Object();
 var MOECASC = MOEPROJ.MOECASC;
+
 MOECASC.ui;
 MOECASC.data = ['data/filenames.json'];
 MOECASC.moegirls = new Array();
@@ -166,7 +168,7 @@ MOECASC.showDetail = function (moegirl) {
 		else if ("link" == i) {
 			$("#" + MOEPROJ.config.canvas + " #detail a").attr("href", moegirl["link"]);
 		}
-		else if ("firstp" == i || "catlinks" == i) {
+		else if ("firstp" == i || "catlinks" == i || "old_photo" == i) {
 			// ignore
 		} else { // append an attribute
 			var th = i;

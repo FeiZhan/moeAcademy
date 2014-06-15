@@ -11,7 +11,7 @@ MOEQUEST.config = {
 	results: new Array(),
 };
 MOEQUEST.ui;
-MOEQUEST.data = ['data/moegirls.json'];
+MOEQUEST.data = ['data/filenames.json'];
 // moegirl list
 MOEQUEST.moegirls = new Array();
 MOEQUEST.load = function (canvas) {
@@ -26,11 +26,15 @@ MOEQUEST.load = function (canvas) {
 };
 // callback for loading json data
 MOEQUEST.loadData = function (data) {
-	// add to moegirl list
-	MOEQUEST.moegirls = MOEQUEST.moegirls.concat(data);
+	// just keep moegirls
+	if ("发色" in data) {
+		// add to moegirl list
+		MOEQUEST.moegirls.push(data);
+	}
 };
 // run when loading completes
 MOEQUEST.run = function (canvas) {
+	console.debug(MOEQUEST.moegirls.length)
 	MOEQUEST.ui.load();
 	for (var i = 0; i < MOEQUEST.config.quest_num; ++ i) {
 		// create a quest
@@ -40,12 +44,16 @@ MOEQUEST.run = function (canvas) {
 // create a quest
 MOEQUEST.createQuest = function () {
 	var q = undefined;
-	while (undefined === q) {
+	var count = 0;
+	while (undefined === q && count < 50) {
+		++ count;
 		q = MOEQUEST.createMoegirlQuest();
 	}
-	MOEQUEST.config.quest = q;
-	MOEQUEST.ui.showQuest(MOEQUEST.config.quest);
-	return MOEQUEST.config.quest;
+	if (undefined !== q) {
+		MOEQUEST.config.quest = q;
+		MOEQUEST.ui.showQuest(MOEQUEST.config.quest);
+		return MOEQUEST.config.quest;
+	}
 }
 // create a quest based on moegirl list
 MOEQUEST.createMoegirlQuest = function () {
@@ -186,6 +194,7 @@ MOEQUESTUI.load = function () {
 };
 // show the quest
 MOEQUESTUI.showQuest = function (quest) {
+	// wanna peek the answer?
 	window["peek"] = MOEQUEST.config.quest.correct;
 	MOEQUEST.clearChecked();
 	// hide result image
@@ -292,17 +301,3 @@ MOEQUEST.clearChecked = function () {
 		$(value).removeClass("checked");
 	});
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -44,7 +44,9 @@ body {
 	min-height: 65%;
 	position: absolute;
 	top: 15%;
-	left: 13%;
+	left: 16%;
+	background: -webkit-linear-gradient(45deg, #FFF, #F0F0F0);
+	box-shadow: 15px 10px 3px 0px #888888;
 }
 #illustra {
 	background-color: LightGreen;
