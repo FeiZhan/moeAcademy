@@ -138,8 +138,10 @@ var MOECRAFTUI = MOEPROJ.MOECRAFTUI;
 MOECRAFTUI.html = ' \
 	<div id="table"></div> \
 	<div id="hand"></div> \
-	<button id="craftbutton" type="button">craft</button> \
-	<button id="drawbutton" type="button">draw cards</button> \
+	<a href="#" id="craftbutton">craft</a> \
+	<a href="#" id="drawbutton">drawCards</a> \
+	<a href="#" id="peek">peek</a> \
+	<span id="formula"></span> \
 ';
 MOECRAFTUI.init = function (canvas) {
 	document.title = "萌娘合成";
@@ -166,6 +168,8 @@ MOECRAFTUI.load = function () {
 	$("#drawbutton").click(function () {
 		MOECRAFT.drawRandom();
 	});
+    // draw button callback
+	$("#peek").click(MOECRAFTUI.peekFormula);
 };
 MOECRAFTUI.drawCard = function (card) {
 	$("#" + MOEPROJ.config.canvas + ' #hand').append('<div id="card-' + card.id + '" class="card">' + card.name + '</div>');
@@ -197,4 +201,15 @@ MOECRAFTUI.doCraft = function (input, output) {
 		var element = jq.detach();
 		$("#" + MOEPROJ.config.canvas + ' #table').append(element);
 	}
+};
+MOECRAFTUI.peekFormula = function () {
+	var r = Math.floor( (Math.random() * MOECRAFT.craft.length) );
+	var formula = "";
+	for (var i in MOECRAFT.craft[r].input) {
+		if (i > 0) {
+			formula += " + ";
+		}
+		formula += MOECRAFT.craft[r].input[i];
+	}
+	$("#formula").html(formula);
 };

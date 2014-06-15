@@ -34,7 +34,6 @@ MOEQUEST.loadData = function (data) {
 };
 // run when loading completes
 MOEQUEST.run = function (canvas) {
-	console.debug(MOEQUEST.moegirls.length)
 	MOEQUEST.ui.load();
 	for (var i = 0; i < MOEQUEST.config.quest_num; ++ i) {
 		// create a quest
