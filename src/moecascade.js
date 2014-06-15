@@ -101,7 +101,8 @@ MOECASCUI.load = function () {
 		}
 	}
 	// click on the webpage
-	$('html').off("click", page_click).on("click", page_click);
+	$('html').unbind("click").off("click", page_click);
+	$('html').on("click", page_click);
 	var page_scroll = function() {
 		clearTimeout($.data(this, 'scrollTimer'));
 		$.data(this, 'scrollTimer', setTimeout(function() {
