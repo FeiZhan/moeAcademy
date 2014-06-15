@@ -54,7 +54,7 @@ MOEPROJ.run = function (choice) {
 	// run the corresponding code
 	switch (choice) {
 	case "cascade":
-		MOEPROJECT.run("cascade");
+		MOECASC.load("cascade");
 		break;
 	case "illustra":
 		MOEILLUSTRA.run("illustra");

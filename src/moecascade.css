@@ -1,7 +1,4 @@
 .moecascade {
-	position: absolute;
-	top: 3%;
-	left: 15%;
 }
 .moecascade #wrapper {
 	width: 96%;
@@ -22,16 +19,17 @@
 }
 .moecascade .pin {
 	display: inline-block;
-	background: #FEFEFE;
 	border: 2px solid #FAFAFA;
-	box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+	-webkit-box-shadow: 7px 7px 5px 0px rgba(34, 25, 25, 0.4);
+	-moz-box-shadow:    7px 7px 5px 0px rgba(34, 25, 25, 0.4);
+	box-shadow:         7px 7px 5px 0px rgba(34, 25, 25, 0.4);
 	margin: 0 2px 15px;
 	-webkit-column-break-inside: avoid;
 	-moz-column-break-inside: avoid;
 	column-break-inside: avoid;
 	padding: 15px;
 	padding-bottom: 5px;
-	background: -webkit-linear-gradient(45deg, #FFF, #F9F9F9);
+	background: -webkit-linear-gradient(45deg, #FFFFFF, #E9E9E9);
 	opacity: 1;
 	-webkit-transition: all .2s ease;
 	-moz-transition: all .2s ease;
@@ -40,28 +38,21 @@
 }
 .moecascade .pin img {
 	width: 100%;
+	/* separate from the text */
 	border-bottom: 1px solid #ccc;
 	padding-bottom: 15px;
 	margin-bottom: 5px;
 }
 .moecascade .pin p {
 	text-align: center;
-	font: 12px/18px Arial, sans-serif;
-	color: #333;
+	font: 16px/24px Arial, sans-serif;
 	margin: 0;
 }
-@media (min-width: 960px) {
+@media (min-width: 1100px) {
 	.moecascade #columns {
 		-webkit-column-count: 4;
 		-moz-column-count: 4;
 		column-count: 4;
-	}
-}
-@media (min-width: 1100px) {
-	.moecascade #columns {
-		-webkit-column-count: 5;
-		-moz-column-count: 5;
-		column-count: 5;
 	}
 }
 .moecascade #columns:hover .pin:not(:hover) {
@@ -73,57 +64,55 @@
 }
 .moecascade #detail {
 	visibility: hidden;
-	border: 2px solid #FAFAFA;
-	box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
-	margin: 0 auto;
-	-webkit-column-break-inside: avoid;
-	-moz-column-break-inside: avoid;
+	-webkit-box-shadow: 15px 15px 5px 0px rgba(34, 25, 25, 0.4);
+	-moz-box-shadow:    15px 15px 5px 0px rgba(34, 25, 25, 0.4);
+	box-shadow:         15px 15px 5px 0px rgba(34, 25, 25, 0.4);
 	padding: 15px;
-	padding-bottom: 5px;
-	background: -webkit-linear-gradient(45deg, #FFF, #F9F9F9);
-	-webkit-transition: all .2s ease;
-	-moz-transition: all .2s ease;
-	-o-transition: all .2s ease;
-	transition: all .2s ease;
+	background: -webkit-linear-gradient(45deg, #FFFFFF, #E9E9E9);
 	position: fixed;
 	top: 15%;
-	left: 10%;
-	width: 80%;
+	left: 13%;
+	width: 75%;
 	min-height: 70%;
 	overflow: auto;
+	/*@bug center the image */
 	/*margin-left: auto;
 	margin-right: auto;*/
 }
 .moecascade #detail img {
 	max-width: 50%;
 	max-height: 70%;
-	height: auto;
-	width: auto;
-	position: relative;
+	/*position: relative;
 	top: 0px;
-	left: 0px;
+	left: 0px;*/
 }
-.moecascade #detail span {
+.moecascade #detail a span {
 	text-align: center;
-	font-weight: bold;
 	position: absolute;
 	top: 0px;
+	/* center text */
 	left: 50%;
 	width: 50%;
-	margin: 10px 0px;
+	margin-top: 15px;
+	font-size: x-large;
 }
 .moecascade #detail table {
 	width: 50%;
 	min-width: 300px;
 	position: absolute;
-	top: 35px;
+	top: 15%;
 	left: 50%;
 }
 .moecascade #detail table td {
 	text-align: center;
-	border-top: 1px Gray solid;
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+.moecascade #detail table tr:nth-child(odd) {
+	background-color: white;
+}
+.moecascade #detail table tr:nth-child(even) {
+	background-color: NavajoWhite;
 }
 .moecascade #detail table th:first-child {
 	width: 30%;

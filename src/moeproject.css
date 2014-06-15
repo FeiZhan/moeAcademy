@@ -4,6 +4,7 @@ body {
 #logo {
 	text-align: center;
 	width: 120px;
+	position: fixed;
 }
 #logo img {
 	width: 100%;
@@ -68,6 +69,11 @@ body {
 	left: 90px;
 	right: 0%;
 	height: 99%;
+}
+#cascade {
+	position: absolute;
+	top: 0%;
+	left: 12%;
 }
 
 /* This button was generated using CSSButtonGenerator.com */
