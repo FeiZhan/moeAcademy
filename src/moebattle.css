@@ -198,14 +198,18 @@ html {
 	left: 5%;
 }
 .moebattle .status {
-	height: 15%;
-	width: 15%;
+	max-height: 15%;
+	max-width: 15%;
 	position: relative;
 	top: 0px;
 	left: 0px;
 	margin: 2px 2px;
 	float: left;
 	background: -webkit-radial-gradient(circle, #FF0000, #FFFFFF);
+}
+.moebattle .status img {
+	max-height: 100%;
+	max-width: 100%;
 }
 
 .moebattle .card {
@@ -236,6 +240,7 @@ html {
 	display: none;
 }
 .moebattle .card div.param {
+	background-color: rgba(255, 255, 255, 0.5);
 }
 .moebattle .card div.cost {
 	position: absolute;
@@ -286,6 +291,7 @@ html {
 	min-width: 10px;
 }
 .moebattle .icon div.param {
+	background-color: rgba(255, 255, 255, 0.5);
 }
 .moebattle .icon div.cost {
 	position: absolute;

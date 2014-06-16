@@ -4,46 +4,50 @@
 	{
 		"name": "战场原黑仪",
 		"type": "character",
-		"photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/8/86/Senjougahara_Hitagi.jpg/250x341x250px-Senjougahara_Hitagi.jpg.pagespeed.ic.UGrCyF46_K.webp",
+		"photo": "http://static.mengniang.org/common/thumb/8/86/Senjougahara_Hitagi.jpg/250px-Senjougahara_Hitagi.jpg",
 		"anime": {
 			"skill0": ["resources/senjougahara-hitagi/1.gif", "resources/senjougahara-hitagi/2.gif", "resources/senjougahara-hitagi/3.gif", "resources/senjougahara-hitagi/4.gif", "resources/senjougahara-hitagi/5.gif", "resources/senjougahara-hitagi/6.gif"]
 		},
 		"hp": 10,
 		"atk": 8,
 		"def": 2,
-		"cost": 5
+		"cost": 5,
+		"detail": "战场原黑仪是轻小说《物语系列》及其衍生的动画、漫画等作品的登场角色，女主角之一。战场原黑仪是个傲娇腹黑毒舌父控，男主人公阿良良木历的女朋友。"
 	}, {
 		"name": "蓝白碗",
 		"type": "effect",
-		"photo": "http://static.mengniang.org/thumb/2/2e/The_Bowl.jpg/250px-The_Bowl.jpg",
+		"photo": "http://static.mengniang.org/common/thumb/2/2e/The_Bowl.jpg/250px-The_Bowl.jpg",
 		"target": 1,
-		"skill": "MOEPROJ.MOEBATTLE.SKILLS.charLoseHP"
+		"skill": "MOEPROJ.MOEBATTLE.SKILLS.charLoseHP",
+		"detail": "蓝白碗 也被称为Nice Bowl!是一种碗的款式，陶瓷材质，古典优雅，外部有蓝白相间条纹。通常说到 蓝白碗 就会想起秋山澪"
 	}, {
 		"name": "朝比奈实玖瑠",
 		"type": "character",
-		"photo": "http://static.mengniang.org/thumb/c/c5/Asahina_Mikuru.png/250px-Asahina_Mikuru.png"
+		"photo": "http://static.mengniang.org/common/thumb/c/c5/Asahina_Mikuru.png/250px-Asahina_Mikuru.png"
 	}, {
 		"name": "喵帕斯",
 		"type": "effect",
-		"photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/7/70/%E5%96%B5%E5%B8%95%E6%96%AF.jpg/250x141x250px-,PE5,P96,PB5,PE5,PB8,P95,PE6,P96,PAF.jpg.pagespeed.ic.D4Xm06QSYx.webp",
+		"photo": "http://static.mengniang.org/common/thumb/7/70/%E5%96%B5%E5%B8%95%E6%96%AF.jpg/250px-%E5%96%B5%E5%B8%95%E6%96%AF.jpg",
 		"detail":"喵帕斯（にゃんぱすー）是《悠哉日常大王》中，宫内莲华和人打招呼时用的一句台词。是小孩子的自创用语，大意为早中晚上好。",
 		"skill": "MOEPROJ.MOEBATTLE.SKILLS.gainPositiveStatus"
 	}, {
 		"name": "把妹之手",
 		"type": "effect",
-		"photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/5/50/250x250xMyface.jpg.pagespeed.ic.VpBkV0JV-S.webp",
-		"skill": "MOEPROJ.MOEBATTLE.SKILLS.loseHP"
+		"photo": "http://static.mengniang.org/common/5/50/Myface.jpg",
+		"skill": "MOEPROJ.MOEBATTLE.SKILLS.loseHP",
+		"detail": "把妹之手是对《魔法禁书目录》系列作品的男主角上条当麻的特殊能力以及桃花运进行吐槽而诞生的一个用语。"
 	}, {
 		"name": "狗·德川家康·薛定谔",
 		"type": "effect",
-		"photo": "http://1-ps.googleusercontent.com/x/zh.moegirl.org/static.mengniang.org/thumb/b/bc/%E7%8B%97-%E5%BE%B7%E5%B7%9D%E5%AE%B6%E5%BA%B7-%E8%96%9B%E5%AE%9A%E8%B0%94-%E8%B6%85%E7%94%B5%E7%A3%81%E7%82%AES-17.png/640x360x640px-,PE7,P8B,P97-,PE5,PBE,PB7,PE5,PB7,P9D,PE5,PAE,PB6,PE5,PBA,PB7-,PE8,P96,P9B,PE5,PAE,P9A,PE8,PB0,P94-,PE8,PB6,P85,PE7,P94,PB5,PE7,PA3,P81,PE7,P82,PAES-17.png.pagespeed.ic.O_kQiIESCp.webp",
+		"photo": "http://static.mengniang.org/common/thumb/5/51/%E7%8B%97-%E5%BE%B7%E5%B7%9D%E5%AE%B6%E5%BA%B7-%E8%96%9B%E5%AE%9A%E8%B0%94-%E8%B6%85%E7%94%B5%E7%A3%81%E7%82%AES-12.png/640px-%E7%8B%97-%E5%BE%B7%E5%B7%9D%E5%AE%B6%E5%BA%B7-%E8%96%9B%E5%AE%9A%E8%B0%94-%E8%B6%85%E7%94%B5%E7%A3%81%E7%82%AES-12.png",
 		"detail": "狗·德川家康·薛定谔是出自网友对《魔法禁书目录》中某只黑猫名字的吐槽。",
 		"skill": "MOEPROJ.MOEBATTLE.SKILLS.drawCard"
 	}, {
 		"name": "哥特式金属私生子",
 		"type": "effect",
-		"photo": "http://static.mengniang.org/thumb/7/78/F3d3572c11dfa9ec5070295962d0f703908fa0ec08fae91e.jpg/180px-F3d3572c11dfa9ec5070295962d0f703908fa0ec08fae91e.jpg",
-		"skill": "MOEPROJ.MOEBATTLE.SKILLS."
+		"photo": "http://static.mengniang.org/common/thumb/7/78/F3d3572c11dfa9ec5070295962d0f703908fa0ec08fae91e.jpg/180px-F3d3572c11dfa9ec5070295962d0f703908fa0ec08fae91e.jpg",
+		"skill": "MOEPROJ.MOEBATTLE.SKILLS.",
+		"detail": "“哥特式金属私生子”和老头滚动条，踢牙老奶奶一样，典型的机翻结果，简直是汉化界中的一朵奇葩。"
 	}
 	],
 	"status": [

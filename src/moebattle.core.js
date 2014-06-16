@@ -4,7 +4,7 @@ MOEPROJ.MOEBATTLE = MOEPROJ.MOEBATTLE || new Object();
 var MOEBATTLE = MOEPROJ.MOEBATTLE;
 
 MOEBATTLE.ui;
-MOEBATTLE.data = ['data/battle.json'];
+MOEBATTLE.data = ['data/battle.json', 'data/filenames.json'];
 MOEBATTLE.load = function (canvas) {
 	// set ui
 	MOEBATTLE.ui = MOEPROJ.MOEBATTLEUI;
@@ -16,9 +16,18 @@ MOEBATTLE.load = function (canvas) {
 	}, MOEBATTLE.run, MOEBATTLE.loadData);
 };
 // callback for loading json data
-MOEBATTLE.loadData = function (data) {
-	MOEBATTLE.battle = MOEBATTLE.battle.concat(data);
-	MOEBATTLE.cards = MOEBATTLE.cards.concat(data.cards);
+MOEBATTLE.loadData = function (data, file) {
+	switch (file) {
+	case 'data/filenames.json':
+		break;
+	case 'data/battle.json':
+		MOEBATTLE.battle = data;
+		MOEBATTLE.cards = MOEBATTLE.cards.concat(data.cards);
+		break;
+	default:
+		MOEBATTLE.moegirls = MOEBATTLE.moegirls.concat(data);
+		break;
+	}
 };
 // run when loading completes
 MOEBATTLE.run = function () {
@@ -43,6 +52,7 @@ MOEBATTLE.game = {
 	// current player
 	current: -1,
 };
+MOEBATTLE.moegirls = new Array();
 MOEBATTLE.battle = new Array();
 MOEBATTLE.cards = new Array();
 MOEBATTLE.players = [
@@ -95,7 +105,7 @@ MOEBATTLE.nextAction = function () {
 MOEBATTLE.gameStart = function (action) {
 	// prepare players
 	for (var i in MOEBATTLE.players) {
-		MOEBATTLE.ui.playerPrepare(i);
+		MOEBATTLE.ui.playerCreate(i);
 	}
 	// prepare discard deck
 	MOEBATTLE.game.discard = new Array();

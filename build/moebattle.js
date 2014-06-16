@@ -1,3 +1,403 @@
+
+// moegirl battle
+
+MOEPROJ.MOEBATTLE = MOEPROJ.MOEBATTLE || new Object();
+var MOEBATTLE = MOEPROJ.MOEBATTLE;
+
+MOEBATTLE.ui;
+MOEBATTLE.data = ['data/battle.json'];
+MOEBATTLE.load = function (canvas) {
+	// set ui
+	MOEBATTLE.ui = MOEPROJ.MOEBATTLEUI;
+	MOEBATTLE.ui.init(canvas);
+	MOEPROJ.load({
+		canvas: canvas,
+		html: MOEBATTLE.ui.html,
+		data: MOEBATTLE.data,
+	}, MOEBATTLE.run, MOEBATTLE.loadData);
+};
+// callback for loading json data
+MOEBATTLE.loadData = function (data) {
+	MOEBATTLE.battle = data;
+	MOEBATTLE.cards = MOEBATTLE.cards.concat(data.cards);
+};
+// run when loading completes
+MOEBATTLE.run = function () {
+	MOEBATTLE.ui.load();
+	// execute based on action list
+	MOEBATTLE.actions.push({ type: "gameStart" });
+	// check next action periodically
+	setInterval(function () {
+		MOEBATTLE.nextAction();
+	}, 100);
+};
+
+MOEBATTLE.game = {
+	// orders for each player
+	orders: [0, 1],
+	// cards in deck
+	deck: new Array(),
+	// cards in discard deck
+	discard: new Array(),
+	round_count: 0,
+	shuffle_count: 0,
+	// current player
+	current: -1,
+};
+MOEBATTLE.battle = new Array();
+MOEBATTLE.cards = new Array();
+MOEBATTLE.players = [
+	{
+		name: "me",
+		order: 0,
+		maxhp: 20,
+		hp: 20,
+		maxmp: 0,
+		mp: 0,
+		hands: [],
+		area: [],
+		status: [],
+		equip: [],
+	}, {
+		name: "opponent",
+		order: 1,
+		maxhp: 20,
+		hp: 20,
+		maxmp: 0,
+		mp: 0,
+		hands: [],
+		area: [],
+		status: [],
+		equip: [],
+	}
+];
+
+MOEBATTLE.actions = new Array();
+// execute the next action
+MOEBATTLE.nextAction = function () {
+	// no more actions or locked
+	if (0 == MOEBATTLE.actions.length || MOEBATTLE.ui.AnimaCount > 0) {
+		return;
+	}
+	var action = MOEBATTLE.actions.shift();
+	// invalid action
+	if (undefined === action.type) {
+		return;
+	}
+	console.debug(action.type)
+	if ("function" == typeof MOEBATTLE[action.type]) {
+		MOEBATTLE[action.type] (action);
+	}
+}
+
+// game
+
+// game start
+MOEBATTLE.gameStart = function (action) {
+	// prepare players
+	for (var i in MOEBATTLE.players) {
+		MOEBATTLE.ui.playerPrepare(i);
+	}
+	// prepare discard deck
+	MOEBATTLE.game.discard = new Array();
+	// init shuffle cards in deck
+	MOEBATTLE.game.deck = new Array();
+	for (var i in MOEBATTLE.cards) {
+		MOEBATTLE.game.deck.push(i);
+	}
+	MOEBATTLE.shuffle(MOEBATTLE.game.deck);
+
+	var new_actions = new Array();
+	new_actions.push({
+		type: "playersShuffle"
+	});
+	// deal initial cards
+	for (var i in MOEBATTLE.game.orders) {
+		new_actions.push({
+			type: "cardsDraw",
+			number: 1,
+			target: MOEBATTLE.game.orders[i]
+		});
+	}
+	MOEBATTLE.actions = new_actions.concat(MOEBATTLE.actions);
+	// the first player
+	MOEBATTLE.actions.push({
+		type: "playerStart",
+	});
+};
+// game over
+MOEBATTLE.gameOver = function (action) {
+	MOEBATTLE.ui.gameOver();
+}
+MOEBATTLE.gamePause = function (action) {
+}
+MOEBATTLE.gamePause = function (action) {
+}
+MOEBATTLE.gameWin = function (action) {
+}
+MOEBATTLE.gameLose = function (action) {
+}
+MOEBATTLE.gameDraw = function (action) {
+}
+
+// deck
+
+MOEBATTLE.deckShuffle = function (action) {
+	MOEBATTLE.shuffle(MOEBATTLE.game.deck);
+	++ MOEBATTLE.game.shuffle_count;
+}
+// shuffle array
+MOEBATTLE.shuffle = function (arr) {
+	for (var j, x, i = arr.length; i; j = Math.floor(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x)
+	{}
+};
+// prepare deck
+MOEBATTLE.deckPrepare = function (action) {
+	MOEBATTLE.game.deck = MOEBATTLE.game.deck.concat(MOEBATTLE.game.discard);
+	MOEBATTLE.game.discard = new Array();
+	MOEBATTLE.actions.unshift({
+		type: "deckShuffle"
+	});
+};
+
+// player
+
+MOEBATTLE.playersShuffle = function (action) {
+	// shuffle player orders
+	MOEBATTLE.game.orders = new Array();
+	for (var i in MOEBATTLE.players) {
+		MOEBATTLE.game.orders.push(i);
+	}
+	MOEBATTLE.shuffle(MOEBATTLE.game.orders);
+	for (var i in MOEBATTLE.players) {
+		MOEBATTLE.players[i].order = MOEBATTLE.game.orders[i];
+	}
+}
+// player start
+MOEBATTLE.playerStart = function (action) {
+	// add current player number by one
+	++ MOEBATTLE.game.current;
+	if (MOEBATTLE.game.current >= MOEBATTLE.players.length) {
+		MOEBATTLE.game.current %= MOEBATTLE.players.length;
+		++ MOEBATTLE.game.round_count;
+	}
+	MOEBATTLE.ui.playerStart();
+	if (MOEBATTLE.players[MOEBATTLE.game.current].maxmp < 10) {
+		MOEBATTLE.actions.unshift({
+			type: "playerGainMP",
+			target: MOEBATTLE.game.current,
+			number: 1,
+		});
+		MOEBATTLE.actions.unshift({
+			type: "playerChangeMaxMP",
+			target: MOEBATTLE.game.current,
+			number: MOEBATTLE.players[MOEBATTLE.game.current].maxmp + 1,
+		});
+	}
+	MOEBATTLE.actions.push({
+		type: "cardsDraw",
+		number: 1,
+		target: MOEBATTLE.game.current
+	});
+}
+// switch to next player
+MOEBATTLE.playerEnd = function (action) {
+	MOEBATTLE.ui.playerEnd();
+	MOEBATTLE.actions.push({
+		type: "playerStart",
+	});
+};
+MOEBATTLE.playerChange = function (action) {
+}
+MOEBATTLE.playerDie = function (action) {
+}
+MOEBATTLE.playerRevive = function (action) {
+}
+MOEBATTLE.playerLoseHP = function (action) {
+	MOEBATTLE.players[action.target].hp -= action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
+}
+MOEBATTLE.playerGainHP = function (action) {
+	MOEBATTLE.players[action.target].hp += action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
+}
+MOEBATTLE.playerChangeMaxHP = function (action) {
+	MOEBATTLE.players[action.target].maxhp = action.number;
+	MOEBATTLE.ui.playerChangeMaxHP(action.target, action.number);
+}
+MOEBATTLE.playerLoseMP = function (action) {
+	MOEBATTLE.players[action.target].mp -= action.number;
+	MOEBATTLE.ui.playerChangeMP(action.target, MOEBATTLE.players[action.target].mp);
+}
+MOEBATTLE.playerGainMP = function (action) {
+	MOEBATTLE.players[action.target].mp += action.number;
+	MOEBATTLE.ui.playerChangeMP(action.target, MOEBATTLE.players[action.target].mp);
+}
+MOEBATTLE.playerChangeMaxMP = function (action) {
+	MOEBATTLE.players[action.target].maxmp = action.number;
+	MOEBATTLE.ui.playerChangeMaxMP(action.target, action.number);
+}
+MOEBATTLE.playerLoseStatus = function (action) {
+	MOEBATTLE.players[action.target].status.splice(MOEBATTLE.players[action.target].status.indexOf(action.status), 1);
+	MOEBATTLE.ui.playerLoseStatus(action.target, action.status);
+}
+MOEBATTLE.playerGainStatus = function (action) {
+	// duplicate status
+	if ( MOEBATTLE.players[action.target].status.indexOf(action.status) >= 0 ) {
+		//return;
+	}
+	MOEBATTLE.players[action.target].status.push(action.status);
+	MOEBATTLE.ui.playerGainStatus(action.target, action.status);
+}
+MOEBATTLE.playerGainEquip = function (action) {
+}
+
+// card
+
+// draw cards
+MOEBATTLE.cardsDraw = function (action) {
+	// invalid
+	if (action.number <= 0 || action.target < 0 || action.target >= MOEBATTLE.players.length) {
+		return;
+	}
+	if (action.number > MOEBATTLE.game.deck.length) {
+		// put discard deck back to deck
+		MOEBATTLE.deckPrepare();
+	}
+	// still not enough
+	if (action.number > MOEBATTLE.game.deck.length) {
+		MOEBATTLE.actions.unshift({
+			type: "gameOver",
+		});
+		return;
+	}
+	// for each card
+	for (var i = 0; i < action.number; ++ i) {
+		MOEBATTLE.actions.unshift({
+			type: "cardDraw",
+			target: action.target,
+			from: action.from,
+		});
+	}
+};
+// draw a card
+MOEBATTLE.cardDraw = function (action) {
+	// get a card from deck
+	var card = MOEBATTLE.game.deck.pop();
+	// give to a player
+	MOEBATTLE.players[action.target].hands.push(card);
+	MOEBATTLE.ui.cardDraw(action.target, card, action.from);
+}
+MOEBATTLE.cardDiscard = function (action) {
+}
+// use a card
+MOEBATTLE.cardUse = function (action) {
+	// remove card from player
+	MOEBATTLE.players[action.from].hands.splice(MOEBATTLE.players[action.from].hands.indexOf(action.card), 1);
+	switch(MOEBATTLE.cards[action.card].type) {
+	case "character": // put into player's area
+		MOEBATTLE.actions.unshift({
+			type: "cardAddToArea",
+			card: action.card,
+			from: action.from,
+		});
+		break;
+	case "effect":
+	default: // use immediately
+		MOEBATTLE.actions.unshift({
+			type: "cardUseWithoutTarget",
+			from: action.from,
+			card: action.card,
+		});
+		break;
+	}
+}
+// add a card to player's area
+MOEBATTLE.cardAddToArea = function (action) {
+	MOEBATTLE.players[action.from].area.push(action.card);
+	MOEBATTLE.ui.cardAddToArea(action.card, action.from);
+};
+// use a card without target
+MOEBATTLE.cardUseWithoutTarget = function (action) {
+	if ("skill" in MOEBATTLE.cards[action.card]) {
+		var func = MOEPROJ.getFunctionFromString( MOEBATTLE.cards[action.card].skill );
+		if ("function" == typeof func) {
+			func(action);
+		}
+	}
+	MOEBATTLE.game.discard.push(action.card);
+	MOEBATTLE.ui.cardUseWithoutTarget(action.card);
+}
+MOEBATTLE.cardUseWithTarget = function (action) {
+	if ("skill" in MOEBATTLE.cards[action.card]) {
+		var func = MOEPROJ.getFunctionFromString( MOEBATTLE.cards[action.card].skill );
+		if ("function" == typeof func) {
+			func(action);
+		}
+	}
+	MOEBATTLE.game.discard.push(action.card);
+	MOEBATTLE.ui.cardUseWithoutTarget(action.card);
+};
+
+// character
+
+MOEBATTLE.charLoseHP = function (action) {
+	MOEBATTLE.players[action.target].hp -= action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
+}
+MOEBATTLE.charGainHP = function (action) {
+	MOEBATTLE.players[action.target].hp += action.number;
+	MOEBATTLE.ui.playerChangeHP(action.target, MOEBATTLE.players[action.target].hp);
+}
+MOEBATTLE.charLoseStatus = function (action) {
+	MOEBATTLE.players[action.target].status.splice(MOEBATTLE.players[action.target].status.indexOf(action.status), 1);
+	MOEBATTLE.ui.playerLoseStatus(action.target, action.status);
+}
+MOEBATTLE.charGainStatus = function (action) {
+	// duplicate status
+	if ( MOEBATTLE.players[action.target].status.indexOf(action.status) >= 0 ) {
+		//return;
+	}
+	MOEBATTLE.players[action.target].status.push(action.status);
+	MOEBATTLE.ui.playerGainStatus(action.target, action.status);
+}
+
+// moegirl battle skills
+
+MOEPROJ.MOEBATTLE = MOEPROJ.MOEBATTLE || new Object();
+MOEPROJ.MOEBATTLE.SKILLS = MOEPROJ.MOEBATTLE.SKILLS || new Object();
+var SKILLS = MOEPROJ.MOEBATTLE.SKILLS;
+
+SKILLS.loseHP = function (action) {
+	MOEBATTLE.actions.unshift({
+		type: "playerLoseHP",
+		target: action.from ? 0 : 1,
+		number: 1,
+	});
+}
+SKILLS.charLoseHP = function (action) {
+	MOEBATTLE.actions.unshift({
+		type: "charLoseHP",
+		target: action.target,
+		number: 1,
+		card: action.card,
+	});
+}
+SKILLS.drawCard = function (action) {
+	MOEBATTLE.actions.unshift({
+		type: "cardsDraw",
+		target: action.from,
+		number: 2,
+	});
+}
+SKILLS.gainPositiveStatus = function (action) {
+	MOEBATTLE.actions.unshift({
+		type: "playerGainStatus",
+		target: action.from,
+		status: 0,
+	});
+}
+
 // moegirl battle ui
 
 MOEPROJ.MOEBATTLEUI = MOEPROJ.MOEBATTLEUI || new Object();
@@ -100,12 +500,6 @@ MOEBATTLEUI.load = function () {
 
 MOEBATTLEUI.AnimaCount = 0;
 MOEBATTLEUI.detail_lock = false;
-MOEBATTLEUI.select = {
-	target: undefined,
-	type: undefined,
-	time: new Date()
-};
-
 // show detail canvas
 MOEBATTLEUI.showDetail = function (card, type, dir) {
 	// only one detail canvas can be displayed
@@ -113,9 +507,6 @@ MOEBATTLEUI.showDetail = function (card, type, dir) {
 		return;
 	}
 	MOEBATTLEUI.detail_lock = true;
-	MOEBATTLEUI.addDetailContent(card, type);
-	var detail_jq = $("#" + MOEPROJ.config.canvas + " #detail");
-	detail_jq.show().css("visibility", "inherit");
 	var card_jq;
 	switch (type) {
 	case "icon":
@@ -123,9 +514,6 @@ MOEBATTLEUI.showDetail = function (card, type, dir) {
 		break;
 	case "status":
 		card_jq = $("#" + MOEPROJ.config.canvas + " #status-" + card);
-		break;
-	case "player":
-		card_jq = card ? $("#" + MOEPROJ.config.canvas + " #yourhead img") : $("#" + MOEPROJ.config.canvas + " #myhead img");
 		break;
 	case "card":
 	default:
@@ -136,10 +524,10 @@ MOEBATTLEUI.showDetail = function (card, type, dir) {
 	if (0 == card_jq.length) {
 		return $("#" + MOEPROJ.config.canvas + " #detail");
 	}
-	// hover to stop hiding
-	/*detail_jq.hover(function () {
-		detail_jq.stop();
-	}, MOEBATTLEUI.hideDetail);*/
+	MOEBATTLEUI.addDetailContent(card, type);
+	var detail_jq = $("#" + MOEPROJ.config.canvas + " #detail");
+	detail_jq.show().css("visibility", "inherit");
+	// hover to prevent hiding
 	// start animation
 	++ MOEBATTLEUI.AnimaCount;
 	MOEBATTLEUI.chooseDetailDir(detail_jq, dir, card_jq);
@@ -149,12 +537,13 @@ MOEBATTLEUI.showDetail = function (card, type, dir) {
 MOEBATTLEUI.addDetailContent = function (card, type) {
 	switch (type) {
 	case "status":
-		$("#" + MOEPROJ.config.canvas + " #detail .name").html(MOEBATTLE.battle.status[card].name);
-		$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", MOEBATTLE.battle.status[card].photo || "");
-		$("#" + MOEPROJ.config.canvas + " #detail .card-detail").html(MOEBATTLE.battle.status[card].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
+		$("#" + MOEPROJ.config.canvas + " #detail .name").html(MOEBATTLE.battle.status[status].name);
+		$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", MOEBATTLE.battle.status[status].photo || "");
+		$("#" + MOEPROJ.config.canvas + " #detail .card-detail").html(MOEBATTLE.battle.status[status].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
 		break;
 	case "card":
 	case "icon":
+	default:
 		$("#" + MOEPROJ.config.canvas + " #detail .name").html(MOEBATTLE.cards[card].name);
 		$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", MOEBATTLE.cards[card].photo || "");
 		if (MOEBATTLE.cards[card].cost) {
@@ -174,9 +563,6 @@ MOEBATTLEUI.addDetailContent = function (card, type) {
 			$("#" + MOEPROJ.config.canvas + " #detail .card-hp").html("hp: " + "N/A").hide();
 		}
 		$("#" + MOEPROJ.config.canvas + " #detail .card-detail").html(MOEBATTLE.cards[card].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
-		break;
-	case "player":
-	default:
 		break;
 	}
 }
@@ -283,10 +669,8 @@ MOEBATTLEUI.arrowFollow = function (card, func) {
 	}
 	// card center position
 	var card_jq = $("#" + MOEPROJ.config.canvas + " #card-" + card);
-	var card_type = "card";
 	if (0 == card_jq.length) {
 		card_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
-		card_type = "icon";
 	}
 	if (0 == card_jq.length) {
 		return;
@@ -320,19 +704,17 @@ MOEBATTLEUI.arrowFollow = function (card, func) {
 		.css({visibility: "inherit"}).show();
 	};
 	var page_click_use_card = function () {
-		// don't select the card itself
-		if (card == MOEBATTLEUI.select.target && card_type == MOEBATTLEUI.select.type) {
+		if (card == MOEBATTLEUI.selectedIcon) {
 			return;
 		}
-		// if nothing selected
-		else if (undefined === MOEBATTLEUI.select.target) {
+		if (undefined === MOEBATTLEUI.selectedIcon) {
 		}
 		// remove arrow
 		$("html").off('mousemove', arrow_follow).off("click", page_click_use_card);
 		$("#" + MOEPROJ.config.canvas + " #arrow").hide();
 		MOEBATTLEUI.arrow.status = "idle";
 		if (typeof func == "function") {
-			func(card, MOEBATTLEUI.select.target);
+			func(card, MOEBATTLEUI.selectedIcon);
 		}
 		-- MOEBATTLEUI.AnimaCount;
 	};
@@ -351,29 +733,9 @@ MOEBATTLEUI.gameOver = function () {
 // player
 
 // prepare player layout
-MOEBATTLEUI.playerCreate = function (player) {
+MOEBATTLEUI.playerPrepare = function (player) {
 	++ MOEBATTLEUI.AnimaCount;
-	var rphoto = Math.round(Math.random() * MOEBATTLE.moegirls.length);
 	if (0 == player) {
-		// head photo
-		$("#" + MOEPROJ.config.canvas + " #myhead img").attr("src", MOEBATTLE.moegirls[rphoto].photo)
-		.error(function () {
-			$(this).attr("src", "resources/nophoto.jpg");
-		});
-		// hover to show detail
-		$("#" + MOEPROJ.config.canvas + " #myhead img").hover(function (obj) {
-			MOEBATTLEUI.select.target = player;
-			MOEBATTLEUI.select.type = "player";
-			MOEBATTLEUI.select.time = new Date();
-			$(this).css("z-index", 1);
-			MOEBATTLEUI.showDetail(player, "player");
-		}, function (obj) {
-			MOEBATTLEUI.select.target = undefined;
-			MOEBATTLEUI.select.type = undefined;
-			$(this).css("z-index", 0);
-			MOEBATTLEUI.hideDetail();
-		});
-		$("#" + MOEPROJ.config.canvas + " #myhead img").hover()
 		var span = $("#" + MOEPROJ.config.canvas + ' #myhead .hp span');
 		$(span[0]).html(MOEBATTLE.players[player].hp);
 		$(span[1]).html(MOEBATTLE.players[player].maxhp);
@@ -382,23 +744,6 @@ MOEBATTLEUI.playerCreate = function (player) {
 		$(span[1]).html(MOEBATTLE.players[player].maxmp);
 	}
 	else if (1 == player) {
-		$("#" + MOEPROJ.config.canvas + " #yourhead img").attr("src", MOEBATTLE.moegirls[rphoto].photo)
-		.error(function () {
-			$(this).attr("src", "resources/nophoto.jpg");
-		});
-		// hover to show detail
-		$("#" + MOEPROJ.config.canvas + " #yourhead img").hover(function (obj) {
-			MOEBATTLEUI.select.target = player;
-			MOEBATTLEUI.select.type = "player";
-			MOEBATTLEUI.select.time = new Date();
-			$(this).css("z-index", 1);
-			MOEBATTLEUI.showDetail(player, "player");
-		}, function (obj) {
-			MOEBATTLEUI.select.target = undefined;
-			MOEBATTLEUI.select.type = undefined;
-			$(this).css("z-index", 0);
-			MOEBATTLEUI.hideDetail();
-		});
 		var span = $("#" + MOEPROJ.config.canvas + ' #yourhead .hp span');
 		$(span[0]).html(MOEBATTLE.players[player].hp);
 		$(span[1]).html(MOEBATTLE.players[player].maxhp);
@@ -572,7 +917,7 @@ MOEBATTLEUI.cardDrop = function (card) {
 	if (undefined !== MOEBATTLE.cards[card].target) {
 		MOEBATTLEUI.arrowFollow(card, function () {
 			// if no target, put it back
-			if (undefined === MOEBATTLEUI.select.target) {
+			if (undefined === MOEBATTLEUI.selectedIcon) {
 				if (0 == player) {
 					$("#" + MOEPROJ.config.canvas + " #myhand").append(card_jq.detach());
 					card_jq.addClass("inhand myhand");
@@ -590,7 +935,7 @@ MOEBATTLEUI.cardDrop = function (card) {
 			MOEBATTLE.actions.unshift({
 				type: "cardUseWithTarget",
 				card: card,
-				target: MOEBATTLEUI.select.target,
+				target: MOEBATTLEUI.selectedIcon,
 			});
 		});
 	} else { // use directly
@@ -728,6 +1073,7 @@ MOEBATTLEUI.moveToAreaAnima = function (card, player, height, width) {
 
 // character
 
+MOEBATTLEUI.selectedIcon = undefined;
 // animation when creating an icon
 MOEBATTLEUI.createIcon = function (player, card, height, width) {
 	++ MOEBATTLEUI.AnimaCount;
@@ -745,10 +1091,10 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 		<div id="icon-' + card + '" class="icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"> \
 			<span></span> \
 			<img src="" alt="icon" class="" /> \
-			<div class="cost param"></div> \
-			<div class="def param"></div> \
-			<div class="atk param"></div> \
-			<div class="card-hp param"></div> \
+			<div class="cost"></div> \
+			<div class="def"></div> \
+			<div class="atk"></div> \
+			<div class="card-hp"></div> \
 		</div> \
 	');
 	$("#" + MOEPROJ.config.canvas + " #icon-" + card + " img").attr("src", MOEBATTLE.cards[card].photo).error(function () {
@@ -769,9 +1115,7 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 	}
 	var icon_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
 	icon_jq.hover(function (obj) {
-		MOEBATTLEUI.select.target = card;
-		MOEBATTLEUI.select.type = "icon";
-		MOEBATTLEUI.select.time = new Date();
+		MOEBATTLEUI.selectedIcon = card;
 		$(this).css("z-index", 1);
 		var detail_jq = MOEBATTLEUI.showDetail(card, "icon");
 		if (undefined === detail_jq) {
@@ -787,8 +1131,7 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 			}, 1000);
 		}*/
 	}, function (obj) {
-		MOEBATTLEUI.select.target = undefined;
-		MOEBATTLEUI.select.type = undefined;
+		MOEBATTLEUI.selectedIcon = undefined;
 		$(this).css("z-index", 0);
 		MOEBATTLEUI.hideDetail();
 		/*clearTimeout(timer);
@@ -802,10 +1145,10 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 		}*/
 	});
 	icon_jq.on("click", function () {
-		if (undefined === MOEBATTLEUI.select.target) {
+		if (undefined === MOEBATTLEUI.selectedIcon) {
 			return;
 		}
-		//actions.push({type: "strike", from: card, to: MOEBATTLEUI.select.target});
+		//actions.push({type: "strike", from: card, to: MOEBATTLEUI.selectedIcon});
 		MOEBATTLEUI.arrowFollow(card, function (from, to) {
 			if (undefined === from || undefined === to) {
 				return;
@@ -864,6 +1207,7 @@ MOEBATTLEUI.skillAnimate = function (card, skill) {
 
 // status
 
+MOEBATTLEUI.selectedStatus = undefined;
 // animation when creating an icon
 MOEBATTLEUI.createStatus = function (player, status) {
 	++ MOEBATTLEUI.AnimaCount;
@@ -887,9 +1231,7 @@ MOEBATTLEUI.createStatus = function (player, status) {
 	});
 	var status_jq = $("#" + MOEPROJ.config.canvas + " #status-" + status);
 	status_jq.hover(function (obj) {
-		MOEBATTLEUI.select.target = status;
-		MOEBATTLEUI.select.type = "status";
-		MOEBATTLEUI.select.time = new Date();
+		MOEBATTLEUI.selectedStatus = status;
 		$(this).css("z-index", 1);
 		var detail_jq = MOEBATTLEUI.showDetail(status, "status");
 		if (undefined === detail_jq) {
@@ -897,8 +1239,7 @@ MOEBATTLEUI.createStatus = function (player, status) {
 			return;
 		}
 	}, function (obj) {
-		MOEBATTLEUI.select.target = undefined;
-		MOEBATTLEUI.select.type = undefined;
+		MOEBATTLEUI.selectedStatus = undefined;
 		$(this).css("z-index", 0);
 		MOEBATTLEUI.hideDetail();
 	});

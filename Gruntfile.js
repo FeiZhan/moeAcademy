@@ -5,18 +5,18 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		concat: {
 			build: {
-				src  : ['src/*.js', 'src/**/*.js'],
-				dest : 'build/<%= pkg.name %>.js'
+				src  : ['src/moebattle.*.js', 'src/**/moebattle.*.js'],
+				dest : 'build/moebattle.js'
 			}
 		},
 		uglify: {
 			options: {
 				//report: 'min',
-				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+				banner: '/*! moebattle.js <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 			},
 			build: {
-				src: 'build/<%= pkg.name %>.js', //'src/<%= pkg.name %>.js',
-				dest: 'build/<%= pkg.name %>.min.js'
+				src: 'build/moebattle.js', //'src/<%= pkg.name %>.js',
+				dest: 'build/moebattle.min.js'
 			}
 		},
 		jshint: {

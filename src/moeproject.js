@@ -163,12 +163,12 @@ MOEPROJ.loadFile = function (file, func) {
 				var file1 = file.substring(0, file.length - 14) + "raw/" + data[i];
 				if (file1 in MOEPROJ.config.files) {
 					// run it again
-					func(MOEPROJ.config.files[file1]);
+					func(MOEPROJ.config.files[file1], file1);
 				}
 			}
 		}
 		else {
-			func(MOEPROJ.config.files[file]);
+			func(MOEPROJ.config.files[file], file);
 		}
 		return;
 	}
@@ -181,7 +181,7 @@ MOEPROJ.loadFile = function (file, func) {
 				MOEPROJ.config.ready[file] = true;
 				console.log("load", file);
 				// call callback
-				return func(script, textStatus);
+				return func(script, file);
 			})
 			.fail(function( jqxhr, settings, exception ) {
 				// fail also ready
@@ -194,7 +194,7 @@ MOEPROJ.loadFile = function (file, func) {
 		$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', file) );
 		MOEPROJ.config.files[file] = "css";
 		MOEPROJ.config.ready[file] = true;
-		return func();
+		return func(undefined, file);
 	}
 	else if (".json" == file.substr(file.length - 5)) {
 		// load a json file
@@ -228,7 +228,7 @@ MOEPROJ.loadJson = function (file, func) {
 		}
 		// call callback func
 		else if (typeof func == "function") {
-			func(data);
+			func(data, file);
 		}
 	})
 	.fail(function(jqXHR, textStatus, errorThrown) {

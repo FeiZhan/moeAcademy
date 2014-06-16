@@ -30,6 +30,6 @@ SKILLS.gainPositiveStatus = function (action) {
 	MOEBATTLE.actions.unshift({
 		type: "playerGainStatus",
 		target: action.from,
-		status: "joy",
+		status: 0,
 	});
 }

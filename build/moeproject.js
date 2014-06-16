@@ -1,10 +1,11 @@
+
 // moegirl battle
 
 MOEPROJ.MOEBATTLE = MOEPROJ.MOEBATTLE || new Object();
 var MOEBATTLE = MOEPROJ.MOEBATTLE;
 
 MOEBATTLE.ui;
-MOEBATTLE.data = ['data/cards.json'];
+MOEBATTLE.data = ['data/battle.json'];
 MOEBATTLE.load = function (canvas) {
 	// set ui
 	MOEBATTLE.ui = MOEPROJ.MOEBATTLEUI;
@@ -17,7 +18,8 @@ MOEBATTLE.load = function (canvas) {
 };
 // callback for loading json data
 MOEBATTLE.loadData = function (data) {
-	MOEBATTLE.cards = MOEBATTLE.cards.concat(data);
+	MOEBATTLE.battle = data;
+	MOEBATTLE.cards = MOEBATTLE.cards.concat(data.cards);
 };
 // run when loading completes
 MOEBATTLE.run = function () {
@@ -42,6 +44,7 @@ MOEBATTLE.game = {
 	// current player
 	current: -1,
 };
+MOEBATTLE.battle = new Array();
 MOEBATTLE.cards = new Array();
 MOEBATTLE.players = [
 	{
@@ -145,10 +148,8 @@ MOEBATTLE.deckShuffle = function (action) {
 }
 // shuffle array
 MOEBATTLE.shuffle = function (arr) {
-	//console.log(arr);
 	for (var j, x, i = arr.length; i; j = Math.floor(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x)
 	{}
-	//console.log(arr);
 };
 // prepare deck
 MOEBATTLE.deckPrepare = function (action) {
@@ -393,7 +394,7 @@ SKILLS.gainPositiveStatus = function (action) {
 	MOEBATTLE.actions.unshift({
 		type: "playerGainStatus",
 		target: action.from,
-		status: "joy",
+		status: 0,
 	});
 }
 
@@ -500,28 +501,37 @@ MOEBATTLEUI.load = function () {
 MOEBATTLEUI.AnimaCount = 0;
 MOEBATTLEUI.detail_lock = false;
 // show detail canvas
-MOEBATTLEUI.showDetail = function (card, dir) {
+MOEBATTLEUI.showDetail = function (card, type, dir) {
+	// only one detail canvas can be displayed
 	if (MOEBATTLEUI.detail_lock) {
 		return;
 	}
 	MOEBATTLEUI.detail_lock = true;
-	$("#" + MOEPROJ.config.canvas + " #detail .name").html(MOEBATTLE.cards[card].name);
-	$("#" + MOEPROJ.config.canvas + " #detail .cost").html("cost: " + (MOEBATTLE.cards[card].cost || 0));
-	$("#" + MOEPROJ.config.canvas + " #detail .atk").html("moe point: " + (MOEBATTLE.cards[card].atk || 0));
-	$("#" + MOEPROJ.config.canvas + " #detail .card-hp").html("hp: " + (MOEBATTLE.cards[card].hp || 0));
-	$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", MOEBATTLE.cards[card].photo || "");
-	$("#" + MOEPROJ.config.canvas + " #detail .card-detail").html(MOEBATTLE.cards[card].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
-	var detail_jq = $("#" + MOEPROJ.config.canvas + " #detail")
+	MOEBATTLEUI.addDetailContent(card, type);
+	var detail_jq = $("#" + MOEPROJ.config.canvas + " #detail");
 	detail_jq.show().css("visibility", "inherit");
-	var card_jq = $("#" + MOEPROJ.config.canvas + " #card-" + card);
-	if (0 == card_jq.length) {
+	var card_jq;
+	switch (type) {
+	case "icon":
 		card_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
+		break;
+	case "status":
+		card_jq = $("#" + MOEPROJ.config.canvas + " #status-" + card);
+		break;
+	case "card":
+	default:
+		card_jq = $("#" + MOEPROJ.config.canvas + " #card-" + card);
+		break;
 	}
+	// invalid parent card
 	if (0 == card_jq.length) {
 		return $("#" + MOEPROJ.config.canvas + " #detail");
 	}
+	// start animation
 	++ MOEBATTLEUI.AnimaCount;
+	// undefined direction
 	if (undefined === dir || "auto" == dir) {
+		// decide the direction to popup based on the location
 		var card_pos = card_jq.offset();
 		if (card_pos.top < 200) {
 			dir = "down";
@@ -537,7 +547,7 @@ MOEBATTLEUI.showDetail = function (card, dir) {
 		}
 	}
 	switch (dir) {
-	case "up":
+	case "up": // popup
 		detail_jq.css({
 			top: card_jq.offset().top,
 			left: card_jq.offset().left - 90,
@@ -552,7 +562,7 @@ MOEBATTLEUI.showDetail = function (card, dir) {
 			-- MOEBATTLEUI.AnimaCount;
 		});
 		break;
-	case "down":
+	case "down": // pop down
 		detail_jq.css({
 			top: card_jq.offset().top + card_jq.height(),
 			left: card_jq.offset().left - 90,
@@ -567,7 +577,7 @@ MOEBATTLEUI.showDetail = function (card, dir) {
 			-- MOEBATTLEUI.AnimaCount;
 		});
 		break;
-	case "left":
+	case "left": // pop left
 		detail_jq.css({
 			top: card_jq.offset().top,
 			left: card_jq.offset().left - 90,
@@ -582,7 +592,7 @@ MOEBATTLEUI.showDetail = function (card, dir) {
 			-- MOEBATTLEUI.AnimaCount;
 		});
 		break;
-	case "right":
+	case "right": // pop right
 		detail_jq.css({
 			top: card_jq.offset().top,
 			left: card_jq.offset().left - 90 + card_jq.width(),
@@ -605,6 +615,43 @@ MOEBATTLEUI.showDetail = function (card, dir) {
 	}
 	return $("#" + MOEPROJ.config.canvas + " #detail");
 }
+// add content to detail canvas
+MOEBATTLEUI.addDetailContent = function (card, type) {
+	switch (type) {
+	case "status":
+		$("#" + MOEPROJ.config.canvas + " #detail .name").html(MOEBATTLE.battle.status[status].name);
+		$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", MOEBATTLE.battle.status[status].photo || "");
+		$("#" + MOEPROJ.config.canvas + " #detail .card-detail").html(MOEBATTLE.battle.status[status].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
+		break;
+	case "card":
+	case "icon":
+	default:
+		$("#" + MOEPROJ.config.canvas + " #detail .name").html(MOEBATTLE.cards[card].name);
+		$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", MOEBATTLE.cards[card].photo || "");
+		if (MOEBATTLE.cards[card].cost) {
+			$("#" + MOEPROJ.config.canvas + " #detail .cost").html("cost: " + (MOEBATTLE.cards[card].cost));
+		} else {
+			// if not valid, hide
+			$("#" + MOEPROJ.config.canvas + " #detail .cost").html("cost: " + "N/A").hide();
+		}
+		if (MOEBATTLE.cards[card].atk) {
+			$("#" + MOEPROJ.config.canvas + " #detail .atk").html("moe point: " + (MOEBATTLE.cards[card].atk || 0));
+		} else {
+			$("#" + MOEPROJ.config.canvas + " #detail .atk").html("moe point: " + "N/A").hide();
+		}
+		if (MOEBATTLE.cards[card].hp) {
+			$("#" + MOEPROJ.config.canvas + " #detail .card-hp").html("hp: " + (MOEBATTLE.cards[card].hp || 0));
+		} else {
+			$("#" + MOEPROJ.config.canvas + " #detail .card-hp").html("hp: " + "N/A").hide();
+		}
+		$("#" + MOEPROJ.config.canvas + " #detail .card-detail").html(MOEBATTLE.cards[card].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
+		break;
+	}
+}
+// hide detail canvas
+MOEBATTLEUI.hideDetail = function () {
+}
+
 MOEBATTLEUI.arrow = {
 	status: "idle",
 };
@@ -767,12 +814,7 @@ MOEBATTLEUI.playerLoseStatus = function (target, status) {
 	}
 }
 MOEBATTLEUI.playerGainStatus = function (target, status) {
-	if (0 == target) {
-		$("#" + MOEPROJ.config.canvas + ' #mystatusarea').append('<div id="status-' + status + '" class="status" />');
-	}
-	else {
-		$("#" + MOEPROJ.config.canvas + ' #yourstatusarea').append('<div id="status-' + status + '" class="status" />');
-	}
+	MOEBATTLEUI.createStatus(target, status);
 }
 
 // card
@@ -820,7 +862,7 @@ MOEBATTLEUI.createCard = function (card) {
 		$(this).css("z-index", 1);
 		// expand
 		//$(this).animate({ height: "+=20px", width: "+=20px", left: "-=10px", top: "-=10px" }, "fast");
-		var detail_jq = MOEBATTLEUI.showDetail(card);
+		var detail_jq = MOEBATTLEUI.showDetail(card, "card");
 		if (undefined === detail_jq) {
 			console.warn("fail to drawCardAnima");
 			return;
@@ -912,7 +954,7 @@ MOEBATTLEUI.cardDraw = function (player, card, from) {
 		return;
 	}
 	// animation for drawing a card
-	var detail_jq = MOEBATTLEUI.showDetail(card);
+	var detail_jq = MOEBATTLEUI.showDetail(card, "card");
 	if (undefined === detail_jq) {
 		console.warn("fail to cardDraw ui");
 		return;
@@ -1075,7 +1117,7 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 	icon_jq.hover(function (obj) {
 		MOEBATTLEUI.selectedIcon = card;
 		$(this).css("z-index", 1);
-		var detail_jq = MOEBATTLEUI.showDetail(card);
+		var detail_jq = MOEBATTLEUI.showDetail(card, "icon");
 		if (undefined === detail_jq) {
 			console.warn("fail to drawCardAnima");
 			return;
@@ -1085,7 +1127,7 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 			// show detail after hovering
 			timer2 = setTimeout(function () {
 				timer2 = null;
-				MOEBATTLEUI.showDetail(card);
+				MOEBATTLEUI.showDetail(card, "icon");
 			}, 1000);
 		}*/
 	}, function (obj) {
@@ -1170,165 +1212,243 @@ MOEBATTLEUI.skillAnimate = function (card, skill) {
 	}, 30);
 }
 
-var MOEPROJECT = MOEPROJECT || new Object();
-MOEPROJECT.config = {
-	files: ['data/moegirls.json'],
-	canvas: undefined,
-	show_detail: false
-};
-// initialize by loading json files
-MOEPROJECT.init = function () {
-	function loadJson(file, func) {
-		$.getJSON(file, function(data, textStatus, jqXHR) {
-			console.log("loaded", file);
-			if (typeof func == "function") {
-				func(data);
-			}
-		})
-		.fail(function(jqXHR, textStatus, errorThrown) {
-			console.error("data load error", textStatus, errorThrown);
-		})
-		.always(function(data, textStatus, jqXHR) {
-		});
+// status
+
+MOEBATTLEUI.selectedStatus = undefined;
+// animation when creating an icon
+MOEBATTLEUI.createStatus = function (player, status) {
+	++ MOEBATTLEUI.AnimaCount;
+	var area_jq;
+	switch (player) {
+	case 1:
+		area_jq = $("#" + MOEPROJ.config.canvas + ' #yourstatusarea');
+		break;
+	case 0:
+	default:
+		area_jq = $("#" + MOEPROJ.config.canvas + ' #mystatusarea');
+		break;
 	}
-	// load card files
-	for (var i in MOEPROJECT.config.files) {
-		loadJson(MOEPROJECT.config.files[i], function (data) {
-			MOEPROJECT.moegirls = MOEPROJECT.moegirls.concat(data);
-		});
-	}
-};
-// init when page loaded
-$(function() {
-	MOEPROJECT.init();
-});
-// main function for moecascade
-MOEPROJECT.run = function (canvas) {
-	if (undefined === canvas || $("#" + canvas).length == 0) {
-		console.error("undefined canvas", canvas);
-		return;
-	}
-	// save canvas id
-	MOEPROJECT.config.canvas = canvas;
-	$("#" + canvas).addClass("moecascade");
-	MOEPROJECT.showFrame();
-	MOEPROJECT.waitLoad();
-};
-// wait for loading json
-MOEPROJECT.waitLoad = function () {
-	if (0 == MOEPROJECT.moegirls.length) {
-		console.log("loading");
-		setTimeout(MOEPROJECT.waitLoad, 300);
-		return;
-	}
-	for (var i = 0; i < 30; ++ i) {
-		MOEPROJECT.addMoegirl();
-	}
-};
-MOEPROJECT.showFrame = function () {
-	MOEPROJECT.order = new Array();
-	var html = 
-	'<div id="wrapper">'
-		+ '<div id="columns">'
-		+ '</div>'
-	+ '</div>'
-	+ '<div id="detail"><a href="#" class="" target="_blank"><img border="0" src="resources/nophoto.jpg" alt="photo" width="100%" class="" /></a><a href="#" class="" target="_blank"><span></span></a><table class="" border="0"></table></div>';
-	$("#" + MOEPROJECT.config.canvas).empty().append(html);
-	$("#" + MOEPROJECT.config.canvas + " #detail img").error(function () {
+	area_jq.append(' \
+		<div id="status-' + status + '" class="status myuse"> \
+			<img src="" alt="status" class="" /> \
+		</div> \
+	');
+	$("#" + MOEPROJ.config.canvas + " #status-" + status + " img").attr("src", MOEBATTLE.battle.status[status].photo).error(function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
+	var status_jq = $("#" + MOEPROJ.config.canvas + " #status-" + status);
+	status_jq.hover(function (obj) {
+		MOEBATTLEUI.selectedStatus = status;
+		$(this).css("z-index", 1);
+		var detail_jq = MOEBATTLEUI.showDetail(status, "status");
+		if (undefined === detail_jq) {
+			console.warn("fail to drawCardAnima");
+			return;
+		}
+	}, function (obj) {
+		MOEBATTLEUI.selectedStatus = undefined;
+		$(this).css("z-index", 0);
+		$("#" + MOEPROJ.config.canvas + " #detail")
+		.animate({
+			//left: '+=240px',
+			width: '0px'
+		}, "fast", function () {
+			$(this).hide();
+			MOEBATTLEUI.detail_lock = false;
+		});
+	});
+	$("#" + MOEPROJ.config.canvas + ' #status-' + status).hide().css({visibility: "inherit"}).fadeIn("fast", function () {
+		-- MOEBATTLEUI.AnimaCount;
+	});
+	return $("#" + MOEPROJ.config.canvas + ' #status-' + status);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// moegirl cascade
+
+MOEPROJ.MOECASC = MOEPROJ.MOECASC || new Object();
+var MOECASC = MOEPROJ.MOECASC;
+
+MOECASC.ui;
+MOECASC.data = ['data/filenames.json'];
+MOECASC.moegirls = new Array();
+// the list of each moegirl to display
+MOECASC.list = new Array();
+// load html and files
+MOECASC.load = function (canvas) {
+	// set ui
+	MOECASC.ui = MOEPROJ.MOECASCUI;
+	MOECASC.ui.init(canvas);
+	MOEPROJ.load({
+		canvas: canvas,
+		html: MOECASC.ui.html,
+		data: MOECASC.data,
+	}, MOECASC.run, MOECASC.loadData);
+};
+// callback for loading json data
+MOECASC.loadData = function (data) {
+	MOECASC.moegirls = MOECASC.moegirls.concat(data);
+};
+// run when loading completes
+MOECASC.run = function () {
+	// add init moegirls
+	MOECASC.list = MOECASC.shuffleMoegirls(24);
+	for (var i = 0; i < 24; ++ i) {
+		MOECASC.addPin( MOECASC.moegirls[MOECASC.list[i]] );
+	}
+	MOECASC.ui.load();
+};
+// get a list of shuffled moegirl numbers
+MOECASC.shuffleMoegirls = function (num) {
+	var list = new Array();
+	for (var i = 0; i < num; ++ i) {
+		var ran = Math.floor( Math.random() * MOECASC.moegirls.length );
+		list.push(ran);
+	}
+	return list;
+}
+// get a list of moegirl details
+MOECASC.getMoegirls = function (orders) {
+	var list = new Array();
+	for (var i in orders) {
+		// deep copy
+		list.push( jQuery.extend(true, {}, MOECASC.moegirls[ orders[i] ]) )
+	}
+	return list;
+}
+
+// moegirl battle ui
+
+MOEPROJ.MOECASCUI = MOEPROJ.MOECASCUI || new Object();
+var MOECASCUI = MOEPROJ.MOECASCUI;
+MOECASCUI.html = ' \
+<div id="wrapper"> \
+	<div id="columns"> \
+	</div> \
+</div> \
+<div id="detail"> \
+	<a href="#" target="_blank"> \
+		<img border="0" src="resources/nophoto.jpg" alt="photo" /> \
+	</a> \
+	<a href="#" target="_blank"> \
+		<span></span> \
+	</a> \
+	<table border="0"></table> \
+</div> \
+';
+MOECASCUI.show_detail = false;
+MOECASCUI.init = function (canvas) {
+	document.title = "萌娘图鉴";
+	$("#" + canvas).addClass("moecascade");
+};
+MOECASCUI.load = function () {
 	// nothing happens when clicking detail div
-	$("#" + MOEPROJECT.config.canvas + " #detail").click(function( event ) {
+	$("#" + MOEPROJ.config.canvas + " #detail").click(function( event ) {
 		event.stopPropagation();
 	});
 	var page_click = function (evt) {
-		switch (MOEPROJECT.config.show_detail) {
+		switch (MOECASCUI.show_detail) {
 		case true:
 			// when clicking out of detail div, detail disappears
 			if (evt.target.id != "detail") {
-				$("#" + MOEPROJECT.config.canvas + " #detail").fadeOut("slow");
-				$("#" + MOEPROJECT.config.canvas + " #columns .pin").removeClass("opaque");
-				MOEPROJECT.config.show_detail = false;
+				$("#" + MOEPROJ.config.canvas + " #detail").fadeOut("fast");
+				$("#" + MOEPROJ.config.canvas + " #columns .pin").removeClass("opaque");
+				MOECASCUI.show_detail = false;
 			}
 			break;
 		case false:
 			break;
 		case "showing":
 			// when clicking moegirls, don't make detail div disappear
-			MOEPROJECT.config.show_detail = true;
+			MOECASCUI.show_detail = true;
 			break;
 		default:
 			break;
 		}
 	}
-	$('html').off("click").on("click", page_click);
-	// check if scrolling
+	// click on the webpage
+	$('html').unbind("click").off("click", page_click);
+	$('html').on("click", page_click);
 	var page_scroll = function() {
 		clearTimeout($.data(this, 'scrollTimer'));
 		$.data(this, 'scrollTimer', setTimeout(function() {
-			// if scroll to buttom
+			// if scroll to bottom
 			if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
-				for (var i = 0; i < 20; ++ i) {
-					MOEPROJECT.addMoegirl();
+				// add new moegirls
+				var last = MOECASC.list.length;
+				MOECASC.list = MOECASC.list.concat(MOECASC.shuffleMoegirls(24));
+				for (var i = 0; i < 24; ++ i) {
+					MOECASC.addPin( MOECASC.moegirls[MOECASC.list[last + i]] );
 				}
 			}
 		}, 250));
 	}
-	$(window).off("scroll").on("scroll", page_scroll);
-	$("#" + MOEPROJECT.config.canvas).hide().css({visibility: "inherit"}).fadeIn("slow");
-}
-MOEPROJECT.moegirls = new Array();
-// the order of each moegirl
-MOEPROJECT.order = new Array();
+	// check if scrolling
+	$(window).off("scroll", page_scroll).on("scroll", page_scroll);
+	// fade in
+	$("#" + MOEPROJ.config.canvas).hide().css({visibility: "inherit"}).fadeIn("slow");
+};
 // append a moegirl div to cascade
-MOEPROJECT.addMoegirl = function () {
-	var ran = Math.floor( Math.random() * MOEPROJECT.moegirls.length );
-	var html =
-		'<div class="pin">'
-			+ '<img src="' + MOEPROJECT.moegirls[ran].photo + '" />'
-			+ '<p>' + MOEPROJECT.moegirls[ran].name + '</p>'
-		+ '</div>';
-	$("#" + MOEPROJECT.config.canvas + " #columns").append(html);
-	$("#" + MOEPROJECT.config.canvas + " #columns .pin:last img").error(function () {
+MOECASC.addPin = function (data) {
+	var html = ' \
+<div class="pin"> \
+	<img src="' + data.photo + '" /> \
+	<p>' + data.name + '</p> \
+</div> \
+	';
+	$("#" + MOEPROJ.config.canvas + " #columns").append(html);
+	$("#" + MOEPROJ.config.canvas + " #columns .pin:last img").error(function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
-	MOEPROJECT.order.push(ran);
 	// when showing detail, make it opaque
-	if (true == MOEPROJECT.config.show_detail) {
-		$("#" + MOEPROJECT.config.canvas + " #columns .pin:last").addClass("opaque");
+	if (true == MOECASCUI.show_detail) {
+		$("#" + MOEPROJ.config.canvas + " #columns .pin:last").addClass("opaque");
 	}
 	// click to show detail div
-	$("#" + MOEPROJECT.config.canvas + " #columns .pin:last").click(function () {
-		MOEPROJECT.config.show_detail = "showing";
-		var moegirl = MOEPROJECT.moegirls[MOEPROJECT.order[$(this).prevAll().length]];
-		MOEPROJECT.showDetail(moegirl);
+	$("#" + MOEPROJ.config.canvas + " #columns .pin:last").click(function () {
+		MOECASCUI.show_detail = "showing";
+		var moegirl = MOECASC.moegirls[MOECASC.list[$(this).prevAll().length]];
+		MOECASC.showDetail(moegirl);
 	});
 }
 // show detail div
-MOEPROJECT.showDetail = function (moegirl) {
+MOECASC.showDetail = function (moegirl) {
 	// make all pins opaque
-	$("#" + MOEPROJECT.config.canvas + " #columns .pin").addClass("opaque");
+	$("#" + MOEPROJ.config.canvas + " #columns .pin").addClass("opaque");
 	// clear link and photo
-	$("#" + MOEPROJECT.config.canvas + " #detail span").empty();
-	$("#" + MOEPROJECT.config.canvas + " #detail a").attr("href", "#");
-	$("#" + MOEPROJECT.config.canvas + " #detail img").attr("src", "resources/nophoto.jpg");
-	var table = $("#" + MOEPROJECT.config.canvas + " #detail table");
+	$("#" + MOEPROJ.config.canvas + " #detail span").empty();
+	$("#" + MOEPROJ.config.canvas + " #detail a").attr("href", "#");
+	$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", "resources/nophoto.jpg");
+	var table = $("#" + MOEPROJ.config.canvas + " #detail table");
 	table.empty();
-	table.append($('<tr><th class=""></th><th class=""></th></tr>'));
+	table.append($('<tr><th></th><th></th></tr>'));
 	// for each attribute
 	for (var i in moegirl) {
 		if ("name" == i) {
-			$("#" + MOEPROJECT.config.canvas + " #detail span").html(moegirl["name"]);
+			$("#" + MOEPROJ.config.canvas + " #detail span").html(moegirl["name"]);
 		}
 		// append photo
 		else if ("photo" == i) {
-			$("#" + MOEPROJECT.config.canvas + " #detail img").attr("src", moegirl["photo"]);
+			$("#" + MOEPROJ.config.canvas + " #detail img").attr("src", moegirl["photo"]);
 		}
 		// append link
 		else if ("link" == i) {
-			$("#" + MOEPROJECT.config.canvas + " #detail a").attr("href", moegirl["link"]);
+			$("#" + MOEPROJ.config.canvas + " #detail a").attr("href", moegirl["link"]);
 		}
-		else if ("firstp" == i || "catlinks" == i) {
+		else if ("firstp" == i || "catlinks" == i || "old_photo" == i) {
 			// ignore
 		} else { // append an attribute
 			var th = i;
@@ -1350,7 +1470,7 @@ MOEPROJECT.showDetail = function (moegirl) {
 			table.append($('<tr><td>' + th + '</td><td>' + td + '</td></tr>'));
 		}
 	}
-	$("#" + MOEPROJECT.config.canvas + " #detail").hide().css({visibility: "inherit"}).fadeIn("slow");
+	$("#" + MOEPROJ.config.canvas + " #detail").hide().css({visibility: "inherit"}).fadeIn("fast");
 }
 
 // moegirl craft
@@ -1493,8 +1613,10 @@ var MOECRAFTUI = MOEPROJ.MOECRAFTUI;
 MOECRAFTUI.html = ' \
 	<div id="table"></div> \
 	<div id="hand"></div> \
-	<button id="craftbutton" type="button">craft</button> \
-	<button id="drawbutton" type="button">draw cards</button> \
+	<a href="#" id="craftbutton">craft</a> \
+	<a href="#" id="drawbutton">drawCards</a> \
+	<a href="#" id="peek">peek</a> \
+	<span id="formula"></span> \
 ';
 MOECRAFTUI.init = function (canvas) {
 	document.title = "萌娘合成";
@@ -1521,6 +1643,8 @@ MOECRAFTUI.load = function () {
 	$("#drawbutton").click(function () {
 		MOECRAFT.drawRandom();
 	});
+    // draw button callback
+	$("#peek").click(MOECRAFTUI.peekFormula);
 };
 MOECRAFTUI.drawCard = function (card) {
 	$("#" + MOEPROJ.config.canvas + ' #hand').append('<div id="card-' + card.id + '" class="card">' + card.name + '</div>');
@@ -1553,156 +1677,23 @@ MOECRAFTUI.doCraft = function (input, output) {
 		$("#" + MOEPROJ.config.canvas + ' #table').append(element);
 	}
 };
-
-// moegirl illustration
-
-var MOEILLUSTRA = MOEILLUSTRA || new Object();
-MOEILLUSTRA.config = {
-	files: ['data/moegirls.json'],
-	canvas: undefined,
-	count: 0,
-	current_illustra: 0,
-};
-// initialize by loading json files
-MOEILLUSTRA.init = function () {
-	function loadJson(file) {
-		$.getJSON(file, function(data, textStatus, jqXHR) {
-			console.log("loaded", file);
-			MOEILLUSTRA.loadIllustra(data);
-		})
-		.fail(function(jqXHR, textStatus, errorThrown) {
-			console.error("data load error", textStatus, errorThrown);
-		})
-		.always(function(data, textStatus, jqXHR) {
-		});
-	}
-	// load json files
-	for (var i in MOEILLUSTRA.config.files) {
-		loadJson(MOEILLUSTRA.config.files[i]);
-	}
-};
-// init when page loaded
-$(function() {
-	MOEILLUSTRA.init();
-});
-// main function
-MOEILLUSTRA.run = function (canvas) {
-	if (undefined === canvas || $("#" + canvas).length == 0) {
-		console.error("undefined canvas", canvas);
-		return;
-	}
-	// save canvas id
-	MOEILLUSTRA.config.canvas = canvas;
-	MOEILLUSTRA.showFrame();
-	MOEILLUSTRA.waitLoad();
-};
-// wait for loading json
-MOEILLUSTRA.waitLoad = function () {
-	if (0 == MOEILLUSTRA.illustra.length) {
-		console.log("loading");
-		setTimeout(MOEILLUSTRA.waitLoad, 300);
-		return;
-	}
-	MOEILLUSTRA.showRandom();
-};
-// illustrations for moegirls
-MOEILLUSTRA.illustra = new Array();
-// load illustrations from json
-MOEILLUSTRA.loadIllustra = function (data) {
-	MOEILLUSTRA.illustra = MOEILLUSTRA.illustra.concat(data);
-	console.log("loaded illustra ", MOEILLUSTRA.illustra.length);
-}
-// show the framework
-MOEILLUSTRA.showFrame = function () {
-	var canvas = $("#" + MOEILLUSTRA.config.canvas);
-	// clear canvas
-	canvas.empty();
-	// create image photo
-	canvas.append($('<a href="#" class="id-pagelink pagelink" target="_blank"><img border="0" src="resources/nophoto.jpg" alt="photo" width="20%" class="id-photo photo" /></a>'));
-	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").hide();
-	// create random button
-	canvas.append($('<a href="#" class="id-randombutton randombutton">Random</a>'));
-	$("#" + MOEILLUSTRA.config.canvas + " .id-randombutton").click(MOEILLUSTRA.showRandom);
-	// create an empty table for information
-	canvas.append($('<table class="id-table" border="0"></table>'));
-	canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
-};
-// show a random illustra
-MOEILLUSTRA.showRandom = function () {
-	// random
-	var r = Math.floor( Math.random() * MOEILLUSTRA.illustra.length );
-	MOEILLUSTRA.config.current_illustra = r;
-	MOEILLUSTRA.showIllustra(MOEILLUSTRA.illustra[MOEILLUSTRA.config.current_illustra]);
-}
-// show an illustra
-MOEILLUSTRA.showIllustra = function (illustra) {
-	var table = $("#" + MOEILLUSTRA.config.canvas + " .id-table");
-	// clear the table
-	table.empty();
-	table.append($('<tr><th class="id-th0"></th><th class="id-th1"></th></tr>'));
-	// clear link and photo
-	$("#" + MOEILLUSTRA.config.canvas + " .id-pagelink").attr("href", "#");
-	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").hide();
-	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").attr("src", "resources/nophoto.jpg");
-	// for each attribute
-	for (var i in illustra) {
-		// append photo
-		if ("photo" == i) {
-			$("#" + MOEILLUSTRA.config.canvas + " .id-photo").attr("src", illustra[i]);
+MOECRAFTUI.peekFormula = function () {
+	var r = Math.floor( (Math.random() * MOECRAFT.craft.length) );
+	var formula = "";
+	for (var i in MOECRAFT.craft[r].input) {
+		if (i > 0) {
+			formula += " + ";
 		}
-		// append link
-		else if ("link" == i) {
-			$("#" + MOEILLUSTRA.config.canvas + " .id-pagelink").attr("href", illustra["link"]);
-		}
-		else if ("firstp" == i || "catlinks" == i) {
-			// ignore
-		} else { // append an attribute
-			var th = i;
-			if ("name" == th) {
-				th = "名字";
-			}
-			var td = illustra[i];
-			// stringify a json
-			if (typeof illustra[i] == "array" || typeof illustra[i] == "object") {
-				td = JSON.stringify(illustra[i]);
-			}
-			// if too long
-			if (td.length > 30) {
-				//td = td.substring(0, 30) + "...";
-			}
-			table.append($('<tr><td>' + th + '</td><td>' + td + '</td></tr>'));
-		}
+		formula += MOECRAFT.craft[r].input[i];
 	}
-	// fade in
-	$("#" + MOEILLUSTRA.config.canvas + " .id-photo").hide().css({visibility: "inherit"}).fadeIn("slow");
-	table.hide().css({visibility: "inherit"}).fadeIn("slow");
+	$("#formula").html(formula);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // moeproject
 
+// namespace
 var MOEPROJ = MOEPROJ || new Object();
+// parse url parameters
 var urlparam = function () {
 	// This function is anonymous, is executed immediately and 
 	// the return value is assigned to QueryString!
@@ -1725,23 +1716,25 @@ var urlparam = function () {
 	}
 	return query_string;
 } ();
+// parse url hash
 urlparam["hash"] = window.location.hash.length > 0 ? window.location.hash.substring(1) : "";
-
+// config parameters
 MOEPROJ.config = {
 	canvas: "",
-	html: "",
-	code: new Array(),
-	data: new Array(),
+	files: new Object(),
 	ready: new Object(),
 };
+// initialize the project
 MOEPROJ.init = function () {
 	// run corresponding view when sidebar is clicked
 	$("#sidebar a").click(function () {
 		var choice = $(this).attr("id").substring(3);
+		// append to hash
 		window.location.hash = choice;
 		MOEPROJ.run(choice);
 	});
 };
+// run the corresponding view based on choice
 MOEPROJ.run = function (choice) {
 	// change the active button in the sidebar
 	var active = $("#sidebar a.active");
@@ -1753,7 +1746,7 @@ MOEPROJ.run = function (choice) {
 	// run the corresponding code
 	switch (choice) {
 	case "cascade":
-		MOEPROJECT.run("cascade");
+		MOECASC.load("cascade");
 		break;
 	case "illustra":
 		MOEILLUSTRA.run("illustra");
@@ -1772,111 +1765,172 @@ MOEPROJ.run = function (choice) {
 		break;
 	}
 };
+// load html and files based on config of view
 MOEPROJ.load = function (config, run_func, data_func) {
+	// set canvas
 	if ("canvas" in config) {
 		if (undefined === config.canvas || $("#" + config.canvas).length == 0) {
-			console.error("undefined canvas", config.canvas);
+			console.error("invalid canvas", config.canvas);
 			return;
 		}
 		MOEPROJ.config.canvas = config.canvas;
 	}
+	// append html to the webpage
 	if (("html" in config) && "" != config.html) {
-		MOEPROJ.config.html = config.html;
 		var canvas = $("#" + MOEPROJ.config.canvas);
 		// clear the canvas
 		canvas.empty();
 		// append html
-		canvas.append($(MOEPROJ.config.html));
+		canvas.append($(config.html));
 		// when image loading in error
 		$("#" + MOEPROJ.config.canvas + " img").error(function () {
 			$(this).attr("src", "resources/nophoto.jpg");
 		});
+		// fade in
 		canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
 	}
+	// load code files
 	if ("code" in config) {
+		// array of files
 		if (typeof config.code == "array" || typeof config.code == "object") {
 			for (var i in config.code) {
 				MOEPROJ.loadFile(config.code[i]);
 			}
 		}
 		else {
+			// a single file
 			MOEPROJ.loadFile(config.code);
 		}
 	}
+	// load data files
 	if ("data" in config) {
+		// array of files
 		if (typeof config.data == "array" || typeof config.data == "object") {
 			for (var i in config.data) {
 				MOEPROJ.loadFile(config.data[i], data_func);
 			}
 		}
 		else {
+			// a single file. call data callback function
 			MOEPROJ.loadFile(config.data, data_func);
 		}
 	}
+	// wait for loading, call run callback when loaded
 	MOEPROJ.waitLoad(run_func);
 };
+// wait for load files
 MOEPROJ.waitLoad = function (func) {
 	var flag = true;
+	// for each file to load
 	for (var i in MOEPROJ.config.ready) {
+		// if not loaded
 		if (! MOEPROJ.config.ready[i]) {
 			flag = false;
 			break;
 		}
 	}
+	// if not loaded, wait again
 	if (! flag) {
 		setTimeout(function () {
 			MOEPROJ.waitLoad(func);
 		}, 300);
 	}
 	else {
-		func();
+		// call callback func
+		return func();
 	}
 };
+// load a file
 MOEPROJ.loadFile = function (file, func) {
+	// define a new file index
 	if (! (file in MOEPROJ.config.ready)) {
 		MOEPROJ.config.ready[file] = false;
 	}
-	else {
+	else { // already done, don't load again
+		// special case: filenames
+		if ("filenames.json" == file.slice(-14)) {
+			var data = MOEPROJ.config.files[file];
+			for (var i = 0; i < data.length; ++ i) {
+				var file1 = file.substring(0, file.length - 14) + "raw/" + data[i];
+				if (file1 in MOEPROJ.config.files) {
+					// run it again
+					func(MOEPROJ.config.files[file1]);
+				}
+			}
+		}
+		else {
+			func(MOEPROJ.config.files[file]);
+		}
 		return;
 	}
 	if (".js" == file.substr(file.length - 3)) {
+		// load a js script
 		$.getScript(file)
 			.done(function( script, textStatus ) {
+				MOEPROJ.config.files[file] = script;
+				// set file as ready
 				MOEPROJ.config.ready[file] = true;
 				console.log("load", file);
+				// call callback
 				return func(script, textStatus);
 			})
 			.fail(function( jqxhr, settings, exception ) {
+				// fail also ready
+				MOEPROJ.config.ready[file] = true;
 				console.error(exception);
 			});
 	}
 	else if (".css" == file.substr(file.length - 4)) {
+		// load a css
 		$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', file) );
+		MOEPROJ.config.files[file] = "css";
 		MOEPROJ.config.ready[file] = true;
 		return func();
 	}
 	else if (".json" == file.substr(file.length - 5)) {
+		// load a json file
 		return MOEPROJ.loadJson(file, func);
 	}
 	else {
+		// ignore it
 		MOEPROJ.config.ready[file] = true;
 	}
 };
+// load a json file
 MOEPROJ.loadJson = function (file, func) {
+	// define a new file index
+	if (! (file in MOEPROJ.config.ready)) {
+		MOEPROJ.config.ready[file] = false;
+	}
 	$.getJSON(file, function(data, textStatus, jqXHR) {
+		MOEPROJ.config.files[file] = data;
+		// set file as ready
 		MOEPROJ.config.ready[file] = true;
-		console.log("loaded", file);
-		if (typeof func == "function") {
+		// don't show moegirls' name
+		if ("data/raw" != file.substr(0, 8)) {
+			console.log("load", file);
+		}
+		// special case: filenames
+		if ("filenames.json" == file.slice(-14)) {
+			for (var i = 0; i < data.length && i < 700; ++ i) {
+				// load again
+				MOEPROJ.loadJson(file.substring(0, file.length - 14) + "raw/" + data[i], func);
+			}
+		}
+		// call callback func
+		else if (typeof func == "function") {
 			func(data);
 		}
 	})
 	.fail(function(jqXHR, textStatus, errorThrown) {
-		console.error("data load error", textStatus, errorThrown);
+		// fail also ready
+		MOEPROJ.config.ready[file] = true;
+		//console.error("data load error", textStatus, errorThrown);
 	})
 	.always(function(data, textStatus, jqXHR) {
 	});
 };
-// Get function from string, with or without scopes (by Nicolas Gauthier)
+// Get function from string, with or without scopes
 MOEPROJ.getFunctionFromString = function (string) {
     var scope = window;
     var scopeSplit = string.split('.');
@@ -1903,7 +1957,7 @@ MOEQUEST.config = {
 	results: new Array(),
 };
 MOEQUEST.ui;
-MOEQUEST.data = ['data/moegirls.json'];
+MOEQUEST.data = ['data/filenames.json'];
 // moegirl list
 MOEQUEST.moegirls = new Array();
 MOEQUEST.load = function (canvas) {
@@ -1918,8 +1972,11 @@ MOEQUEST.load = function (canvas) {
 };
 // callback for loading json data
 MOEQUEST.loadData = function (data) {
-	// add to moegirl list
-	MOEQUEST.moegirls = MOEQUEST.moegirls.concat(data);
+	// just keep moegirls
+	if ("发色" in data) {
+		// add to moegirl list
+		MOEQUEST.moegirls.push(data);
+	}
 };
 // run when loading completes
 MOEQUEST.run = function (canvas) {
@@ -1932,12 +1989,16 @@ MOEQUEST.run = function (canvas) {
 // create a quest
 MOEQUEST.createQuest = function () {
 	var q = undefined;
-	while (undefined === q) {
+	var count = 0;
+	while (undefined === q && count < 50) {
+		++ count;
 		q = MOEQUEST.createMoegirlQuest();
 	}
-	MOEQUEST.config.quest = q;
-	MOEQUEST.ui.showQuest(MOEQUEST.config.quest);
-	return MOEQUEST.config.quest;
+	if (undefined !== q) {
+		MOEQUEST.config.quest = q;
+		MOEQUEST.ui.showQuest(MOEQUEST.config.quest);
+		return MOEQUEST.config.quest;
+	}
 }
 // create a quest based on moegirl list
 MOEQUEST.createMoegirlQuest = function () {
@@ -2078,6 +2139,7 @@ MOEQUESTUI.load = function () {
 };
 // show the quest
 MOEQUESTUI.showQuest = function (quest) {
+	// wanna peek the answer?
 	window["peek"] = MOEQUEST.config.quest.correct;
 	MOEQUEST.clearChecked();
 	// hide result image
@@ -2185,20 +2247,6 @@ MOEQUEST.clearChecked = function () {
 	});
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // moeproject parser
 
 var MOEPROJ = MOEPROJ || new Object();
@@ -2206,6 +2254,7 @@ var MOEPARSER = MOEPROJ.MOEPARSER || new Object();
 
 var fs = require('fs');
 var jsdom = require("jsdom");
+MOEPARSER.PROJ_ROOT = '../';
 MOEPARSER.ENTRY_URL = [
 // english
 //"http://en.moegirl.org/Amakase_Miharu",
@@ -2219,12 +2268,13 @@ MOEPARSER.ENTRY_URL = [
 //"http://zh.moegirl.org/%E5%8D%83%E7%9F%B3%E6%8A%9A%E5%AD%90",
 ];
 MOEPARSER.contents = new Object();
-
+// parse all specified pages
 MOEPARSER.parse = function () {
 	for (var i in MOEPARSER.ENTRY_URL) {
 		MOEPARSER.parsePage(MOEPARSER.ENTRY_URL[i]);
 	}
 };
+// parse one page, save to json format
 MOEPARSER.parsePage = function (url) {
 	if (url in MOEPARSER.contents) {
 		return;
@@ -2236,56 +2286,72 @@ MOEPARSER.parsePage = function (url) {
 				console.error("error parsing url", errors);
 				return;
 			}
+			// create a key for the new url
 			if (undefined === MOEPARSER.contents[url]) {
 				MOEPARSER.contents[url] = new Object();
 			}
+			// moegirl's name
 			MOEPARSER.contents[url].name = MOEPARSER.parseDom(window, "#firstHeading > span");
+			// get error from the webpage
 			if (undefined === MOEPARSER.contents[url].name) {
 				console.warn(window.$("p").html());
 				return;
 			}
+			// first line
 			MOEPARSER.contents[url].first = MOEPARSER.parseDom(window, "#mw-content-text > p:nth-child(4)");
+			// all the links in the content
 			MOEPARSER.contents[url].links = new Array();
 			window.$("#mw-content-text a").each(function () {
 				MOEPARSER.contents[url].links.push(window.$(this).attr("href"));
 			});
+			// photo
 			//#mw-content-text > div.infotemplatebox > table > tbody > tr:nth-child(1) > td > a > img
 			MOEPARSER.contents[url].photo = window.$("#mw-content-text > div.infotemplatebox > table > tr:nth-child(1) > td > a > img").attr('src');
+			// info table
 			MOEPARSER.contents[url].info = new Object();
 			var info = window.$("#mw-content-text > div.infotemplatebox > table > tr");
 			info.each(function (index, value) {
+				// key on the left
 				var key = window.$('#mw-content-text > div.infotemplatebox > table > tr:nth-child(' + index + ') > th').text();
+				// remove invalid symbols
 				key = key.replace(/\s/g, '');
 				if (undefined !== key && "" != key && " " != key) {
+					// content on the right
 					var content = window.$('#mw-content-text > div.infotemplatebox > table > tr:nth-child(' + index + ') > td').text();
+					// remove invalid symbols
 					content = content.replace(/^\s+|\s+$/g,'').replace(/(\r\n|\n|\r)/gm,"");
 					MOEPARSER.contents[url].info[key] = content;
 				}
 			});
+			// category
 			MOEPARSER.contents[url].categories = new Array();
 			var category = window.$("#mw-normal-catlinks > ul > li");
 			category.each(function (index, value) {
 				var text = window.$(this).text();
+				// remove invalid symbols
 				text = text.replace(/^\s+|\s+$/g,'').replace(/(\r\n|\n|\r)/gm,"");
 				MOEPARSER.contents[url].categories.push(text);
 			});
-
+			// filename based on moegirl's name
 			var filename = MOEPARSER.contents[url].name; //.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 			filename = 'data/raw/' + filename + '.json';
+			// write json to file
 			fs.writeFile(filename, JSON.stringify(MOEPARSER.contents[url], null, 4), function (err) {
 				if (err) {
-					console.log("file error", err);
+					console.error("file error", err);
 				} else {
 					console.log("JSON saved to " + filename);
 				}
 			}); 
-			console.log(MOEPARSER.contents[url].name, MOEPARSER.contents[url].info);
+			//console.info(MOEPARSER.contents[url].name, MOEPARSER.contents[url].info);
 		}
 	);
 };
+// parse an element in the DOM
 MOEPARSER.parseDom = function (window, selector) {
 	return window.$(selector).html();
 };
+// return all the elements for the selector in the DOM
 MOEPARSER.parseDomAll = function (window, selector) {
 	var ret = new Array();
 	window.$(selector).each(function () {
@@ -2293,55 +2359,164 @@ MOEPARSER.parseDomAll = function (window, selector) {
 	});
 	return ret;
 }
+// separate the raw data into each moegirl
 MOEPARSER.separate = function () {
+	// open json file
 	var json = require('../data/raw.json');
 	var count = 0;
 	for (var i in json) {
 		++ count;
 		if ("object" == typeof json[i] && ("name" in json[i])) {
+			// new file name
 			var filename = json[i].name;
 			filename = 'data/raw/' + filename + '.json';
+			// write json to file
 			fs.writeFile(filename, JSON.stringify(json[i], null, 4), function (err) {
 				if (err) {
-					console.log("file error", err);
+					console.error("file error", err);
 				} else {
 					console.log("JSON saved to " + filename);
 				}
 			}); 
 		}
 	}
-	console.log(count);
+	console.info(count);
+}
+// change photo path to the current one
+MOEPARSER.changePhoto = function () {
+	// get file name list
+	MOEPARSER.eachFile("data/raw/", function (err, files) {
+		// for each moegirl file
+		for (var i in files) {
+			// try to load the json file
+			try {
+				var json = require("../" + files[i]);
+			}
+			catch (err) {
+				//@bug usually error
+				//console.error("require error:", err);
+				continue;
+			}
+			// if no photo
+			if (! ("photo" in json)) {
+				continue;
+			}
+			// if no old photo, copy current one to old. if have old photo, don't do twice
+			if (! ("old_photo" in json)) {
+				json.old_photo = json.photo;
+			}
+			// modify the photo file path
+			json.photo = json.old_photo.replace("1-ps.googleusercontent.com/x/zh.moegirl.org/", "").replace("static.mengniang.org/thumb", "static.mengniang.org/common/thumb");
+			var end = json.photo.indexOf(".pagespeed");
+			if (end >= 0) {
+				json.photo = json.photo.substr(0, end);
+			}
+			var name0 = json.photo.indexOf(".jpg/");
+			var name1 = json.photo.indexOf("250px-");
+			var remove = json.photo.substring(name0 + 5, name1);
+			json.photo = json.photo.replace(remove, "");
+			//console.info(json.photo, " === ", json.old_photo);
+			// write it back
+			fs.writeFile(files[i], JSON.stringify(json, null, 4), function (err) {
+				if (err) {
+					//console.error("file error", err);
+				} else {
+					//console.log("JSON saved to " + files[i]);
+				}
+			}); 
+		}
+	});
+};
+// put moegirl file paths into filenames.json
+MOEPARSER.saveFileNames = function () {
+	var path = MOEPARSER.PROJ_ROOT + "data/raw/";
+	MOEPARSER.eachFile(path, function (err, files) {
+		for (var i in files) {
+			files[i] = files[i].substr(path.length);
+		}
+		// write them back
+		fs.writeFile(MOEPARSER.PROJ_ROOT + "data/filenames.json", JSON.stringify(files, null, 4), function (err) {
+			if (err) {
+				console.error("file error", err);
+			} else {
+				console.log("JSON saved to ", MOEPARSER.PROJ_ROOT + "data/filenames.json");
+			}
+		});
+	});
+};
+// return a list of file names
+MOEPARSER.eachFile = function (path, callback) {
+ // the callback gets ( err, files) where files is an array of file names
+ if( typeof callback !== 'function' ) return
+ var
+  result = []
+  , files = [ path.replace( /\/\s*$/, '' ) ]
+ function traverseFiles (){
+  if( files.length ) {
+   var name = files.shift()
+   fs.stat(name, function( err, stats){
+	if( err ){
+	 if( err.errno == 34 ) traverseFiles()
+// in case there's broken symbolic links or a bad path
+// skip file instead of sending error
+	 else callback(err)
+	}
+	else if ( stats.isDirectory() ) fs.readdir( name, function( err, files2 ){
+	 if( err ) callback(err)
+	 else {
+	  files = files2
+	   .map( function( file ){ return name + '/' + file } )
+	   .concat( files )
+	  traverseFiles()
+	 }
+	})
+	else{
+	 result.push(name)
+	 traverseFiles()
+	}
+   })
+  }
+  else callback( null, result )
+ }
+ traverseFiles()
 }
 
-MOEPARSER.parse();
+
+//MOEPARSER.parse();
+//MOEPARSER.changePhoto();
+MOEPARSER.saveFileNames();
+
+// server side
+// to start the server:
+// goto project root directory (moeAcademy);
+// $ node src/server.js
 
 var http = require("http"),
     url = require("url"),
     path = require("path"),
     fs = require("fs")
     port = process.argv[2] || 8080;
-
+// create a server
 http.createServer(function(request, response) {
 
   var uri = url.parse(request.url).pathname
     , filename = path.join(process.cwd(), uri);
-
   var contentTypesByExtension = {
     '.html': "text/html",
     '.css':  "text/css",
     '.js':   "text/javascript"
   };
-
-  path.exists(filename, function(exists) {
+  // if file exists
+  fs.exists(filename, function(exists) {
     if(!exists) {
       response.writeHead(404, {"Content-Type": "text/plain"});
       response.write("404 Not Found\n");
       response.end();
       return;
     }
-
-    if (fs.statSync(filename).isDirectory()) filename += '../index.html';
-
+    // default file name
+    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+    // read and display it
     fs.readFile(filename, "binary", function(err, file) {
       if(err) {        
         response.writeHead(500, {"Content-Type": "text/plain"});
@@ -2360,4 +2535,4 @@ http.createServer(function(request, response) {
   });
 }).listen(parseInt(port, 10));
 
-console.log("Static file server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
+console.log("Static file server running at => http://localhost:" + port + "/ CTRL + C to shutdown");
