@@ -1,11 +1,454 @@
 {
-	"formula" : [
+	"cards" : [
+		{
+			"name": "傲娇",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/e/e7/Moes.png/250px-Moes.png"
+		},
+		{
+			"name": "五更琉璃",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/4/45/Gokou_Ruri.jpg/250px-Gokou_Ruri.jpg"
+		},
+		{
+			"name": "御坂美琴",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/6/67/6770373.jpg/250px-6770373.jpg"
+		},
+		{
+			"name": "立华奏",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/8/8c/11258649.png/250px-11258649.png"
+		},
+		{
+			"name": "桂雏菊",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/d/de/Hinagiku.jpg/250px-Hinagiku.jpg"
+		},
+		{
+			"name": "菲特·泰斯特罗莎·哈拉温",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/8/8e/Myfate.jpg/250px-Myfate.jpg"
+		},
+		{
+			"name": "秋山澪",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/f/f7/7aad4ae7442cd561b83820ea.jpg/250px-7aad4ae7442cd561b83820ea.jpg"
+		},
+		{
+			"name": "逢坂大河",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/0/08/Aisaka_Taiga.jpg/250px-Aisaka_Taiga.jpg"
+		},
+		{
+			"name": "中野梓",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/7/7d/Nakano_Azusa_K-ON.jpg/250px-Nakano_Azusa_K-ON.jpg"
+		},
+		{
+			"name": "巴麻美",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/4/44/Mami_Tomoe_Original_Design.jpg/250px-Mami_Tomoe_Original_Design.jpg"
+		},
+		{
+			"name": "园城寺怜",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/1/18/Chara_senriyama_toki.png/250px-Chara_senriyama_toki.png"
+		},
+		{
+			"name": "鹿目圆香",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/7/7c/39499039.jpg/250px-39499039.jpg"
+		},
+		{
+			"name": "柊镜",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/4/4c/Dongjin.jpg/250px-Dongjin.jpg"
+		},
+		{
+			"name": "古手梨花",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/4/46/5f5314a80d29bc8dca130c01.jpg/250px-5f5314a80d29bc8dca130c01.jpg"
+		},
+		{
+			"name": "翠星石",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/e/e6/%E7%BF%A0%E6%98%9F%E7%9F%B3.jpg/250px-%E7%BF%A0%E6%98%9F%E7%9F%B3.jpg"
+		},
+		{
+			"name": "高町奈叶",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/3/3d/Nanoha.jpg/250px-Nanoha.jpg"
+		},
+		{
+			"name": "木之本樱",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/c/c0/Kinomoto_Sakura.jpg/250px-Kinomoto_Sakura.jpg"
+		},
+		{
+			"name": "美树沙耶加",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/e/eb/32060946.jpg/250px-32060946.jpg"
+		},
+		{
+			"name": "佐仓杏子",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/8/81/16646793.jpg/250px-16646793.jpg"
+		},
+		{
+			"name": "三千院凪",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/7/71/Sanzenin_Nagi.jpg/250px-Sanzenin_Nagi.jpg"
+		},
+		{
+			"name": "平泽唯",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/f/f6/Hirasawa_yui_2.jpg/250px-Hirasawa_yui_2.jpg"
+		},
+		{
+			"name": "龙宫礼奈",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/f/f2/1891186.jpg/250px-1891186.jpg"
+		},
+		{
+			"name": "夏娜",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/8/8c/Moe_203160_shana_thighhighs.jpg/250px-Moe_203160_shana_thighhighs.jpg"
+		},
+		{
+			"name": "苍星石",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/5/59/%E8%92%BC%E6%98%9F%E7%9F%B3.jpg/250px-%E8%92%BC%E6%98%9F%E7%9F%B3.jpg"
+		},
+		{
+			"name": "小鸟游六花",
+			"type": "hidden",
+			"photo": "http://static.mengniang.org/common/thumb/f/fc/Poster.png/250px-Poster.png"
+		},
+		{
+			"name": "泪痣",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/6/6a/Izumi_Konata.jpg/250px-Izumi_Konata.jpg"
+		},
+		{
+			"name": "中二病",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/6/68/Zhongerbingyeyaotanlianai2.png/250px-Zhongerbingyeyaotanlianai2.png"
+		},
+		{
+			"name": "姬发式",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/6/6b/Isayama_Yomi.jpg/250px-Isayama_Yomi.jpg"
+		},
+		{
+			"name": "元气",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/9/97/Saten_Ruiko.jpg/250px-Saten_Ruiko.jpg"
+		},
+		{
+			"name": "安全裤",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/9/95/B5b36b161fc6ee3921a4e9c4.jpg/180px-B5b36b161fc6ee3921a4e9c4.jpg"
+		},
+		{
+			"name": "超能力",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "三无",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/c/c1/%E6%9C%80%E5%AE%89%E9%9D%99%E7%9A%84%E6%88%BF%E9%97%B4.jpg/250px-%E6%9C%80%E5%AE%89%E9%9D%99%E7%9A%84%E6%88%BF%E9%97%B4.jpg"
+		},
+		{
+			"name": "白发",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/2/2f/White_Hair_Girl.jpg/250px-White_Hair_Girl.jpg"
+		},
+		{
+			"name": "翅膀",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/4/46/Tachibana_Kanade_Angel.jpg/250px-Tachibana_Kanade_Angel.jpg"
+		},
+		{
+			"name": "粉发",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "腹黑",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "双马尾",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "魔法少女",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/e/e3/33065601.jpg/250px-33065601.jpg"
+		},
+		{
+			"name": "萝莉",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "绝对领域",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/8/8c/Moe_203160_shana_thighhighs.jpg/250px-Moe_203160_shana_thighhighs.jpg"
+		},
+		{
+			"name": "蓝白胖次",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/0/04/7333b02djw1drshbjfj28j.jpg/250px-7333b02djw1drshbjfj28j.jpg"
+		},
+		{
+			"name": "毒舌",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "贫乳",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "猫娘",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "巨乳",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "螺旋双马尾",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/6/6a/Tomoe_Mami.jpg/250px-Tomoe_Mami.jpg"
+		},
+		{
+			"name": "弱娇",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "百合",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "白丝",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/e/e1/3694558.jpg/300px-3694558.jpg"
+		},
+		{
+			"name": "神",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "双胞胎",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "左撇子",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "口头禅",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "巫女",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "猫",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "人偶",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/0/0e/Side_img_04.png"
+		},
+		{
+			"name": "萝莉装",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "天然呆",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "梨花头",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/8/8f/P_satsuki.gif/250px-P_satsuki.gif"
+		},
+		{
+			"name": "披风",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "短发",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "吃货",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "单马尾",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "虎牙",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/4/4e/560863.jpg/250px-560863.jpg"
+		},
+		{
+			"name": "露脐装",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "音乐少女",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "糟糕",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/6/69/Shirai_Kuroko_orz.jpg/250px-Shirai_Kuroko_orz.jpg"
+		},
+		{
+			"name": "病娇",
+			"type": "",
+			"photo": "http://static.mengniang.org/common/thumb/f/f1/Gasai_Yono.jpg/250px-Gasai_Yono.jpg"
+		},
+		{
+			"name": "黑化",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "薛定谔的胖次",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "黑长直",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "伪郎",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "無口",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "呆毛",
+			"type": "",
+			"photo": ""
+		},
+		{
+			"name": "眼罩",
+			"type": "",
+			"photo": ""
+		}
+	],
+	"formulas" : [
 	{
-		"input" : ["a", "b"],
-		"output" : ["c"]
+		"input" : ["傲娇", "泪痣", "中二病", "姬发式"],
+		"output" : ["五更琉璃"]
 	}, {
 		"input" : ["傲娇", "元气", "安全裤", "超能力"],
 		"output" : ["御坂美琴"]
+	}, {
+		"input" : ["三无", "白发", "翅膀"],
+		"output" : ["立华奏"]
+	}, {
+		"input" : ["粉发", "傲娇", "腹黑"],
+		"output" : ["桂雏菊"]
+	}, {
+		"input" : ["双马尾", "魔法少女", "萝莉", "绝对领域"],
+		"output" : ["菲特·泰斯特罗莎·哈拉温"]
+	}, {
+		"input" : ["姬发式", "蓝白胖次"],
+		"output" : ["秋山澪"]
+	}, {
+		"input" : ["傲娇", "毒舌", "萝莉", "绝对领域"],
+		"output" : ["逢坂大河"]
+	}, {
+		"input" : ["双马尾", "傲娇", "贫乳", "猫娘"],
+		"output" : ["中野梓"]
+	}, {
+		"input" : ["巨乳", "螺旋双马尾", "魔法少女"],
+		"output" : ["巴麻美"]
+	}, {
+		"input" : ["弱娇", "百合"],
+		"output" : ["园城寺怜"]
+	}, {
+		"input" : ["萝莉", "白丝", "神", "双马尾"],
+		"output" : ["鹿目圆香"]
+	}, {
+		"input" : ["双马尾", "双胞胎", "左撇子"],
+		"output" : ["柊镜"]
+	}, {
+		"input" : ["口头禅", "巫女", "猫", "腹黑"],
+		"output" : ["古手梨花"]
+	}, {
+		"input" : ["人偶", "萝莉", "腹黑", "萝莉装"],
+		"output" : ["翠星石"]
+	}, {
+		"input" : ["双马尾", "元气", "魔法少女", "绝对领域"],
+		"output" : ["高町奈叶"]
+	}, {
+		"input" : ["萝莉", "魔法少女", "元气", "天然呆", "梨花头"],
+		"output" : ["木之本樱"]
+	}, {
+		"input" : ["元气", "魔法少女", "披风", "短发"],
+		"output" : ["美树沙耶加"]
+	}, {
+		"input" : ["吃货", "魔法少女", "单马尾", "虎牙", "露脐装"],
+		"output" : ["佐仓杏子"]
+	}, {
+		"input" : ["傲娇", "贫乳", "双马尾"],
+		"output" : ["三千院凪"]
+	}, {
+		"input" : ["天然呆", "音乐少女"],
+		"output" : ["平泽唯"]
+	}, {
+		"input" : ["糟糕", "病娇", "黑化", "薛定谔的胖次"],
+		"output" : ["龙宫礼奈"]
+	}, {
+		"input" : ["傲娇", "黑长直", "绝对领域"],
+		"output" : ["夏娜"]
+	}, {
+		"input" : ["人偶", "萝莉", "伪郎", "無口"],
+		"output" : ["苍星石"]
+	}, {
+		"input" : ["呆毛", "眼罩", "中二病", "绝对领域"],
+		"output" : ["小鸟游六花"]
 	}
 	]
 }

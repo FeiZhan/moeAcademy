@@ -218,7 +218,7 @@ html {
 	width: 100px;
 	margin: 5px 5px;
 	border: 1px solid Black;
-	background: -webkit-linear-gradient(left, LightCyan, aquamarine);
+	background: -webkit-linear-gradient(left top, LightCyan, LightPink);
 	text-align: center;
 	overflow: hidden;
 }

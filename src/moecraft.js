@@ -17,22 +17,8 @@ MOECRAFT.load = function (canvas) {
 };
 // callback for loading json data
 MOECRAFT.loadData = function (data) {
-	MOECRAFT.craft = MOECRAFT.craft.concat(data.formula);
-	// extract card list from inputs and outputs of formulas
-	for (var j in data.formula)
-	{
-		for (var k in data.formula[j])
-		{
-			if ("input" == k)
-			{
-				MOECRAFT.cards = MOECRAFT.cards.concat(data.formula[j][k]);
-			}
-			else if ("output" == k)
-			{
-				MOECRAFT.cards = MOECRAFT.cards.concat(data.formula[j][k]);
-			}
-		}
-	}
+	MOECRAFT.craft = MOECRAFT.craft.concat(data.formulas);
+	MOECRAFT.cards = MOECRAFT.cards.concat(data.cards);
 };
 // run when loading completes
 MOECRAFT.run = function () {
@@ -43,6 +29,12 @@ MOECRAFT.run = function () {
 		}
 		if ("output" in MOECRAFT.craft[i]) {
 			MOECRAFT.craft[i].output.sort();
+		}
+	}
+	// get a list of cards which can be drawn
+	for (var i in MOECRAFT.cards) {
+		if ("hidden" != MOECRAFT.cards[i].type) {
+			MOECRAFT.drawableCards.push(i);
 		}
 	}
 	// prepare ui
@@ -57,6 +49,8 @@ MOECRAFT.run = function () {
 MOECRAFT.craft = new Array();
 // all cards
 MOECRAFT.cards = new Array();
+// drawable cards
+MOECRAFT.drawableCards = new Array();
 // cards on the table
 MOECRAFT.table = new Array();
 // the last of card id
@@ -66,11 +60,11 @@ MOECRAFT.myCards = new Object();
 // draw a random card
 MOECRAFT.drawRandom = function () {
 	var r = Math.random();
-	var num = Math.floor(r * MOECRAFT.cards.length);
+	var num = Math.floor(r * MOECRAFT.drawableCards.length);
 	var card = {
 		id: ++ MOECRAFT.lastId,
-		num: num,
-		name: MOECRAFT.cards[num],
+		num: MOECRAFT.drawableCards[num],
+		name: MOECRAFT.cards[ MOECRAFT.drawableCards[num] ].name,
 		status: "hand",
 	};
 	MOECRAFT.myCards[card.id] = card;
@@ -85,7 +79,9 @@ MOECRAFT.putCardOnTable = function (card_id) {
 MOECRAFT.takeCardBack = function (card_id) {
 	card_id = parseInt(card_id.substr(5));
 	var index = MOECRAFT.table.indexOf(card_id);
-	MOECRAFT.table.splice(index, 1);
+	if (-1 != index) {
+		MOECRAFT.table.splice(index, 1);
+	}
 	MOECRAFT.myCards[card_id].status = "hand";
 }
 // do the crafting
@@ -121,6 +117,12 @@ MOECRAFT.doCraft = function () {
 					name: MOECRAFT.craft[i].output[j],
 					status: "table",
 				};
+				for (var k in MOECRAFT.cards) {
+					if (MOECRAFT.craft[i].output[j] == MOECRAFT.cards[k].name) {
+						card.num = k;
+						break;
+					}
+				}
 				MOECRAFT.myCards[card.id] = card;
 				MOECRAFT.table.push(card.id);
 			}
@@ -156,6 +158,7 @@ MOECRAFTUI.load = function () {
 			var element = $(ui.draggable[0]).detach();
 			$("#" + MOEPROJ.config.canvas + ' #table').append(element);
 		},
+		// take it back
 		out: function(event, ui) {
 			MOECRAFT.takeCardBack(ui.draggable[0].id);
 		},
@@ -172,7 +175,21 @@ MOECRAFTUI.load = function () {
 	$("#peek").click(MOECRAFTUI.peekFormula);
 };
 MOECRAFTUI.drawCard = function (card) {
-	$("#" + MOEPROJ.config.canvas + ' #hand').append('<div id="card-' + card.id + '" class="card">' + card.name + '</div>');
+	var html = '\
+<div id="card-' + card.id + '" class="card"> \
+	<span>' + card.name + '</span> \
+	<img src="resources/nophoto.jpg" alt="photo" /> \
+</div> \
+	';
+	$("#" + MOEPROJ.config.canvas + ' #hand').append(html);
+	$("#" + MOEPROJ.config.canvas + ' #card-' + card.id + ' span').html(card.name);
+	$("#" + MOEPROJ.config.canvas + ' #card-' + card.id + ' img').error(function () {
+		$(this).attr("src", "resources/nophoto.jpg");
+	});
+	// add photo
+	if (undefined !== MOECRAFT.cards[card.num].photo && "" != MOECRAFT.cards[card.num].photo) {
+		$("#" + MOEPROJ.config.canvas + ' #card-' + card.id + ' img').attr("src", MOECRAFT.cards[card.num].photo);
+	}
 	var card_jq = $("#" + MOEPROJ.config.canvas + ' #card-' + card.id);
 	card_jq.draggable({
 		stop: function (evt, ui) {

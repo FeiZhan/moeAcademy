@@ -37,6 +37,7 @@
 	position: absolute;
 	top: 60%;
 	left: 80%;
+	background-color: black;
 }
 .moecraft .card {
 	position: relative;
@@ -47,7 +48,7 @@
 	width: 100px;
 	border: 1px solid Black;
 	margin: 5px 5px;
-	background-color: White;
+	background: -webkit-linear-gradient(left top, LightCyan, LightPink);
 	text-align: center;
 }
 .moecraft .card span {
