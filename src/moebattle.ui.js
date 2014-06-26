@@ -50,9 +50,11 @@ MOEBATTLEUI.init = function (canvas) {
 MOEBATTLEUI.load = function () {
 	// endbutton
 	$("#" + MOEPROJ.config.canvas + ' #endbutton').on("click", function () {
+		// don't work if disabled
 		if ($(this).hasClass('disable')) {
 			return;
 		}
+		// end player
 		MOEBATTLE.actions.push({
 			type: "playerEnd"
 		});
@@ -65,8 +67,9 @@ MOEBATTLEUI.load = function () {
 				return;
 			}
 			card = card.substring(5);
+			// drop the card to board
 			if (card in MOEBATTLE.cards) {
-				MOEBATTLEUI.cardDrop(card);
+				MOEBATTLEUI.Card.drop(card);
 			}
 		},
 		out: function (event, ui) {
@@ -81,7 +84,9 @@ MOEBATTLEUI.load = function () {
 	});
 };
 
+// lock for animation
 MOEBATTLEUI.AnimaCount = 0;
+// the selected item
 MOEBATTLEUI.select = {
 	target: undefined,
 	type: undefined,
@@ -669,21 +674,27 @@ MOEBATTLEUI.playerGainStatus = function (target, status) {
 }
 
 // card
-
-// create a card
-MOEBATTLEUI.createCard = function (card) {
+MOEBATTLEUI.Card = function () {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Card.count;
+	++ MOEBATTLEUI.Card.count;
+};
+MOEBATTLEUI.Card.prototype.canvas = "card";
+MOEBATTLEUI.Card.count = 0;
+MOEBATTLEUI.Card.prototype.show = function (card) {
 	++ MOEBATTLEUI.AnimaCount;
-	$("#" + MOEPROJ.config.canvas).append(' \
-		<div id="card-' + card + '" class=" card"> \
-			<span>test</span> \
-			<img src="" alt="photo" /> \
-			<div class="card-detail"></div> \
-			<div class="cost param"></div> \
-			<div class="def param"></div> \
-			<div class="atk param"></div> \
-			<div class="card-hp param"></div> \
-		</div> \
-	');
+	var html = ' \
+<div id="card-' + card + '" class=" card"> \
+	<span>test</span> \
+	<img src="" alt="photo" /> \
+	<div class="card-detail"></div> \
+	<div class="cost param"></div> \
+	<div class="def param"></div> \
+	<div class="atk param"></div> \
+	<div class="card-hp param"></div> \
+</div> \
+	';
+	$("#" + MOEPROJ.config.canvas).append(html);
 	var card_jq = $("#" + MOEPROJ.config.canvas + " #card-" + card);
 	card_jq.draggable({
 		stop: function (event, ui) {
@@ -725,7 +736,7 @@ MOEBATTLEUI.createCard = function (card) {
 	return $("#" + MOEPROJ.config.canvas + " #card-" + card);
 };
 // drop a card into board
-MOEBATTLEUI.cardDrop = function (card) {
+MOEBATTLEUI.Card.drop = function (card) {
 	++ MOEBATTLEUI.AnimaCount;
 	var card_jq = $("#" + MOEPROJ.config.canvas + " #card-" + card);
 	// if not my turn, put card back
@@ -788,7 +799,7 @@ MOEBATTLEUI.cardDrop = function (card) {
 	-- MOEBATTLEUI.AnimaCount;
 }
 // draw card animation
-MOEBATTLEUI.cardDraw = function (player, card, from) {
+MOEBATTLEUI.Card.draw = function (player, card, from) {
 	// invalid
 	if (player < 0 || player >= MOEBATTLE.players.length) {
 		return;
@@ -831,7 +842,8 @@ MOEBATTLEUI.cardDraw = function (player, card, from) {
 				width: "100px"
 			}, "slow", function () {
 				// create a card
-				var card_jquery = MOEBATTLEUI.createCard(card);
+				var card_obj = new MOEBATTLEUI.Card();
+				var card_jquery = card_obj.show(card);
 				// put inside myhand canvas
 				if (0 == player) {
 					$("#" + MOEPROJ.config.canvas + " #myhand").append(card_jquery.detach());
@@ -856,7 +868,7 @@ MOEBATTLEUI.cardDraw = function (player, card, from) {
 		}, 200);
 	});
 };
-MOEBATTLEUI.cardUseWithoutTarget = function (card) {
+MOEBATTLEUI.Card.useWithoutTarget = function (card) {
 	++ MOEBATTLEUI.AnimaCount;
 	// expand and disappear
 	$("#" + MOEPROJ.config.canvas + ' #card-' + card).animate({
@@ -871,7 +883,7 @@ MOEBATTLEUI.cardUseWithoutTarget = function (card) {
 		-- MOEBATTLEUI.AnimaCount;
 	});
 }
-MOEBATTLEUI.cardAddToArea = function (card, player) {
+MOEBATTLEUI.Card.addToArea = function (card, player) {
 	++ MOEBATTLEUI.AnimaCount;
 	// shrink to image size
 	var height = $("#" + MOEPROJ.config.canvas + " #card-" + card + " img").height();
@@ -891,10 +903,10 @@ MOEBATTLEUI.cardAddToArea = function (card, player) {
 	if (width < 10) {
 		width = 10;
 	}
-	MOEBATTLEUI.moveToAreaAnima(card, player, height, width);
+	MOEBATTLEUI.Card.moveToAreaAnima(card, player, height, width);
 	-- MOEBATTLEUI.AnimaCount;
 }
-MOEBATTLEUI.moveToAreaAnima = function (card, player, height, width) {
+MOEBATTLEUI.Card.moveToAreaAnima = function (card, player, height, width) {
 	++ MOEBATTLEUI.AnimaCount;
 	// move to player's area
 	$("#" + MOEPROJ.config.canvas + ' #card-' + card).animate({
