@@ -82,7 +82,6 @@ MOEBATTLEUI.load = function () {
 };
 
 MOEBATTLEUI.AnimaCount = 0;
-MOEBATTLEUI.detail_lock = false;
 MOEBATTLEUI.select = {
 	target: undefined,
 	type: undefined,
@@ -95,7 +94,6 @@ MOEBATTLEUI.Detail = function (target_jq, type) {
 	this.canvas += MOEBATTLEUI.Detail.count;
 	++ MOEBATTLEUI.Detail.count;
 	if (undefined === type) {
-		console.debug(target_jq, target_jq[0])
 		// find type in element id
 		var id = target_jq.attr("id");
 		var index = id.indexOf("-");
@@ -264,6 +262,7 @@ MOEBATTLEUI.Detail.prototype.hide = function () {
 	});
 }
 
+MOEBATTLEUI.detail_lock = false;
 //@deprecated show detail canvas
 MOEBATTLEUI.showDetail = function (card, type, dir) {
 	// only one detail canvas can be displayed
@@ -906,17 +905,28 @@ MOEBATTLEUI.moveToAreaAnima = function (card, player, height, width) {
 	}, "slow", function () {
 		$(this).remove();
 		// add an icon in area
-		MOEBATTLEUI.createIcon(player, card, height, width);
+		var char = new MOEBATTLEUI.Char(card, player, height, width);
 		MOEBATTLEUI.skillAnimate(card, "skill0");
 		-- MOEBATTLEUI.AnimaCount;
 	});
 }
 
-// character
+// icon
+MOEBATTLEUI.Icon = function () {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Icon.count;
+	++ MOEBATTLEUI.Icon.count;
+};
+MOEBATTLEUI.Icon.prototype.canvas = "icon";
+MOEBATTLEUI.Icon.count = 0;
+MOEBATTLEUI.Icon.prototype.show = function () {
+};
 
-// animation when creating an icon
-MOEBATTLEUI.createIcon = function (player, card, height, width) {
-	++ MOEBATTLEUI.AnimaCount;
+// character
+MOEBATTLEUI.Char = function (card, player, height, width) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Char.count;
+	++ MOEBATTLEUI.Char.count;
 	var area_jq;
 	switch (player) {
 	case 1:
@@ -927,16 +937,23 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 		area_jq = $("#" + MOEPROJ.config.canvas + ' #myarea');
 		break;
 	}
-	area_jq.append(' \
-		<div id="icon-' + card + '" class="icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"> \
-			<span></span> \
-			<img src="" alt="icon" class="" /> \
-			<div class="cost param"></div> \
-			<div class="def param"></div> \
-			<div class="atk param"></div> \
-			<div class="card-hp param"></div> \
-		</div> \
-	');
+	this.show(card, area_jq, height, width);
+};
+MOEBATTLEUI.Char.prototype.canvas = "char";
+MOEBATTLEUI.Char.count = 0;
+MOEBATTLEUI.Char.prototype.show = function (card, area_jq, height, width) {
+	++ MOEBATTLEUI.AnimaCount;
+	var html = ' \
+<div id="icon-' + card + '" class="icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"> \
+	<span></span> \
+	<img src="" alt="icon" class="" /> \
+	<div class="cost param"></div> \
+	<div class="def param"></div> \
+	<div class="atk param"></div> \
+	<div class="card-hp param"></div> \
+</div> \
+	';
+	area_jq.append(html);
 	$("#" + MOEPROJ.config.canvas + " #icon-" + card + " img").attr("src", MOEBATTLE.cards[card].photo).error(function () {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
@@ -944,15 +961,6 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 	$("#" + MOEPROJ.config.canvas + " #icon-" + card + " div.def").html(MOEBATTLE.cards[card].def || 0);
 	$("#" + MOEPROJ.config.canvas + " #icon-" + card + " div.card-hp").html(MOEBATTLE.cards[card].hp || 0);
 	$("#" + MOEPROJ.config.canvas + " #icon-" + card + " div.cost").html(MOEBATTLE.cards[card].cost || 0);
-	var timer, timer2, degree = 0;
-	// rotate when hovering
-	var rotate = function (obj) {
-		$(obj).css({ WebkitTransform: 'rotate(' + degree + 'deg)' });
-		$(obj).css({ '-moz-transform': 'rotate(' + degree + 'deg)' });
-		timer = setTimeout(function () {
-			++ degree; rotate(obj);
-		}, 5);
-	}
 	var icon_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
 	var detail;
 	icon_jq.hover(function (obj) {
@@ -961,28 +969,11 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 		MOEBATTLEUI.select.time = new Date();
 		$(this).css("z-index", 1);
 		detail = new MOEBATTLEUI.Detail(icon_jq);
-		/*rotate(obj.currentTarget);
-		if (! timer2) {
-			// show detail after hovering
-			timer2 = setTimeout(function () {
-				timer2 = null;
-				detail = new MOEBATTLEUI.Detail(icon_jq);
-			}, 1000);
-		}*/
 	}, function (obj) {
 		MOEBATTLEUI.select.target = undefined;
 		MOEBATTLEUI.select.type = undefined;
 		$(this).css("z-index", 0);
 		detail.hide();
-		/*clearTimeout(timer);
-		// move back
-		degree = 0;
-		$(obj.currentTarget).css({ WebkitTransform: 'rotate(0deg)' });
-		$(obj.currentTarget).css({ '-moz-transform': 'rotate(0deg)' });
-		if (timer2) {
-			clearTimeout(timer2);
-			timer2 = null;
-		}*/
 	});
 	icon_jq.on("click", function () {
 		if (undefined === MOEBATTLEUI.select.target) {
@@ -990,6 +981,7 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 		}
 		//actions.push({type: "strike", from: card, to: MOEBATTLEUI.select.target});
 		var arrow = new MOEBATTLEUI.Arrow(icon_jq, function (from, to) {
+			// hit target icon
 			if (undefined === from || undefined === to) {
 				return;
 			}
@@ -1015,7 +1007,7 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 		});
 		
 	})
-	$("#" + MOEPROJ.config.canvas + ' #icon-' + card).hide().css({visibility: "inherit"}).fadeIn("fast", function () {
+	icon_jq.hide().css({visibility: "inherit"}).fadeIn("fast", function () {
 		-- MOEBATTLEUI.AnimaCount;
 	});
 	return $("#" + MOEPROJ.config.canvas + ' #icon-' + card);
