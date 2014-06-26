@@ -36,7 +36,7 @@ html {
 	left: 90%;
 }
 
-.moebattle #detail {
+.moebattle .detail {
 	position: absolute;
 	height: 80%;
 	width: 40%;
@@ -46,42 +46,42 @@ html {
 	border: 1px solid black;
 	overflow: auto;
 }
-.moebattle #detail div.name {
+.moebattle .detail div.name {
 	width: 100%;
 	margin: 3% 0px;
 	text-align: center;
 	font-size: large;
 }
-.moebattle #detail div.cost {
+.moebattle .detail div.cost {
 	position: absolute;
 	top: 15%;
 	left: 1%;
 	text-align: center;
 }
-.moebattle #detail div.def {
+.moebattle .detail div.def {
 	position: absolute;
 	top: 15%;
 	left: 35%;
 	text-align: center;
 }
-.moebattle #detail div.atk {
+.moebattle .detail div.atk {
 	position: absolute;
 	top: 25%;
 	left: 1%;
 	text-align: center;
 }
-.moebattle #detail div.card-hp {
+.moebattle .detail div.card-hp {
 	position: absolute;
 	top: 25%;
 	left: 35%;
 	text-align: center;
 }
-.moebattle #detail img {
+.moebattle .detail img {
 	max-height: 40%;
 	max-width: 40%;
 	float: right;
 }
-.moebattle #detail .card-detail {
+.moebattle .detail .card-detail {
 	position: absolute;
 	top: 50%;
 	margin: 3%;
@@ -95,6 +95,7 @@ html {
 	left: 50%;
 	visibility: hidden;
 	z-index: 10;
+	box-shadow: 15px 10px 3px 0px #888888;
 }
 .moebattle .arrow canvas {
 	height: 100%;

@@ -33,7 +33,7 @@ MOEBATTLEUI.html = ' \
 <div id="anime"> \
 	<img src="#" alt="anime" class="" /> \
 </div> \
-<div id="detail"> \
+<div id="detail" class="detail"> \
 	<div class="name"></div> \
 	<div class="cost"></div> \
 	<div class="def"></div> \
@@ -89,7 +89,182 @@ MOEBATTLEUI.select = {
 	time: new Date()
 };
 
-// show detail canvas
+// detail view of a card/icon
+MOEBATTLEUI.Detail = function (target_jq, type) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Detail.count;
+	++ MOEBATTLEUI.Detail.count;
+	if (undefined === type) {
+		console.debug(target_jq, target_jq[0])
+		// find type in element id
+		var id = target_jq.attr("id");
+		var index = id.indexOf("-");
+		if (index >= 0) {
+			type = id.substring(0, index);
+		}
+	}
+	this.show(target_jq, type);
+};
+MOEBATTLEUI.Detail.prototype.canvas = "detail";
+MOEBATTLEUI.Detail.count = 0;
+// lock up
+MOEBATTLEUI.Detail.lock = false;
+// show it
+MOEBATTLEUI.Detail.prototype.show = function (target_jq, type) {
+	// only one detail canvas can be displayed
+	if (MOEBATTLEUI.Detail.lock) {
+		return;
+	}
+	MOEBATTLEUI.Detail.lock = true;
+	var html = ' \
+<div id="' + this.canvas + '" class="detail"> \
+	<div class="name"></div> \
+	<div class="cost"></div> \
+	<div class="def"></div> \
+	<div class="atk"></div> \
+	<div class="card-hp"></div> \
+	<img src="#" alt="photo" class="" /> \
+	<div class="card-detail"></div> \
+</div> \
+	';
+	$("#" + MOEPROJ.config.canvas).append(html);
+	// find target name in element id
+	var target;
+	var id = target_jq.attr("id");
+	var index = id.indexOf("-");
+	if (index >= 0) {
+		target = id.substring(index + 1);
+	}
+	this.addContent(target, type);
+	++ MOEBATTLEUI.AnimaCount;
+	// show it
+	var detail_jq = $("#" + MOEPROJ.config.canvas + " #" + this.canvas);
+	detail_jq.show().css("visibility", "inherit");
+	// hover to stop hiding
+	/*detail_jq.hover(function () {
+		detail_jq.stop();
+	}, MOEBATTLEUI.hideDetail);*/
+	// start animation
+	this.chooseDir(detail_jq, undefined, target_jq);
+};
+// add content to detail canvas
+MOEBATTLEUI.Detail.prototype.addContent = function (target, type) {
+	switch (type) {
+	case "status":
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " .name").html(MOEBATTLE.battle.status[target].name);
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " img").attr("src", MOEBATTLE.battle.status[target].photo || "");
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " .card-detail").html(MOEBATTLE.battle.status[target].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
+		break;
+	case "card":
+	case "icon":
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " .name").html(MOEBATTLE.cards[target].name);
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " img").attr("src", MOEBATTLE.cards[target].photo || "");
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " .cost").html("cost: " + (MOEBATTLE.cards[target].cost || 0));
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " .atk").html("moe point: " + (MOEBATTLE.cards[target].atk || 0));
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " .card-hp").html("hp: " + (MOEBATTLE.cards[target].hp || 0));
+		$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " .card-detail").html(MOEBATTLE.cards[target].detail || "detaildetaildetaildetaildetaildetaildet aildetaildetaildetaildetaildetaildetaildetaildetaild etaildetaildetaildetaildetaildetaildetaildetaildeta ildetaildetail");
+		break;
+	case "player":
+	default:
+		break;
+	}
+};
+// choose direction for detail canvas
+MOEBATTLEUI.Detail.prototype.chooseDir = function (detail_jq, dir, target_jq) {
+	// undefined direction
+	if (undefined === dir || "auto" == dir) {
+		// decide the direction to popup based on the location
+		var target_pos = target_jq.offset();
+		if (target_pos.top < 200) {
+			dir = "down";
+		}
+		else if (target_pos.top + 200 > $(window).height()) {
+			dir = "up";
+		}
+		else if (target_pos.left < $(window).width() / 2) {
+			dir = "right";
+		}
+		else {
+			dir = "left";
+		}
+	}
+	switch (dir) {
+	case "up": // popup
+		detail_jq.css({
+			top: target_jq.offset().top,
+			left: target_jq.offset().left - 90,
+			height: "0%",
+			width: target_jq.width()
+		}).animate({
+			top: '-=400px',
+			left: '-=120px',
+			height: '+=400px',
+			width: '+=240px'
+		}, "fast", function () {
+			-- MOEBATTLEUI.AnimaCount;
+		});
+		break;
+	case "down": // pop down
+		detail_jq.css({
+			top: target_jq.offset().top + target_jq.height(),
+			left: target_jq.offset().left - 90,
+			height: "0%",
+			width: target_jq.width()
+		}).animate({
+			//top: '-=400px',
+			left: '-=120px',
+			height: '+=400px',
+			width: '+=240px'
+		}, "fast", function () {
+			-- MOEBATTLEUI.AnimaCount;
+		});
+		break;
+	case "left": // pop left
+		detail_jq.css({
+			top: target_jq.offset().top,
+			left: target_jq.offset().left - 90,
+			height: target_jq.height(),
+			width: "0%"
+		}).animate({
+			top: '-=200px',
+			left: '-=360px',
+			height: '+=400px',
+			width: '+=360px'
+		}, "fast", function () {
+			-- MOEBATTLEUI.AnimaCount;
+		});
+		break;
+	case "right": // pop right
+		detail_jq.css({
+			top: target_jq.offset().top,
+			left: target_jq.offset().left - 90 + target_jq.width(),
+			height: target_jq.height(),
+			width: "0%"
+		}).animate({
+			top: '-=200px',
+			//left: '-=240px',
+			height: '+=400px',
+			width: '+=360px'
+		}, "fast", function () {
+			-- MOEBATTLEUI.AnimaCount;
+		});
+		break;
+	case "none":
+	case 0:
+	default:
+		-- MOEBATTLEUI.AnimaCount;
+		break;
+	}
+}
+// hide detail canvas
+MOEBATTLEUI.Detail.prototype.hide = function () {
+	$("#" + MOEPROJ.config.canvas + " #" + this.canvas).fadeOut("slow", function () {
+		$(this).remove();
+		MOEBATTLEUI.Detail.lock = false;
+	});
+}
+
+//@deprecated show detail canvas
 MOEBATTLEUI.showDetail = function (card, type, dir) {
 	// only one detail canvas can be displayed
 	if (MOEBATTLEUI.detail_lock) {
@@ -534,21 +709,18 @@ MOEBATTLEUI.createCard = function (card) {
 	$("#" + MOEPROJ.config.canvas + " #card-" + card + " div.def").html(MOEBATTLE.cards[card].def || 0);
 	$("#" + MOEPROJ.config.canvas + " #card-" + card + " div.atk").html(MOEBATTLE.cards[card].atk || 0);
 	$("#" + MOEPROJ.config.canvas + " #card-" + card + " div.card-hp").html(MOEBATTLE.cards[card].hp || 0);
+	var detail;
 	card_jq.hover(function () {
 		// move to front
 		$(this).css("z-index", 1);
 		// expand
 		//$(this).animate({ height: "+=20px", width: "+=20px", left: "-=10px", top: "-=10px" }, "fast");
-		var detail_jq = MOEBATTLEUI.showDetail(card, "card");
-		if (undefined === detail_jq) {
-			console.warn("fail to drawCardAnima");
-			return;
-		}
+		detail = new MOEBATTLEUI.Detail(card_jq);
 	}, function () {
 		// move back
 		$(this).css("z-index", 0);
 		//$(this).animate({ height: "-=20px", width: "-=20px", left: "+=10px", top: "+=10px" }, "fast");
-		MOEBATTLEUI.hideDetail();
+		detail.hide();
 	});
 	-- MOEBATTLEUI.AnimaCount;
 	return $("#" + MOEPROJ.config.canvas + " #card-" + card);
@@ -782,29 +954,26 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 		}, 5);
 	}
 	var icon_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
+	var detail;
 	icon_jq.hover(function (obj) {
 		MOEBATTLEUI.select.target = card;
 		MOEBATTLEUI.select.type = "icon";
 		MOEBATTLEUI.select.time = new Date();
 		$(this).css("z-index", 1);
-		var detail_jq = MOEBATTLEUI.showDetail(card, "icon");
-		if (undefined === detail_jq) {
-			console.warn("fail to drawCardAnima");
-			return;
-		}
+		detail = new MOEBATTLEUI.Detail(icon_jq);
 		/*rotate(obj.currentTarget);
 		if (! timer2) {
 			// show detail after hovering
 			timer2 = setTimeout(function () {
 				timer2 = null;
-				MOEBATTLEUI.showDetail(card, "icon");
+				detail = new MOEBATTLEUI.Detail(icon_jq);
 			}, 1000);
 		}*/
 	}, function (obj) {
 		MOEBATTLEUI.select.target = undefined;
 		MOEBATTLEUI.select.type = undefined;
 		$(this).css("z-index", 0);
-		MOEBATTLEUI.hideDetail();
+		detail.hide();
 		/*clearTimeout(timer);
 		// move back
 		degree = 0;
@@ -900,12 +1069,13 @@ MOEBATTLEUI.createStatus = function (player, status) {
 		$(this).attr("src", "resources/nophoto.jpg");
 	});
 	var status_jq = $("#" + MOEPROJ.config.canvas + " #status-" + status);
+	var detail;
 	status_jq.hover(function (obj) {
 		MOEBATTLEUI.select.target = status;
 		MOEBATTLEUI.select.type = "status";
 		MOEBATTLEUI.select.time = new Date();
 		$(this).css("z-index", 1);
-		var detail_jq = MOEBATTLEUI.showDetail(status, "status");
+		detail = new MOEBATTLEUI.Detail(status_jq);
 		if (undefined === detail_jq) {
 			console.warn("fail to drawCardAnima");
 			return;
@@ -914,7 +1084,7 @@ MOEBATTLEUI.createStatus = function (player, status) {
 		MOEBATTLEUI.select.target = undefined;
 		MOEBATTLEUI.select.type = undefined;
 		$(this).css("z-index", 0);
-		MOEBATTLEUI.hideDetail();
+		detail.hide();
 	});
 	$("#" + MOEPROJ.config.canvas + ' #status-' + status).hide().css({visibility: "inherit"}).fadeIn("fast", function () {
 		-- MOEBATTLEUI.AnimaCount;
