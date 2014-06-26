@@ -30,9 +30,6 @@ MOEBATTLEUI.html = ' \
 <div id="yourstatusarea" class="statusarea"></div> \
 <div id="myarea" class="area"></div> \
 <div id="yourarea" class="area"></div> \
-<div id="arrow"> \
-	<canvas /> \
-</div> \
 <div id="anime"> \
 	<img src="#" alt="anime" class="" /> \
 </div> \
@@ -82,20 +79,6 @@ MOEBATTLEUI.load = function () {
 			}
 		},
 	});
-	// arrow canvas
-	var arrow = $("#" + MOEPROJ.config.canvas + " #arrow canvas")[0].getContext('2d');
-	// draw an arrow
-	arrow.fillStyle = 'yellow';
-	arrow.beginPath();
-	arrow.moveTo(150, 0);
-	arrow.lineTo(0, 45);
-	arrow.lineTo(100, 45);
-	arrow.lineTo(100, 150);
-	arrow.lineTo(200, 150);
-	arrow.lineTo(200, 45);
-	arrow.lineTo(300, 45);
-	arrow.closePath();
-	arrow.fill();
 };
 
 MOEBATTLEUI.AnimaCount = 0;
@@ -274,44 +257,75 @@ MOEBATTLEUI.hideDetail = function () {
 	});
 }
 
-MOEBATTLEUI.arrow = {
-	status: "idle",
+// arrow
+MOEBATTLEUI.Arrow = function (source_jq, func) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Arrow.count;
+	++ MOEBATTLEUI.Arrow.count;
+	this.draw(this.canvas);
+	if (undefined !== source_jq) {
+		this.follow(source_jq, func);
+	}
 };
-MOEBATTLEUI.arrowFollow = function (card, func) {
-	if ("follow" == MOEBATTLEUI.arrow.status) {
+MOEBATTLEUI.Arrow.prototype.canvas = "arrow";
+MOEBATTLEUI.Arrow.count = 0;
+MOEBATTLEUI.Arrow.prototype.status = "idle";
+// draw the arrow
+MOEBATTLEUI.Arrow.prototype.draw = function (canvas) {
+	var html = ' \
+<div id= "' + this.canvas + '" class="arrow"> \
+	<canvas /> \
+</div> \
+	';
+	$("#" + MOEPROJ.config.canvas).append(html);
+	// arrow canvas
+	var arrow = $("#" + MOEPROJ.config.canvas + " #" + this.canvas + " canvas")[0].getContext('2d');
+	// draw an arrow
+	arrow.fillStyle = 'yellow';
+	arrow.beginPath();
+	arrow.moveTo(150, 0);
+	arrow.lineTo(0, 45);
+	arrow.lineTo(100, 45);
+	arrow.lineTo(100, 150);
+	arrow.lineTo(200, 150);
+	arrow.lineTo(200, 45);
+	arrow.lineTo(300, 45);
+	arrow.closePath();
+	arrow.fill();
+}
+// set arrow follow mouse
+MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
+	// don't follow again
+	if ("follow" == this.status) {
 		return;
 	}
-	// card center position
-	var card_jq = $("#" + MOEPROJ.config.canvas + " #card-" + card);
-	var card_type = "card";
-	if (0 == card_jq.length) {
-		card_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
-		card_type = "icon";
-	}
-	if (0 == card_jq.length) {
-		return;
-	}
-	++ MOEBATTLEUI.AnimaCount;
-	MOEBATTLEUI.arrow.status = "follow";
-	var y = card_jq.position().top + card_jq.height() / 2;
-	var x = card_jq.position().left + card_jq.width() / 2;
-	var parent = card_jq.parent();
+	var that = this;
+	this.status = "follow";
+	// find source position
+	var source_y = source_jq.position().top + source_jq.height() / 2;
+	var source_x = source_jq.position().left + source_jq.width() / 2;
+	// trace back to parents
+	var parent = source_jq.parent();
 	while (undefined !== parent && parent.attr('id') != MOEPROJ.config.canvas) {
-		x += parent.position().left;
-		y += parent.position().top;
+		source_x += parent.position().left;
+		source_y += parent.position().top;
 		parent = parent.parent();
 	}
 	// draw an arrow following mouse
 	var arrow_follow = function (event) {
+		// mouse position
 		var pagex = event.pageX - $("#" + MOEPROJ.config.canvas).offset().left;
 		var pagey = event.pageY - $("#" + MOEPROJ.config.canvas).offset().top;
-		var dist = Math.sqrt((pagex - x) * (pagex - x) + (pagey - y) * (pagey - y));
-		var newx = (pagex + x) / 2 - 25;
-		var newy = (pagey + y) / 2 - dist / 2;
-		// the length is the dist
-		$("#" + MOEPROJ.config.canvas + " #arrow").height(dist);
-		var angle = Math.atan2(pagey - y, pagex - x) * 180 / Math.PI + 90;
-		$("#" + MOEPROJ.config.canvas + " #arrow").css({
+		// arrow length
+		var length = Math.sqrt((pagex - source_x) * (pagex - source_x) + (pagey - source_y) * (pagey - source_y));
+		// arrow center
+		var newx = (pagex + source_x) / 2 - 25;
+		var newy = (pagey + source_y) / 2 - length / 2;
+		// arrow length
+		$("#" + MOEPROJ.config.canvas + " #" + that.canvas).height(length);
+		// arrow angle to rotate
+		var angle = Math.atan2(pagey - source_y, pagex - source_x) * 180 / Math.PI + 90;
+		$("#" + MOEPROJ.config.canvas + " #" + that.canvas).css({
 			top: newy,
 			left: newx
 		})
@@ -319,28 +333,28 @@ MOEBATTLEUI.arrowFollow = function (card, func) {
 		.css({ WebkitTransform: 'rotate(' + angle + 'deg)' }).css({ '-moz-transform': 'rotate(' + angle + 'deg)' })
 		.css({visibility: "inherit"}).show();
 	};
-	var page_click_use_card = function () {
-		// don't select the card itself
-		if (card == MOEBATTLEUI.select.target && card_type == MOEBATTLEUI.select.type) {
+	// click a target and hide arrow
+	var arrow_click_target = function () {
+		// don't select the source itself
+		if (source_jq.attr('id') == MOEBATTLEUI.select.target) {
 			return;
 		}
 		// if nothing selected
 		else if (undefined === MOEBATTLEUI.select.target) {
 		}
 		// remove arrow
-		$("html").off('mousemove', arrow_follow).off("click", page_click_use_card);
-		$("#" + MOEPROJ.config.canvas + " #arrow").hide();
-		MOEBATTLEUI.arrow.status = "idle";
+		$("html").off('mousemove', arrow_follow).off("click", arrow_click_target);
+		$("#" + MOEPROJ.config.canvas + " #" + that.canvas).hide().remove();
+		that.status = "idle";
 		if (typeof func == "function") {
-			func(card, MOEBATTLEUI.select.target);
+			func(source_jq.attr('id'), MOEBATTLEUI.select.target);
 		}
-		-- MOEBATTLEUI.AnimaCount;
 	};
 	// set arrow to follow mouse
 	$("html").on("mousemove", arrow_follow)
 	// click anywhere to stop the arrow
-	.on("click", page_click_use_card);
-}
+	.on("click", arrow_click_target);
+};
 
 // game
 
@@ -570,7 +584,7 @@ MOEBATTLEUI.cardDrop = function (card) {
 	});
 	// if having target
 	if (undefined !== MOEBATTLE.cards[card].target) {
-		MOEBATTLEUI.arrowFollow(card, function () {
+		var arrow = new MOEBATTLEUI.Arrow(card_jq, function () {
 			// if no target, put it back
 			if (undefined === MOEBATTLEUI.select.target) {
 				if (0 == player) {
@@ -806,7 +820,7 @@ MOEBATTLEUI.createIcon = function (player, card, height, width) {
 			return;
 		}
 		//actions.push({type: "strike", from: card, to: MOEBATTLEUI.select.target});
-		MOEBATTLEUI.arrowFollow(card, function (from, to) {
+		var arrow = new MOEBATTLEUI.Arrow(icon_jq, function (from, to) {
 			if (undefined === from || undefined === to) {
 				return;
 			}

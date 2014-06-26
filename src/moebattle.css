@@ -87,7 +87,7 @@ html {
 	margin: 3%;
 }
 
-.moebattle #arrow {
+.moebattle .arrow {
 	height: 10px;
 	width: 50px;
 	position: absolute;
@@ -96,7 +96,7 @@ html {
 	visibility: hidden;
 	z-index: 10;
 }
-.moebattle canvas {
+.moebattle .arrow canvas {
 	height: 100%;
 	width: 100%;
 	position: absolute;
