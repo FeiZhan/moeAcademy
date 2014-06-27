@@ -670,7 +670,7 @@ MOEBATTLEUI.playerLoseStatus = function (target, status) {
 	}
 }
 MOEBATTLEUI.playerGainStatus = function (target, status) {
-	MOEBATTLEUI.createStatus(target, status);
+	var status = new MOEBATTLEUI.Status(status, target);
 }
 
 // card
@@ -1025,6 +1025,56 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq, height, width) {
 	return $("#" + MOEPROJ.config.canvas + ' #icon-' + card);
 };
 
+// status
+MOEBATTLEUI.Status = function (status, player) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Status.count;
+	++ MOEBATTLEUI.Status.count;
+	var area_jq;
+	switch (player) {
+	case 1:
+		area_jq = $("#" + MOEPROJ.config.canvas + ' #yourstatusarea');
+		break;
+	case 0:
+	default:
+		area_jq = $("#" + MOEPROJ.config.canvas + ' #mystatusarea');
+		break;
+	}
+	this.show(status, area_jq);
+};
+MOEBATTLEUI.Status.prototype.canvas = "status";
+MOEBATTLEUI.Status.count = 0;
+MOEBATTLEUI.Status.prototype.show = function (status, area_jq) {
+	++ MOEBATTLEUI.AnimaCount;
+	var html = ' \
+<div id="status-' + status + '" class="status myuse"> \
+	<img src="" alt="status" class="" /> \
+</div> \
+	';
+	area_jq.append(html);
+	$("#" + MOEPROJ.config.canvas + " #status-" + status + " img").attr("src", MOEBATTLE.battle.status[status].photo).error(function () {
+		$(this).attr("src", "resources/nophoto.jpg");
+	});
+	var status_jq = $("#" + MOEPROJ.config.canvas + " #status-" + status);
+	var detail;
+	status_jq.hover(function (obj) {
+		MOEBATTLEUI.select.target = status;
+		MOEBATTLEUI.select.type = "status";
+		MOEBATTLEUI.select.time = new Date();
+		$(this).css("z-index", 1);
+		detail = new MOEBATTLEUI.Detail(status_jq);
+	}, function (obj) {
+		MOEBATTLEUI.select.target = undefined;
+		MOEBATTLEUI.select.type = undefined;
+		$(this).css("z-index", 0);
+		detail.hide();
+	});
+	$("#" + MOEPROJ.config.canvas + ' #status-' + status).hide().css({visibility: "inherit"}).fadeIn("fast", function () {
+		-- MOEBATTLEUI.AnimaCount;
+	});
+	return $("#" + MOEPROJ.config.canvas + ' #status-' + status);
+};
+
 // skill
 
 // animate for a skill
@@ -1048,58 +1098,6 @@ MOEBATTLEUI.skillAnimate = function (card, skill) {
 		});
 	}, 30);
 }
-
-// status
-
-// animation when creating an icon
-MOEBATTLEUI.createStatus = function (player, status) {
-	++ MOEBATTLEUI.AnimaCount;
-	var area_jq;
-	switch (player) {
-	case 1:
-		area_jq = $("#" + MOEPROJ.config.canvas + ' #yourstatusarea');
-		break;
-	case 0:
-	default:
-		area_jq = $("#" + MOEPROJ.config.canvas + ' #mystatusarea');
-		break;
-	}
-	area_jq.append(' \
-		<div id="status-' + status + '" class="status myuse"> \
-			<img src="" alt="status" class="" /> \
-		</div> \
-	');
-	$("#" + MOEPROJ.config.canvas + " #status-" + status + " img").attr("src", MOEBATTLE.battle.status[status].photo).error(function () {
-		$(this).attr("src", "resources/nophoto.jpg");
-	});
-	var status_jq = $("#" + MOEPROJ.config.canvas + " #status-" + status);
-	var detail;
-	status_jq.hover(function (obj) {
-		MOEBATTLEUI.select.target = status;
-		MOEBATTLEUI.select.type = "status";
-		MOEBATTLEUI.select.time = new Date();
-		$(this).css("z-index", 1);
-		detail = new MOEBATTLEUI.Detail(status_jq);
-		if (undefined === detail_jq) {
-			console.warn("fail to drawCardAnima");
-			return;
-		}
-	}, function (obj) {
-		MOEBATTLEUI.select.target = undefined;
-		MOEBATTLEUI.select.type = undefined;
-		$(this).css("z-index", 0);
-		detail.hide();
-	});
-	$("#" + MOEPROJ.config.canvas + ' #status-' + status).hide().css({visibility: "inherit"}).fadeIn("fast", function () {
-		-- MOEBATTLEUI.AnimaCount;
-	});
-	return $("#" + MOEPROJ.config.canvas + ' #status-' + status);
-};
-
-
-
-
-
 
 
 

@@ -1,4 +1,5 @@
 html {
+	overflow-x: scroll;
 	overflow-y: scroll;
 }
 .moebattle {
@@ -95,13 +96,13 @@ html {
 	left: 50%;
 	visibility: hidden;
 	z-index: 10;
-	box-shadow: 15px 10px 3px 0px #888888;
 }
 .moebattle .arrow canvas {
 	height: 100%;
 	width: 100%;
 	position: absolute;
 	z-index: 10;
+	box-shadow: 15px 10px 3px 0px #888888;
 }
 
 .moebattle .hand {
