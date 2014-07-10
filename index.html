@@ -49,6 +49,9 @@ $(function() {
 	// run based on url hash
 	if (undefined !== urlparam.hash && "" != urlparam.hash && " " != urlparam.hash) {
 		MOEPROJ.run(urlparam.hash);
+	}
+	else if (undefined !== urlparam.view && "" != urlparam.view && " " != urlparam.view) {
+		MOEPROJ.run(urlparam.view);
 	} else {
 		// run the default active one
 		MOEPROJ.run($("#sidebar .active").attr("id").substring(3));

@@ -30,9 +30,6 @@ MOEBATTLEUI.html = ' \
 <div id="yourstatusarea" class="statusarea"></div> \
 <div id="myarea" class="area"></div> \
 <div id="yourarea" class="area"></div> \
-<div id="anime"> \
-	<img src="#" alt="anime" class="" /> \
-</div> \
 <div id="detail" class="detail"> \
 	<div class="name"></div> \
 	<div class="cost"></div> \
@@ -1075,7 +1072,40 @@ MOEBATTLEUI.Status.prototype.show = function (status, area_jq) {
 	return $("#" + MOEPROJ.config.canvas + ' #status-' + status);
 };
 
-// skill
+// anime
+MOEBATTLEUI.Anime = function (img) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Anime.count;
+	if (undefined !== img)
+	{
+		this.show(img);
+	}
+};
+MOEBATTLEUI.Anime.prototype.canvas = "anime";
+MOEBATTLEUI.Anime.count = 0;
+MOEBATTLEUI.Anime.mutex = 0;
+MOEBATTLEUI.Anime.prototype.show = function (img) {
+	++ MOEBATTLEUI.AnimaCount;
+	var html = ' \
+<div id="' + this.canvas + '" class="anime"> \
+	<img src="#" alt="anime" class="" /> \
+</div> \
+	';
+	$("#" + MOEPROJ.config.canvas).append(html);
+	$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " img").attr("src", img).error(function () {
+		$(this).attr("src", "resources/nophoto.jpg");
+	});
+	$("#" + MOEPROJ.config.canvas + ' #' + this.canvas).addClass("active").fadeIn("fast").show();
+	var that = this;
+	// disappear after a while
+	setTimeout(function () {
+		$("#" + MOEPROJ.config.canvas + ' #' + that.canvas).fadeOut("slow", function () {
+			$(that).removeClass("active");
+			$("#" + MOEPROJ.config.canvas + ' #' + that.canvas + " img").attr("src", "");
+			-- MOEBATTLEUI.AnimaCount;
+		});
+	}, 3000);
+};
 
 // animate for a skill
 MOEBATTLEUI.skillAnimate = function (card, skill) {
@@ -1083,20 +1113,10 @@ MOEBATTLEUI.skillAnimate = function (card, skill) {
 	if (! (card in MOEBATTLE.cards) || undefined === MOEBATTLE.cards[card].anime || undefined === MOEBATTLE.cards[card].anime[skill]) {
 		return;
 	}
-	++ MOEBATTLEUI.AnimaCount;
 	var ani_list = MOEBATTLE.cards[card].anime[skill];
 	// choose one by random
 	var ran = Math.floor( (Math.random() * ani_list.length) );
-	$("#" + MOEPROJ.config.canvas + ' #anime img').attr("src", ani_list[ran]);
-	$("#" + MOEPROJ.config.canvas + ' #anime').addClass("active").fadeIn("fast").show();
-	// disappear after a while
-	setTimeout(function () {
-		$("#" + MOEPROJ.config.canvas + ' #anime').fadeOut("slow", function () {
-			$(this).removeClass("active");
-			$("#" + MOEPROJ.config.canvas + ' #anime img').attr("src", "");
-			-- MOEBATTLEUI.AnimaCount;
-		});
-	}, 30);
+	var anime = new MOEBATTLEUI.Anime(ani_list[ran]);
 }
 
 

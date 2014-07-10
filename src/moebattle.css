@@ -11,7 +11,7 @@ html {
 	height: 45%;
 	width: 100%;
 }
-.moebattle #anime {
+.moebattle .anime {
 	/* the entire webpage */
 	position: absolute;
 	top: 0%;
@@ -21,10 +21,10 @@ html {
 	visibility: hidden;
 	z-index: 10;
 }
-.moebattle #anime.active {
+.moebattle .anime.active {
 	visibility: inherit;
 }
-.moebattle #anime img {
+.moebattle .anime img {
 	z-index: 10;
 	/* in the center */
 	margin: auto;
