@@ -39,6 +39,8 @@ MOEBATTLEUI.html = ' \
 	<img src="#" alt="photo" class="" /> \
 	<div class="card-detail"></div> \
 </div> \
+<audio id="audio" src="/mp3/juicy.mp3" preload="auto" /> \
+<div id="debug" /> \
 ';
 MOEBATTLEUI.init = function (canvas) {
 	document.title = "萌娘对战";
@@ -455,19 +457,29 @@ MOEBATTLEUI.Arrow.prototype.draw = function (canvas) {
 	';
 	$("#" + MOEPROJ.config.canvas).append(html);
 	// arrow canvas
-	var arrow = $("#" + MOEPROJ.config.canvas + " #" + this.canvas + " canvas")[0].getContext('2d');
+	var ctx = $("#" + MOEPROJ.config.canvas + " #" + this.canvas + " canvas")[0].getContext('2d');
+	// Create gradient
+	var grd = ctx.createLinearGradient(0, 0, 0, 150);
+	grd.addColorStop(0,"gold");
+	grd.addColorStop(1,"white");
+	// Fill with gradient
+	ctx.fillStyle = grd;
+	// shadow
+	ctx.shadowColor = '#999';
+	ctx.shadowBlur = 20;
+	ctx.shadowOffsetX = 30;
+	ctx.shadowOffsetY = 10;
 	// draw an arrow
-	arrow.fillStyle = 'yellow';
-	arrow.beginPath();
-	arrow.moveTo(150, 0);
-	arrow.lineTo(0, 45);
-	arrow.lineTo(100, 45);
-	arrow.lineTo(100, 150);
-	arrow.lineTo(200, 150);
-	arrow.lineTo(200, 45);
-	arrow.lineTo(300, 45);
-	arrow.closePath();
-	arrow.fill();
+	ctx.beginPath();
+	ctx.moveTo(150, 0);
+	ctx.lineTo(0, 45);
+	ctx.lineTo(100, 45);
+	ctx.lineTo(100, 150);
+	ctx.lineTo(200, 150);
+	ctx.lineTo(200, 45);
+	ctx.lineTo(300, 45);
+	ctx.closePath();
+	ctx.fill();
 }
 // set arrow follow mouse
 MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
@@ -627,11 +639,14 @@ MOEBATTLEUI.playerEnd = function () {
 	-- MOEBATTLEUI.AnimaCount;
 }
 MOEBATTLEUI.playerChangeHP = function (target, number) {
+	var num;
 	if (0 == target) {
-		$("#" + MOEPROJ.config.canvas + ' #myhead .hp span').html(number);
+		$("#" + MOEPROJ.config.canvas + ' #myhead .hp span').html(MOEBATTLE.players[target].hp);
+		num = new MOEBATTLEUI.Number(number, $("#" + MOEPROJ.config.canvas + ' #myhead'));
 	}
 	else {
-		$("#" + MOEPROJ.config.canvas + ' #yourhead .hp span').html(number);
+		$("#" + MOEPROJ.config.canvas + ' #yourhead .hp span').html(MOEBATTLE.players[target].hp);
+		num = new MOEBATTLEUI.Number(number, $("#" + MOEPROJ.config.canvas + ' #yourhead'));
 	}
 };
 MOEBATTLEUI.playerChangeMaxHP = function (target, number) {
@@ -780,9 +795,24 @@ MOEBATTLEUI.Card.drop = function (card) {
 				});
 				return;
 			}
+			var targetPlayer = "";
+			switch ($("#" + MOEBATTLEUI.select.type + "-" + MOEBATTLEUI.select.target).parent().attr("id")) {
+			case "myhand":
+			case "myarea":
+				targetPlayer = 0;
+				break;
+			case "yourhand":
+			case "yourarea":
+				targetPlayer = 1;
+				break;
+			default:
+				targetPlayer = undefined;
+				break;
+			}
 			MOEBATTLE.actions.unshift({
 				type: "cardUseWithTarget",
 				card: card,
+				targetPlayer: targetPlayer,
 				target: MOEBATTLEUI.select.target,
 			});
 		});
@@ -880,12 +910,27 @@ MOEBATTLEUI.Card.useWithoutTarget = function (card) {
 		-- MOEBATTLEUI.AnimaCount;
 	});
 }
+MOEBATTLEUI.Card.useWithTarget = function (card) {
+	++ MOEBATTLEUI.AnimaCount;
+	// expand and disappear
+	$("#" + MOEPROJ.config.canvas + ' #card-' + card).animate({
+		top: '-=100px',
+		left: '-=100px',
+		height: '+=200px',
+		width: '+=200px',
+		opacity: 0,
+	}, "slow", function () {
+		$(this).remove();
+		MOEBATTLEUI.skillAnimate(card, "");
+		-- MOEBATTLEUI.AnimaCount;
+	});
+}
 MOEBATTLEUI.Card.addToArea = function (card, player) {
 	++ MOEBATTLEUI.AnimaCount;
 	// shrink to image size
 	var height = $("#" + MOEPROJ.config.canvas + " #card-" + card + " img").height();
 	var width = $("#" + MOEPROJ.config.canvas + " #card-" + card + " img").width();
-	// fit to max-, min-height, width
+	//@bug useless  fit to max-, min-height, width
 	if (height > 60) {
 		width *= 60 / height;
 		height = 60;
@@ -914,7 +959,7 @@ MOEBATTLEUI.Card.moveToAreaAnima = function (card, player, height, width) {
 	}, "slow", function () {
 		$(this).remove();
 		// add an icon in area
-		var char = new MOEBATTLEUI.Char(card, player, height, width);
+		var char = new MOEBATTLEUI.Char(card, player);
 		MOEBATTLEUI.skillAnimate(card, "skill0");
 		-- MOEBATTLEUI.AnimaCount;
 	});
@@ -950,10 +995,10 @@ MOEBATTLEUI.Char = function (card, player, height, width) {
 };
 MOEBATTLEUI.Char.prototype.canvas = "char";
 MOEBATTLEUI.Char.count = 0;
-MOEBATTLEUI.Char.prototype.show = function (card, area_jq, height, width) {
+MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 	++ MOEBATTLEUI.AnimaCount;
 	var html = ' \
-<div id="icon-' + card + '" class="icon myuse" style="height: ' + height + 'px; width: ' + width + 'px;"> \
+<div id="icon-' + card + '" class="icon myuse"> \
 	<span></span> \
 	<img src="" alt="icon" class="" /> \
 	<div class="cost param"></div> \
@@ -972,17 +1017,30 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq, height, width) {
 	$("#" + MOEPROJ.config.canvas + " #icon-" + card + " div.cost").html(MOEBATTLE.cards[card].cost || 0);
 	var icon_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
 	var detail;
+	var hover_flag = false;
+	var that = this;
 	icon_jq.hover(function (obj) {
 		MOEBATTLEUI.select.target = card;
 		MOEBATTLEUI.select.type = "icon";
 		MOEBATTLEUI.select.time = new Date();
-		$(this).css("z-index", 1);
+		hover_flag = true;
+		$(that).css("z-index", 1);
+		if (undefined !== detail) {
+			detail.hide();
+		}
 		detail = new MOEBATTLEUI.Detail(icon_jq);
+
 	}, function (obj) {
-		MOEBATTLEUI.select.target = undefined;
-		MOEBATTLEUI.select.type = undefined;
-		$(this).css("z-index", 0);
-		detail.hide();
+		hover_flag = false;
+		// delay to check leave
+		setTimeout(function () {
+			if (! hover_flag) {
+				MOEBATTLEUI.select.target = undefined;
+				MOEBATTLEUI.select.type = undefined;
+				$(that).css("z-index", 0);
+				detail.hide();
+			}
+		}, 200);
 	});
 	icon_jq.on("click", function () {
 		if (undefined === MOEBATTLEUI.select.target) {
@@ -1020,6 +1078,16 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq, height, width) {
 		-- MOEBATTLEUI.AnimaCount;
 	});
 	return $("#" + MOEPROJ.config.canvas + ' #icon-' + card);
+};
+
+MOEBATTLEUI.charChangeHP = function (player, target, number) {
+	$("#" + MOEPROJ.config.canvas + ' #char-' + target + ' .hp').html( MOEBATTLE.players[player].chars[target].hp );
+	var parent = $("#" + MOEPROJ.config.canvas + ' #icon-' + target);
+	var num = new MOEBATTLEUI.Number(number, parent);
+	var overlay;
+	if (number < 0) {
+		overlay = new MOEBATTLEUI.Overlay("resources/effects/628_1.gif", parent);
+	}
 };
 
 // status
@@ -1104,7 +1172,7 @@ MOEBATTLEUI.Anime.prototype.show = function (img) {
 			$("#" + MOEPROJ.config.canvas + ' #' + that.canvas + " img").attr("src", "");
 			-- MOEBATTLEUI.AnimaCount;
 		});
-	}, 3000);
+	}, 30);
 };
 
 // animate for a skill
@@ -1119,7 +1187,84 @@ MOEBATTLEUI.skillAnimate = function (card, skill) {
 	var anime = new MOEBATTLEUI.Anime(ani_list[ran]);
 }
 
+// number
+MOEBATTLEUI.Number = function (num, parent_jq) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Number.count;
+	if (undefined !== parent_jq)
+	{
+		this.show(num, parent_jq);
+	}
+};
+MOEBATTLEUI.Number.prototype.canvas = "number";
+MOEBATTLEUI.Number.count = 0;
+MOEBATTLEUI.Number.prototype.show = function (num, parent_jq) {
+	var that = this;
+	var html = ' \
+<div id="' + this.canvas + '" class="number"> \
+</div> \
+	';
+	parent_jq.append(html);
+	if (num > 0) {
+		num = "+" + num;
+	}
+	var direction = "up";
+	if (parent_jq.offset().top < 100) {
+		direction = "down";
+	}
+	var jq = $("#" + MOEPROJ.config.canvas + ' #' + this.canvas);
+	jq.html(num);
+	switch (direction) {
+	case "down":
+		jq.css({top: "110%"})
+		.animate({
+			top: "210%",
+			opacity: 0,
+		}, 1500, function () {
+			$(this).hide();
+		});
+		break;
+	case "up":
+	default:
+		jq.css({top: "-10%"})
+		// disappear after a while
+		.animate({
+			top: "-110%",
+			opacity: 0,
+		}, 1500, function () {
+			$(this).hide();
+		});
+		break;
+	}
+};
 
+// overlay
+MOEBATTLEUI.Overlay = function (img, parent_jq) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Overlay.count;
+	if (undefined !== parent_jq)
+	{
+		this.show(img, parent_jq);
+	}
+};
+MOEBATTLEUI.Overlay.prototype.canvas = "overlay";
+MOEBATTLEUI.Overlay.count = 0;
+MOEBATTLEUI.Overlay.prototype.show = function (img, parent_jq) {
+	var that = this;
+	var html = ' \
+<div id="' + this.canvas + '" class="overlay"> \
+	<img src="' + img + '" alt="overlay" /> \
+</div> \
+	';
+	parent_jq.append(html);
+	$("#" + MOEPROJ.config.canvas + ' #' + this.canvas + " img").error(function () {
+		$(this).hide();
+	});
+	var jq = $("#" + MOEPROJ.config.canvas + ' #' + this.canvas);
+	jq.fadeIn("fast").fadeOut(1000, function () {
+		$(this).hide();
+	});
+};
 
 
 

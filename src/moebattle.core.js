@@ -68,7 +68,7 @@ MOEBATTLE.Player = function (config) {
 	this.maxmp = config.maxmp || 0;
 	this.mp = config.mp || 0;
 	this.hands = new Array();
-	this.chars = new Array();
+	this.chars = new Object();
 	this.statuses = new Array();
 	this.equips = new Array();
 };
@@ -85,7 +85,7 @@ MOEBATTLE.nextAction = function () {
 	if (undefined === action.type) {
 		return;
 	}
-	console.debug(action.type, action)
+	console.log(action.type)
 	if ("function" == typeof MOEBATTLE[action.type]) {
 		MOEBATTLE[action.type] (action);
 	}

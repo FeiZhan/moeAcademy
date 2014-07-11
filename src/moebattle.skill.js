@@ -14,6 +14,7 @@ SKILLS.loseHP = function (action) {
 SKILLS.charLoseHP = function (action) {
 	MOEBATTLE.actions.unshift({
 		type: "charLoseHP",
+		targetPlayer: action.targetPlayer,
 		target: action.target,
 		number: 1,
 		card: action.card,
