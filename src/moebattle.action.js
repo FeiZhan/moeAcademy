@@ -264,11 +264,11 @@ MOEBATTLE.charLoseHP = function (action) {
 		return;
 	}
 	MOEBATTLE.players[action.targetPlayer].chars[action.target].hp -= action.number;
-	MOEBATTLE.ui.charChangeHP(action.targetPlayer, action.target, - action.number);
+	MOEBATTLE.ui.Char.changeHP(action.targetPlayer, action.target, - action.number);
 }
 MOEBATTLE.charGainHP = function (action) {
 	MOEBATTLE.players[action.target].hp += action.number;
-	MOEBATTLE.ui.charChangeHP(action.targetPlayer, action.target, action.number);
+	MOEBATTLE.ui.Char.changeHP(action.targetPlayer, action.target, action.number);
 }
 MOEBATTLE.charLoseStatus = function (action) {
 	MOEBATTLE.players[action.target].statuses.splice(MOEBATTLE.players[action.target].statuses.indexOf(action.status), 1);

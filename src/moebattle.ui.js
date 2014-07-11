@@ -99,7 +99,7 @@ MOEBATTLEUI.load = function () {
 	}, function () {
 		$("#" + MOEPROJ.config.canvas + ' #audiojs_wrapper0').hide("slow");
 	});
-	MOEBATTLEUI.BackgroundMusic.run();
+	//MOEBATTLEUI.BackgroundMusic.run();
 };
 
 // lock for animation
@@ -140,12 +140,12 @@ MOEBATTLEUI.Detail.prototype.show = function (target_jq, type) {
 	var html = ' \
 <div id="' + this.canvas + '" class="detail"> \
 	<div class="name"></div> \
-	<div class="cost"></div> \
-	<div class="def"></div> \
-	<div class="atk"></div> \
-	<div class="card-hp"></div> \
 	<img src="#" alt="photo" class="" /> \
 	<div class="card-detail"></div> \
+	<div class="cost param"></div> \
+	<div class="def param"></div> \
+	<div class="atk param"></div> \
+	<div class="card-hp param"></div> \
 </div> \
 	';
 	$("#" + MOEPROJ.config.canvas).append(html);
@@ -587,12 +587,12 @@ MOEBATTLEUI.playerCreate = function (player) {
 			MOEBATTLEUI.select.type = "player";
 			MOEBATTLEUI.select.time = new Date();
 			$(this).css("z-index", 1);
-			MOEBATTLEUI.showDetail(player, "player");
+			//MOEBATTLEUI.showDetail(player, "player");
 		}, function (obj) {
 			MOEBATTLEUI.select.target = undefined;
 			MOEBATTLEUI.select.type = undefined;
 			$(this).css("z-index", 0);
-			MOEBATTLEUI.hideDetail();
+			//MOEBATTLEUI.hideDetail();
 		});
 		$("#" + MOEPROJ.config.canvas + " #myhead img").hover()
 		var span = $("#" + MOEPROJ.config.canvas + ' #myhead .hp span');
@@ -613,12 +613,12 @@ MOEBATTLEUI.playerCreate = function (player) {
 			MOEBATTLEUI.select.type = "player";
 			MOEBATTLEUI.select.time = new Date();
 			$(this).css("z-index", 1);
-			MOEBATTLEUI.showDetail(player, "player");
+			//MOEBATTLEUI.showDetail(player, "player");
 		}, function (obj) {
 			MOEBATTLEUI.select.target = undefined;
 			MOEBATTLEUI.select.type = undefined;
 			$(this).css("z-index", 0);
-			MOEBATTLEUI.hideDetail();
+			//MOEBATTLEUI.hideDetail();
 		});
 		var span = $("#" + MOEPROJ.config.canvas + ' #yourhead .hp span');
 		$(span[0]).html(MOEBATTLE.players[player].hp);
@@ -711,6 +711,7 @@ MOEBATTLEUI.Card = function () {
 	++ MOEBATTLEUI.Card.count;
 };
 MOEBATTLEUI.Card.prototype.canvas = "card";
+MOEBATTLEUI.Card.prototype.detail;
 MOEBATTLEUI.Card.count = 0;
 MOEBATTLEUI.Card.prototype.show = function (card) {
 	++ MOEBATTLEUI.AnimaCount;
@@ -725,6 +726,7 @@ MOEBATTLEUI.Card.prototype.show = function (card) {
 	<div class="card-hp param"></div> \
 </div> \
 	';
+	var that = this;
 	$("#" + MOEPROJ.config.canvas).append(html);
 	var card_jq = $("#" + MOEPROJ.config.canvas + " #card-" + card);
 	card_jq.draggable({
@@ -750,18 +752,17 @@ MOEBATTLEUI.Card.prototype.show = function (card) {
 	$("#" + MOEPROJ.config.canvas + " #card-" + card + " div.def").html(MOEBATTLE.cards[card].def || 0);
 	$("#" + MOEPROJ.config.canvas + " #card-" + card + " div.atk").html(MOEBATTLE.cards[card].atk || 0);
 	$("#" + MOEPROJ.config.canvas + " #card-" + card + " div.card-hp").html(MOEBATTLE.cards[card].hp || 0);
-	var detail;
 	card_jq.hover(function () {
 		// move to front
 		$(this).css("z-index", 1);
 		// expand
 		//$(this).animate({ height: "+=20px", width: "+=20px", left: "-=10px", top: "-=10px" }, "fast");
-		detail = new MOEBATTLEUI.Detail(card_jq);
+		that.detail = new MOEBATTLEUI.Detail(card_jq);
 	}, function () {
 		// move back
 		$(this).css("z-index", 0);
 		//$(this).animate({ height: "-=20px", width: "-=20px", left: "+=10px", top: "+=10px" }, "fast");
-		detail.hide();
+		that.detail.hide();
 	});
 	-- MOEBATTLEUI.AnimaCount;
 	return $("#" + MOEPROJ.config.canvas + " #card-" + card);
@@ -983,6 +984,10 @@ MOEBATTLEUI.Card.moveToAreaAnima = function (card, player, height, width) {
 		-- MOEBATTLEUI.AnimaCount;
 	});
 }
+MOEBATTLEUI.Card.remove = function (card) {
+	//if ()
+	$(this).remove();
+};
 
 // icon
 MOEBATTLEUI.Icon = function () {
@@ -1098,8 +1103,7 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 	});
 	return $("#" + MOEPROJ.config.canvas + ' #icon-' + card);
 };
-
-MOEBATTLEUI.charChangeHP = function (player, target, number) {
+MOEBATTLEUI.Char.changeHP = function (player, target, number) {
 	$("#" + MOEPROJ.config.canvas + ' #char-' + target + ' .hp').html( MOEBATTLE.players[player].chars[target].hp );
 	var parent = $("#" + MOEPROJ.config.canvas + ' #icon-' + target);
 	var num = new MOEBATTLEUI.Number(number, parent);

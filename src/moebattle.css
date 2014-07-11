@@ -58,39 +58,43 @@ html {
 	text-align: center;
 	font-size: large;
 }
-.moebattle .detail div.cost {
-	position: absolute;
-	top: 15%;
-	left: 1%;
-	text-align: center;
-}
-.moebattle .detail div.def {
-	position: absolute;
-	top: 15%;
-	left: 35%;
-	text-align: center;
-}
-.moebattle .detail div.atk {
-	position: absolute;
-	top: 25%;
-	left: 1%;
-	text-align: center;
-}
-.moebattle .detail div.card-hp {
-	position: absolute;
-	top: 25%;
-	left: 35%;
-	text-align: center;
-}
 .moebattle .detail img {
-	max-height: 40%;
-	max-width: 40%;
-	float: right;
+	/* center it */
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-height: 100%;
+	max-width: 100%;
 }
 .moebattle .detail .card-detail {
 	position: absolute;
-	top: 50%;
+	top: 60%;
 	margin: 3%;
+	background-color: rgba(255, 255, 255, 0.5);
+}
+.moebattle .detail div.param {
+	background-color: rgba(255, 255, 255, 0.5);
+	text-align: center;
+}
+.moebattle .detail div.cost {
+	position: absolute;
+	top: 20%;
+	left: 1%;
+}
+.moebattle .detail div.def {
+	position: absolute;
+	top: 20%;
+	right: 1%;
+}
+.moebattle .detail div.atk {
+	position: absolute;
+	bottom: 5%;
+	left: 1%;
+}
+.moebattle .detail div.card-hp {
+	position: absolute;
+	bottom: 5%;
+	right: 1%;
 }
 
 .moebattle .arrow {
@@ -178,12 +182,12 @@ html {
 }
 .moebattle #myarea {
 	position: absolute;
-	top: 55%;
+	top: 50%;
 	left: 25%;
 }
 .moebattle #yourarea {
 	position: absolute;
-	top: 25%;
+	top: 20%;
 	left: 25%;
 }
 
@@ -279,6 +283,9 @@ html {
 	top: 0px;
 	left: 0px;
 	float: left;
+}
+.moebattle .card.yourhand {
+	width: 80px;
 }
 
 .moebattle .area .icon {
