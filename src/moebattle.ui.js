@@ -39,7 +39,17 @@ MOEBATTLEUI.html = ' \
 	<img src="#" alt="photo" class="" /> \
 	<div class="card-detail"></div> \
 </div> \
-<audio id="audio" src="/mp3/juicy.mp3" preload="auto" /> \
+<div id="musicplayer"> \
+	<input type="image" src="resources/icons/music-note.png" alt="music player"> \
+	<audio id="bgm" src="media/bgm/Chuunibyou/23 平凡さの美学.mp3" preload="auto" loop /> \
+</div> \
+<video id="video" class="video-js vjs-default-skin" \
+	controls preload="auto" width="640" height="264" \
+	poster="http://video-js.zencoder.com/oceans-clip.png" \
+	data-setup=\'{"example_option":true}\'> \
+	<source src="http://video-js.zencoder.com/oceans-clip.mp4" type="video/mp4" /> \
+	<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p> \
+</video> \
 <div id="debug" /> \
 ';
 MOEBATTLEUI.init = function (canvas) {
@@ -81,6 +91,15 @@ MOEBATTLEUI.load = function () {
 			}
 		},
 	});
+	$("#" + MOEPROJ.config.canvas + ' #musicplayer input').on("click", function () {
+		MOEBATTLEUI.BackgroundMusic.instance[0].playPause();
+	})
+	.hover(function () {
+		$("#" + MOEPROJ.config.canvas + ' #audiojs_wrapper0').show("slow");
+	}, function () {
+		$("#" + MOEPROJ.config.canvas + ' #audiojs_wrapper0').hide("slow");
+	});
+	MOEBATTLEUI.BackgroundMusic.run();
 };
 
 // lock for animation
@@ -1266,6 +1285,25 @@ MOEBATTLEUI.Overlay.prototype.show = function (img, parent_jq) {
 	});
 };
 
+// background music
+MOEBATTLEUI.BackgroundMusic = {
+	canvas: "bgm",
+	instance: new Object(),
+	list: new Array(),
+	run: function () {
+		MOEBATTLEUI.BackgroundMusic.instance = audiojs.createAll();
+		MOEBATTLEUI.BackgroundMusic.instance[0].setVolume(0.3);
+		MOEBATTLEUI.BackgroundMusic.instance[0].play();
+	},
+};
+// video
+MOEBATTLEUI.Video = {
+	canvas: "video",
+	list: new Array(),
+	run: function () {
+		$("#" + MOEPROJ.config.canvas + ' #' + MOEBATTLEUI.Video.canvas + " source");
+	},
+};
 
 
 
