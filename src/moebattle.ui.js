@@ -39,8 +39,17 @@ MOEBATTLEUI.html = ' \
 	<img src="#" alt="photo" class="" /> \
 	<div class="card-detail"></div> \
 </div> \
+<div id="buttonsection" > \
+	<div id="chat"> \
+		<input id="chatbutton" type="image" src="resources/icons/chatbox.png" alt="chat" /> \
+		<input id="chatbox" type="text" name="chatbox" /> \
+	</div> \
+</div> \
+<div id="msgsection"> \
+	<div id="msgsection1" /> \
+</div> \
 <div id="musicplayer"> \
-	<input type="image" src="resources/icons/music-note.png" alt="music player"> \
+	<input type="image" src="resources/icons/music-note.png" alt="music player" /> \
 	<audio id="bgm" src="media/bgm/Chuunibyou/23 平凡さの美学.mp3" preload="auto" loop /> \
 </div> \
 <video id="video" class="video-js vjs-default-skin" \
@@ -93,13 +102,24 @@ MOEBATTLEUI.load = function () {
 	});
 	$("#" + MOEPROJ.config.canvas + ' #musicplayer input').on("click", function () {
 		MOEBATTLEUI.BackgroundMusic.instance[0].playPause();
-	})
-	.hover(function () {
+	});
+	$("#" + MOEPROJ.config.canvas + ' #musicplayer').hover(function () {
 		$("#" + MOEPROJ.config.canvas + ' #audiojs_wrapper0').show("slow");
 	}, function () {
 		$("#" + MOEPROJ.config.canvas + ' #audiojs_wrapper0').hide("slow");
 	});
-	//MOEBATTLEUI.BackgroundMusic.run();
+	$("#" + MOEPROJ.config.canvas + ' #chat').hover(function () {
+		$("#" + MOEPROJ.config.canvas + ' #chatbox').show("slow");
+	}, function () {
+		$("#" + MOEPROJ.config.canvas + ' #chatbox').hide("slow");
+	});
+	$('#chatbox').keypress(function (event) {
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if(keycode == '13') {
+			console.debug('You pressed a "enter" key in textbox');
+		}
+	});
+	MOEBATTLEUI.BackgroundMusic.run();
 };
 
 // lock for animation
@@ -561,6 +581,10 @@ MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
 	$("html").on("mousemove", arrow_follow)
 	// click anywhere to stop the arrow
 	.on("click", arrow_click_target);
+};
+
+MOEBATTLEUI.runAction = function (action) {
+	var msg = new MOEBATTLEUI.Message(action);
 };
 
 // game
@@ -1167,6 +1191,7 @@ MOEBATTLEUI.Status.prototype.show = function (status, area_jq) {
 MOEBATTLEUI.Anime = function (img) {
 	// set a new canvas id
 	this.canvas += MOEBATTLEUI.Anime.count;
+	++ MOEBATTLEUI.Anime.count;
 	if (undefined !== img)
 	{
 		this.show(img);
@@ -1214,6 +1239,7 @@ MOEBATTLEUI.skillAnimate = function (card, skill) {
 MOEBATTLEUI.Number = function (num, parent_jq) {
 	// set a new canvas id
 	this.canvas += MOEBATTLEUI.Number.count;
+	++ MOEBATTLEUI.Number.count;
 	if (undefined !== parent_jq)
 	{
 		this.show(num, parent_jq);
@@ -1265,6 +1291,7 @@ MOEBATTLEUI.Number.prototype.show = function (num, parent_jq) {
 MOEBATTLEUI.Overlay = function (img, parent_jq) {
 	// set a new canvas id
 	this.canvas += MOEBATTLEUI.Overlay.count;
+	++ MOEBATTLEUI.Overlay.count;
 	if (undefined !== parent_jq)
 	{
 		this.show(img, parent_jq);
@@ -1297,7 +1324,7 @@ MOEBATTLEUI.BackgroundMusic = {
 	run: function () {
 		MOEBATTLEUI.BackgroundMusic.instance = audiojs.createAll();
 		MOEBATTLEUI.BackgroundMusic.instance[0].setVolume(0.3);
-		MOEBATTLEUI.BackgroundMusic.instance[0].play();
+		//MOEBATTLEUI.BackgroundMusic.instance[0].play();
 	},
 };
 // video
@@ -1308,6 +1335,51 @@ MOEBATTLEUI.Video = {
 		$("#" + MOEPROJ.config.canvas + ' #' + MOEBATTLEUI.Video.canvas + " source");
 	},
 };
+
+MOEBATTLEUI.Message = function (msg, sender) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Message.count;
+	++ MOEBATTLEUI.Message.count;
+	if (undefined !== msg)
+	{
+		this.show(msg, sender);
+	}
+	
+};
+MOEBATTLEUI.Message.prototype.canvas = "message";
+MOEBATTLEUI.Message.count = 0;
+MOEBATTLEUI.Message.parent = "msgsection1";
+MOEBATTLEUI.Message.prototype.show = function (msg, sender) {
+	var html ='\
+<div id="' + this.canvas + '" class="message" /> \
+	';
+	$("#" + MOEPROJ.config.canvas + " #" + MOEBATTLEUI.Message.parent).append(html);
+	var content = "";
+	if ("string" == typeof sender) {
+		content += "[" + sender + "]";
+	}
+	if ("array" == typeof msg || "object" == typeof msg) {
+		try {
+			msg = JSON.stringify(msg);
+		} catch (err) {
+			msg = "";
+			console.warn("message error", error);
+		}
+	}
+	content += msg;
+	$("#" + MOEPROJ.config.canvas + " #" + MOEBATTLEUI.Message.parent + " #" + this.canvas).html(content);
+};
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -85,8 +85,8 @@ MOEBATTLE.nextAction = function () {
 	if (undefined === action.type) {
 		return;
 	}
-	console.log(action.type)
 	if ("function" == typeof MOEBATTLE[action.type]) {
 		MOEBATTLE[action.type] (action);
+		MOEBATTLE.ui.runAction(action);
 	}
 }

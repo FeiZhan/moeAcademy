@@ -343,6 +343,37 @@ html {
 	position: absolute;
 	top: 0; left: 0; bottom: 0; right: 0;
 }
+
+.moebattle #buttonsection {
+	z-index: 1;
+	position: absolute;
+	top: 60%;
+	left: 1%;
+}
+.moebattle #buttonsection #chatbutton {
+	height: 30px;
+	float: left;
+}
+.moebattle #buttonsection #chatbox {
+	display: none;
+	float: left;
+}
+
+.moebattle #msgsection {
+	z-index: 1;
+	position: relative;
+	top: 20%;
+	left: 1%;
+	width: 20%;
+	height: 50%;
+}
+.moebattle #msgsection > div {
+	position: absolute;
+	bottom: 0;
+}
+.moebattle #msgsection div div {
+}
+
 .moebattle #musicplayer {
 	z-index: 1;
 	position: absolute;
@@ -351,7 +382,7 @@ html {
 }
 .moebattle #musicplayer input {
 	height: 30px;
-	float:left;
+	float: left;
 }
 .moebattle #musicplayer #audiojs_wrapper0 {
 	display: none;
