@@ -89,4 +89,14 @@ MOEBATTLE.nextAction = function () {
 		MOEBATTLE[action.type] (action);
 		MOEBATTLE.ui.runAction(action);
 	}
-}
+};
+
+MOEBATTLE.Command = {
+	exe: function () {
+	},
+	
+};
+
+
+
+

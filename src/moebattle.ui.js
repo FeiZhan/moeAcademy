@@ -479,6 +479,7 @@ MOEBATTLEUI.hideDetail = function () {
 
 // arrow
 MOEBATTLEUI.Arrow = function (source_jq, func) {
+console.debug(source_jq)
 	// set a new canvas id
 	this.canvas += MOEBATTLEUI.Arrow.count;
 	++ MOEBATTLEUI.Arrow.count;
@@ -1097,6 +1098,7 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 		if (undefined === MOEBATTLEUI.select.target) {
 			return;
 		}
+		console.debug("click")
 		//actions.push({type: "strike", from: card, to: MOEBATTLEUI.select.target});
 		var arrow = new MOEBATTLEUI.Arrow(icon_jq, function (from, to) {
 			// hit target icon
@@ -1123,7 +1125,6 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 				});
 			});
 		});
-		
 	})
 	icon_jq.hide().css({visibility: "inherit"}).fadeIn("fast", function () {
 		-- MOEBATTLEUI.AnimaCount;

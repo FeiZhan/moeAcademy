@@ -384,6 +384,7 @@ html {
 }
 
 .moebattle #barrage {
+	z-index: -1;
 	position: absolute;
 	top: 20%;
 	left: 1%;
