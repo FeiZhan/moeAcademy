@@ -48,6 +48,7 @@ MOEBATTLEUI.html = ' \
 <div id="msgsection"> \
 	<div id="msgsection1" /> \
 </div> \
+<div id="barrage" /> \
 <div id="musicplayer"> \
 	<input type="image" src="resources/icons/music-note.png" alt="music player" /> \
 	<audio id="bgm" src="media/bgm/Chuunibyou/23 平凡さの美学.mp3" preload="auto" loop /> \
@@ -113,10 +114,12 @@ MOEBATTLEUI.load = function () {
 	}, function () {
 		$("#" + MOEPROJ.config.canvas + ' #chatbox').hide("slow");
 	});
+	// chatbox
 	$('#chatbox').keypress(function (event) {
 		var keycode = (event.keyCode ? event.keyCode : event.which);
 		if(keycode == '13') {
-			console.debug('You pressed a "enter" key in textbox');
+			var chat = new MOEBATTLEUI.Chat($("#chatbox").val(), "me");
+			$("#chatbox").val("");
 		}
 	});
 	MOEBATTLEUI.BackgroundMusic.run();
@@ -1376,8 +1379,53 @@ MOEBATTLEUI.Message.prototype.show = function (msg, sender, time) {
 	}, 5000);
 };
 
-
-
+MOEBATTLEUI.Chat = function (msg, sender, time) {
+	// set a new canvas id
+	this.canvas += MOEBATTLEUI.Chat.count;
+	++ MOEBATTLEUI.Chat.count;
+	if (undefined !== msg)
+	{
+		this.show(msg, sender, time);
+	}
+	
+};
+MOEBATTLEUI.Chat.prototype.canvas = "chat";
+MOEBATTLEUI.Chat.count = 0;
+MOEBATTLEUI.Chat.parent = "barrage";
+MOEBATTLEUI.Chat.prototype.show = function (msg, sender, time) {
+	var html ='\
+<div id="' + this.canvas + '" class="chat" /> \
+	';
+	$("#" + MOEPROJ.config.canvas + " #" + MOEBATTLEUI.Chat.parent).append(html);
+	var content = "";
+	if ("string" == typeof sender) {
+		content += "[" + sender + "]";
+	}
+	if ("array" == typeof msg || "object" == typeof msg) {
+		try {
+			msg = JSON.stringify(msg);
+		} catch (err) {
+			msg = "";
+			console.warn("message error", error);
+		}
+	}
+	content += msg;
+	var jq = $("#" + MOEPROJ.config.canvas + " #" + MOEBATTLEUI.Chat.parent + " #" + this.canvas);
+	jq.html(content);
+	this.barrage(jq);
+};
+MOEBATTLEUI.Chat.prototype.barrage = function (jq) {
+	var r = (Math.random() * 99) + 1;
+	jq.css({
+		top: r + '%',
+		left: '101%',
+	});
+	jq.animate({
+		left: "-100%"
+	}, 12000, function () {
+		$(this).remove();
+	});
+};
 
 
 
