@@ -1336,20 +1336,20 @@ MOEBATTLEUI.Video = {
 	},
 };
 
-MOEBATTLEUI.Message = function (msg, sender) {
+MOEBATTLEUI.Message = function (msg, sender, time) {
 	// set a new canvas id
 	this.canvas += MOEBATTLEUI.Message.count;
 	++ MOEBATTLEUI.Message.count;
 	if (undefined !== msg)
 	{
-		this.show(msg, sender);
+		this.show(msg, sender, time);
 	}
 	
 };
 MOEBATTLEUI.Message.prototype.canvas = "message";
 MOEBATTLEUI.Message.count = 0;
 MOEBATTLEUI.Message.parent = "msgsection1";
-MOEBATTLEUI.Message.prototype.show = function (msg, sender) {
+MOEBATTLEUI.Message.prototype.show = function (msg, sender, time) {
 	var html ='\
 <div id="' + this.canvas + '" class="message" /> \
 	';
@@ -1367,7 +1367,13 @@ MOEBATTLEUI.Message.prototype.show = function (msg, sender) {
 		}
 	}
 	content += msg;
-	$("#" + MOEPROJ.config.canvas + " #" + MOEBATTLEUI.Message.parent + " #" + this.canvas).html(content);
+	var jq = $("#" + MOEPROJ.config.canvas + " #" + MOEBATTLEUI.Message.parent + " #" + this.canvas);
+	jq.html(content);
+	setTimeout(function () {
+		jq.fadeOut("slow", function () {
+			$(this).remove();
+		});
+	}, 5000);
 };
 
 
