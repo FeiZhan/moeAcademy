@@ -380,7 +380,7 @@ html {
 }
 
 .moebattle .message {
-	font-size: x-small;
+	font-size: small;
 }
 
 .moebattle #barrage {
@@ -402,7 +402,7 @@ html {
 	z-index: 1;
 	position: absolute;
 	top: 90%;
-	left: -5%;
+	left: 1%;
 }
 .moebattle #musicplayer input {
 	height: 30px;

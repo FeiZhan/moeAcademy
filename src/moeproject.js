@@ -98,6 +98,14 @@ MOEPROJ.load = function (config, run_func, data_func) {
 		// fade in
 		canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
 	}
+	if (false == config.menubar) {
+		$("#logo").hide("slide", { direction: "left" }, "slow");
+		$("#sidebar").hide("slide", { direction: "left" }, "slow");
+	}
+	else if ($("#sidebar").css('display') == 'none') {
+		$("#logo").show("slow");
+		$("#sidebar").show("slow");
+	}
 	// load code files
 	if ("code" in config) {
 		// array of files

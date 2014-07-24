@@ -13,6 +13,7 @@ MOEBATTLE.load = function (canvas) {
 		canvas: canvas,
 		html: MOEBATTLE.ui.html,
 		data: MOEBATTLE.data,
+		menubar: false,
 	}, MOEBATTLE.run, MOEBATTLE.loadData);
 };
 // callback for loading json data

@@ -159,7 +159,7 @@ MOEBATTLEUI.Detail.prototype.show = function (target_jq, type) {
 	if (MOEBATTLEUI.Detail.lock) {
 		return;
 	}
-	MOEBATTLEUI.Detail.lock = true;
+	//MOEBATTLEUI.Detail.lock = true;
 	var html = ' \
 <div id="' + this.canvas + '" class="detail"> \
 	<div class="name"></div> \
@@ -281,7 +281,7 @@ MOEBATTLEUI.Detail.prototype.chooseDir = function (detail_jq, dir, target_jq) {
 	case "right": // pop right
 		detail_jq.css({
 			top: target_jq.offset().top,
-			left: target_jq.offset().left - 90 + target_jq.width(),
+			left: target_jq.offset().left + target_jq.width(),
 			height: target_jq.height(),
 			width: "0%"
 		}).animate({
@@ -479,7 +479,6 @@ MOEBATTLEUI.hideDetail = function () {
 
 // arrow
 MOEBATTLEUI.Arrow = function (source_jq, func) {
-console.debug(source_jq)
 	// set a new canvas id
 	this.canvas += MOEBATTLEUI.Arrow.count;
 	++ MOEBATTLEUI.Arrow.count;
@@ -567,7 +566,7 @@ MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
 	// click a target and hide arrow
 	var arrow_click_target = function () {
 		// don't select the source itself
-		if (source_jq.attr('id') == MOEBATTLEUI.select.target) {
+		if (source_jq.attr('id') == MOEBATTLEUI.select.type + "-" + MOEBATTLEUI.select.target) {
 			return;
 		}
 		// if nothing selected
@@ -577,6 +576,7 @@ MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
 		$("html").off('mousemove', arrow_follow).off("click", arrow_click_target);
 		$("#" + MOEPROJ.config.canvas + " #" + that.canvas).hide().remove();
 		that.status = "idle";
+console.debug(source_jq.attr('id'), MOEBATTLEUI.select.target)
 		if (typeof func == "function") {
 			func(source_jq.attr('id'), MOEBATTLEUI.select.target);
 		}
@@ -1098,7 +1098,6 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 		if (undefined === MOEBATTLEUI.select.target) {
 			return;
 		}
-		console.debug("click")
 		//actions.push({type: "strike", from: card, to: MOEBATTLEUI.select.target});
 		var arrow = new MOEBATTLEUI.Arrow(icon_jq, function (from, to) {
 			// hit target icon
