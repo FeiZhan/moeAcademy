@@ -13,7 +13,7 @@ MOEBATTLE.gameStart = function (action) {
 	MOEBATTLE.players[0] = new MOEBATTLE.Player({name : "me", order : 0});
 	MOEBATTLE.players[1] = new MOEBATTLE.Player({name : "opponent", order : 1});
 	for (var i in MOEBATTLE.players) {
-		MOEBATTLE.ui.playerCreate(i);
+		MOEBATTLE.players[i].show();
 	}
 	// prepare discard deck
 	MOEBATTLE.game.discard = new Array();
@@ -98,7 +98,7 @@ MOEBATTLE.playerStart = function (action) {
 		MOEBATTLE.game.current %= Object.keys(MOEBATTLE.players).length;
 		++ MOEBATTLE.game.round_count;
 	}
-	MOEBATTLE.ui.playerStart();
+	MOEBATTLE.ui.Player.start();
 	if (MOEBATTLE.players[MOEBATTLE.game.current].maxmp < 10) {
 		MOEBATTLE.actions.unshift({
 			type: "playerGainMP",
@@ -119,7 +119,7 @@ MOEBATTLE.playerStart = function (action) {
 }
 // switch to next player
 MOEBATTLE.playerEnd = function (action) {
-	MOEBATTLE.ui.playerEnd();
+	MOEBATTLE.ui.Player.end();
 	MOEBATTLE.actions.push({
 		type: "playerStart",
 	});
@@ -132,31 +132,31 @@ MOEBATTLE.playerRevive = function (action) {
 }
 MOEBATTLE.playerLoseHP = function (action) {
 	MOEBATTLE.players[action.target].hp -= action.number;
-	MOEBATTLE.ui.playerChangeHP(action.target, - action.number);
+	MOEBATTLE.ui.Player.changeHP(action.target, - action.number);
 }
 MOEBATTLE.playerGainHP = function (action) {
 	MOEBATTLE.players[action.target].hp += action.number;
-	MOEBATTLE.ui.playerChangeHP(action.target, action.number);
+	MOEBATTLE.ui.Player.changeHP(action.target, action.number);
 }
 MOEBATTLE.playerChangeMaxHP = function (action) {
 	MOEBATTLE.players[action.target].maxhp = action.number;
-	MOEBATTLE.ui.playerChangeMaxHP(action.target, action.number);
+	MOEBATTLE.ui.Player.changeMaxHP(action.target, action.number);
 }
 MOEBATTLE.playerLoseMP = function (action) {
 	MOEBATTLE.players[action.target].mp -= action.number;
-	MOEBATTLE.ui.playerChangeMP(action.target, MOEBATTLE.players[action.target].mp);
+	MOEBATTLE.ui.Player.changeMP(action.target, MOEBATTLE.players[action.target].mp);
 }
 MOEBATTLE.playerGainMP = function (action) {
 	MOEBATTLE.players[action.target].mp += action.number;
-	MOEBATTLE.ui.playerChangeMP(action.target, MOEBATTLE.players[action.target].mp);
+	MOEBATTLE.ui.Player.changeMP(action.target, MOEBATTLE.players[action.target].mp);
 }
 MOEBATTLE.playerChangeMaxMP = function (action) {
 	MOEBATTLE.players[action.target].maxmp = action.number;
-	MOEBATTLE.ui.playerChangeMaxMP(action.target, action.number);
+	MOEBATTLE.ui.Player.changeMaxMP(action.target, action.number);
 }
 MOEBATTLE.playerLoseStatus = function (action) {
 	MOEBATTLE.players[action.target].statuses.splice(MOEBATTLE.players[action.target].statuses.indexOf(action.status), 1);
-	MOEBATTLE.ui.playerLoseStatus(action.target, action.status);
+	MOEBATTLE.ui.Player.loseStatus(action.target, action.status);
 }
 MOEBATTLE.playerGainStatus = function (action) {
 	// duplicate status
@@ -164,7 +164,7 @@ MOEBATTLE.playerGainStatus = function (action) {
 		//return;
 	}
 	MOEBATTLE.players[action.target].statuses.push(action.status);
-	MOEBATTLE.ui.playerGainStatus(action.target, action.status);
+	MOEBATTLE.ui.Player.gainStatus(action.target, action.status);
 }
 MOEBATTLE.playerGainEquip = function (action) {
 }
@@ -272,7 +272,7 @@ MOEBATTLE.charGainHP = function (action) {
 }
 MOEBATTLE.charLoseStatus = function (action) {
 	MOEBATTLE.players[action.target].statuses.splice(MOEBATTLE.players[action.target].statuses.indexOf(action.status), 1);
-	MOEBATTLE.ui.playerLoseStatus(action.target, action.status);
+	MOEBATTLE.ui.Player.loseStatus(action.target, action.status);
 }
 MOEBATTLE.charGainStatus = function (action) {
 	// duplicate status
@@ -280,5 +280,5 @@ MOEBATTLE.charGainStatus = function (action) {
 		//return;
 	}
 	MOEBATTLE.players[action.target].statuses.push(action.status);
-	MOEBATTLE.ui.playerGainStatus(action.target, action.status);
+	MOEBATTLE.ui.Player.gainStatus(action.target, action.status);
 }

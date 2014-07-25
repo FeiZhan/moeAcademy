@@ -73,6 +73,10 @@ MOEBATTLE.Player = function (config) {
 	this.statuses = new Array();
 	this.equips = new Array();
 };
+MOEBATTLE.Player.prototype.show = function () {
+	this.ui = new MOEBATTLEUI.Player(this.order);
+};
+
 // action list
 MOEBATTLE.actions = new Array();
 // execute the next action

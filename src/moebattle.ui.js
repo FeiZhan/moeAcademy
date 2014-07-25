@@ -123,6 +123,9 @@ MOEBATTLEUI.load = function () {
 		}
 	});
 	MOEBATTLEUI.BackgroundMusic.run();
+	setInterval(function () {
+		$("#debug").html("debug" + MOEBATTLEUI.select.target);
+	}, 100);
 };
 
 // lock for animation
@@ -232,11 +235,13 @@ MOEBATTLEUI.Detail.prototype.chooseDir = function (detail_jq, dir, target_jq) {
 			dir = "left";
 		}
 	}
+	var DETAIL_MARGIN = 20;
+	var DETAIL_HALF = 20;
 	switch (dir) {
 	case "up": // popup
 		detail_jq.css({
-			top: target_jq.offset().top,
-			left: target_jq.offset().left - 90,
+			top: target_jq.offset().top - DETAIL_MARGIN,
+			left: target_jq.offset().left - DETAIL_HALF,
 			height: "0%",
 			width: target_jq.width()
 		}).animate({
@@ -250,8 +255,8 @@ MOEBATTLEUI.Detail.prototype.chooseDir = function (detail_jq, dir, target_jq) {
 		break;
 	case "down": // pop down
 		detail_jq.css({
-			top: target_jq.offset().top + target_jq.height(),
-			left: target_jq.offset().left - 90,
+			top: target_jq.offset().top + target_jq.height() + DETAIL_MARGIN,
+			left: target_jq.offset().left - DETAIL_HALF,
 			height: "0%",
 			width: target_jq.width()
 		}).animate({
@@ -265,8 +270,8 @@ MOEBATTLEUI.Detail.prototype.chooseDir = function (detail_jq, dir, target_jq) {
 		break;
 	case "left": // pop left
 		detail_jq.css({
-			top: target_jq.offset().top,
-			left: target_jq.offset().left - 90,
+			top: target_jq.offset().top - DETAIL_HALF,
+			left: target_jq.offset().left - DETAIL_MARGIN,
 			height: target_jq.height(),
 			width: "0%"
 		}).animate({
@@ -280,8 +285,8 @@ MOEBATTLEUI.Detail.prototype.chooseDir = function (detail_jq, dir, target_jq) {
 		break;
 	case "right": // pop right
 		detail_jq.css({
-			top: target_jq.offset().top,
-			left: target_jq.offset().left + target_jq.width(),
+			top: target_jq.offset().top - DETAIL_HALF,
+			left: target_jq.offset().left + target_jq.width() + DETAIL_MARGIN,
 			height: target_jq.height(),
 			width: "0%"
 		}).animate({
@@ -546,8 +551,8 @@ MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
 		// mouse position
 		var pagex = event.pageX - $("#" + MOEPROJ.config.canvas).offset().left;
 		var pagey = event.pageY - $("#" + MOEPROJ.config.canvas).offset().top;
-		// arrow length
-		var length = Math.sqrt((pagex - source_x) * (pagex - source_x) + (pagey - source_y) * (pagey - source_y));
+		// arrow length, avoid mouse clicking on the arrow
+		var length = Math.sqrt((pagex - source_x) * (pagex - source_x) + (pagey - source_y) * (pagey - source_y)) - 10;
 		// arrow center
 		var newx = (pagex + source_x) / 2 - 25;
 		var newy = (pagey + source_y) / 2 - length / 2;
@@ -565,8 +570,9 @@ MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
 	};
 	// click a target and hide arrow
 	var arrow_click_target = function () {
+		var target = MOEBATTLEUI.select.type + "-" + MOEBATTLEUI.select.target;
 		// don't select the source itself
-		if (source_jq.attr('id') == MOEBATTLEUI.select.type + "-" + MOEBATTLEUI.select.target) {
+		if (source_jq.attr('id') == target) {
 			return;
 		}
 		// if nothing selected
@@ -576,9 +582,8 @@ MOEBATTLEUI.Arrow.prototype.follow = function (source_jq, func) {
 		$("html").off('mousemove', arrow_follow).off("click", arrow_click_target);
 		$("#" + MOEPROJ.config.canvas + " #" + that.canvas).hide().remove();
 		that.status = "idle";
-console.debug(source_jq.attr('id'), MOEBATTLEUI.select.target)
 		if (typeof func == "function") {
-			func(source_jq.attr('id'), MOEBATTLEUI.select.target);
+			func(source_jq.attr('id'), target);
 		}
 	};
 	// set arrow to follow mouse
@@ -599,65 +604,52 @@ MOEBATTLEUI.gameOver = function () {
 
 // player
 
-// prepare player layout
-MOEBATTLEUI.playerCreate = function (player) {
-	++ MOEBATTLEUI.AnimaCount;
-	var rphoto = Math.round(Math.random() * MOEBATTLE.moegirls.length);
+MOEBATTLEUI.Player = function (player) {
+	// set a new canvas id
+	/*this.canvas += MOEBATTLEUI.Player.count;
+	++ MOEBATTLEUI.Player.count;*/
 	if (0 == player) {
-		// head photo
-		$("#" + MOEPROJ.config.canvas + " #myhead img").attr("src", MOEBATTLE.moegirls[rphoto].photo)
-		.error(function () {
-			$(this).attr("src", "resources/nophoto.jpg");
-		});
-		// hover to show detail
-		$("#" + MOEPROJ.config.canvas + " #myhead img").hover(function (obj) {
-			MOEBATTLEUI.select.target = player;
-			MOEBATTLEUI.select.type = "player";
-			MOEBATTLEUI.select.time = new Date();
-			$(this).css("z-index", 1);
-			//MOEBATTLEUI.showDetail(player, "player");
-		}, function (obj) {
-			MOEBATTLEUI.select.target = undefined;
-			MOEBATTLEUI.select.type = undefined;
-			$(this).css("z-index", 0);
-			//MOEBATTLEUI.hideDetail();
-		});
-		$("#" + MOEPROJ.config.canvas + " #myhead img").hover()
-		var span = $("#" + MOEPROJ.config.canvas + ' #myhead .hp span');
-		$(span[0]).html(MOEBATTLE.players[player].hp);
-		$(span[1]).html(MOEBATTLE.players[player].maxhp);
-		span = $("#" + MOEPROJ.config.canvas + ' #myhead .mp span');
-		$(span[0]).html(MOEBATTLE.players[player].mp);
-		$(span[1]).html(MOEBATTLE.players[player].maxmp);
+		this.canvas = "myhead";
 	}
 	else if (1 == player) {
-		$("#" + MOEPROJ.config.canvas + " #yourhead img").attr("src", MOEBATTLE.moegirls[rphoto].photo)
-		.error(function () {
-			$(this).attr("src", "resources/nophoto.jpg");
-		});
-		// hover to show detail
-		$("#" + MOEPROJ.config.canvas + " #yourhead img").hover(function (obj) {
-			MOEBATTLEUI.select.target = player;
-			MOEBATTLEUI.select.type = "player";
-			MOEBATTLEUI.select.time = new Date();
-			$(this).css("z-index", 1);
-			//MOEBATTLEUI.showDetail(player, "player");
-		}, function (obj) {
-			MOEBATTLEUI.select.target = undefined;
-			MOEBATTLEUI.select.type = undefined;
-			$(this).css("z-index", 0);
-			//MOEBATTLEUI.hideDetail();
-		});
-		var span = $("#" + MOEPROJ.config.canvas + ' #yourhead .hp span');
-		$(span[0]).html(MOEBATTLE.players[player].hp);
-		$(span[1]).html(MOEBATTLE.players[player].maxhp);
-		span = $("#" + MOEPROJ.config.canvas + ' #yourhead .mp span');
-		$(span[0]).html(MOEBATTLE.players[player].mp);
-		$(span[1]).html(MOEBATTLE.players[player].maxmp);
+		this.canvas = "yourhead";
 	}
-	-- MOEBATTLEUI.AnimaCount;
+	if (undefined !== player) {
+		this.show(player);
+	}
+};
+MOEBATTLEUI.Player.prototype.canvas = "player";
+MOEBATTLEUI.Player.prototype.detail;
+MOEBATTLEUI.Player.count = 0;
+MOEBATTLEUI.Player.prototype.show = function (player) {
+	var rphoto = Math.round(Math.random() * MOEBATTLE.moegirls.length);
+	// head photo
+	$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " img").attr("src", MOEBATTLE.moegirls[rphoto].photo)
+	.error(function () {
+		$(this).attr("src", "resources/nophoto.jpg");
+	});
+	// hover to show detail
+	$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " img").hover(function (obj) {
+		MOEBATTLEUI.select.target = player;
+		MOEBATTLEUI.select.type = "player";
+		MOEBATTLEUI.select.time = new Date();
+		$(this).css("z-index", 1);
+		//MOEBATTLEUI.showDetail(player, "player");
+	}, function (obj) {
+		MOEBATTLEUI.select.target = undefined;
+		MOEBATTLEUI.select.type = undefined;
+		$(this).css("z-index", 0);
+		//MOEBATTLEUI.hideDetail();
+	});
+	$("#" + MOEPROJ.config.canvas + " #" + this.canvas + " img").hover()
+	var span = $("#" + MOEPROJ.config.canvas + ' #' + this.canvas + ' .hp span');
+	$(span[0]).html(MOEBATTLE.players[player].hp);
+	$(span[1]).html(MOEBATTLE.players[player].maxhp);
+	span = $("#" + MOEPROJ.config.canvas + ' #' + this.canvas + ' .mp span');
+	$(span[0]).html(MOEBATTLE.players[player].mp);
+	$(span[1]).html(MOEBATTLE.players[player].maxmp);
 }
-MOEBATTLEUI.playerStart = function () {
+MOEBATTLEUI.Player.start = function () {
 	++ MOEBATTLEUI.AnimaCount;
 	// change border color
 	$("#battle .hand.turn").removeClass("turn");
@@ -679,13 +671,13 @@ MOEBATTLEUI.playerStart = function () {
 	}
 	-- MOEBATTLEUI.AnimaCount;
 }
-MOEBATTLEUI.playerEnd = function () {
+MOEBATTLEUI.Player.end = function () {
 	++ MOEBATTLEUI.AnimaCount;
 	// disable endbutton in case of double click
 	$("#" + MOEPROJ.config.canvas + ' #endbutton').addClass("disable");
 	-- MOEBATTLEUI.AnimaCount;
 }
-MOEBATTLEUI.playerChangeHP = function (target, number) {
+MOEBATTLEUI.Player.changeHP = function (target, number) {
 	var num;
 	if (0 == target) {
 		$("#" + MOEPROJ.config.canvas + ' #myhead .hp span').html(MOEBATTLE.players[target].hp);
@@ -696,7 +688,7 @@ MOEBATTLEUI.playerChangeHP = function (target, number) {
 		num = new MOEBATTLEUI.Number(number, $("#" + MOEPROJ.config.canvas + ' #yourhead'));
 	}
 };
-MOEBATTLEUI.playerChangeMaxHP = function (target, number) {
+MOEBATTLEUI.Player.changeMaxHP = function (target, number) {
 	if (0 == target) {
 		$($("#" + MOEPROJ.config.canvas + ' #myhead .hp span')[1]).html(number);
 	}
@@ -704,7 +696,7 @@ MOEBATTLEUI.playerChangeMaxHP = function (target, number) {
 		$($("#" + MOEPROJ.config.canvas + ' #yourhead .hp span')[1]).html(number);
 	}
 };
-MOEBATTLEUI.playerChangeMP = function (target, number) {
+MOEBATTLEUI.Player.changeMP = function (target, number) {
 	if (0 == target) {
 		$("#" + MOEPROJ.config.canvas + ' #myhead .mp span').html(number);
 	}
@@ -712,7 +704,7 @@ MOEBATTLEUI.playerChangeMP = function (target, number) {
 		$("#" + MOEPROJ.config.canvas + ' #yourhead .mp span').html(number);
 	}
 };
-MOEBATTLEUI.playerChangeMaxMP = function (target, number) {
+MOEBATTLEUI.Player.changeMaxMP = function (target, number) {
 	if (0 == target) {
 		$($("#" + MOEPROJ.config.canvas + ' #myhead .mp span')[1]).html(number);
 	}
@@ -720,7 +712,7 @@ MOEBATTLEUI.playerChangeMaxMP = function (target, number) {
 		$($("#" + MOEPROJ.config.canvas + ' #yourhead .mp span')[1]).html(number);
 	}
 };
-MOEBATTLEUI.playerLoseStatus = function (target, status) {
+MOEBATTLEUI.Player.loseStatus = function (target, status) {
 	if (0 == target) {
 		$("#" + MOEPROJ.config.canvas + ' #mystatusarea #status-' + status).remove();
 	}
@@ -728,7 +720,7 @@ MOEBATTLEUI.playerLoseStatus = function (target, status) {
 		$("#" + MOEPROJ.config.canvas + ' #yourstatusarea #status-' + status).remove();
 	}
 }
-MOEBATTLEUI.playerGainStatus = function (target, status) {
+MOEBATTLEUI.Player.gainStatus = function (target, status) {
 	var status = new MOEBATTLEUI.Status(status, target);
 }
 
@@ -1047,6 +1039,7 @@ MOEBATTLEUI.Char = function (card, player, height, width) {
 };
 MOEBATTLEUI.Char.prototype.canvas = "char";
 MOEBATTLEUI.Char.count = 0;
+MOEBATTLEUI.Char.arrow = false;
 MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 	++ MOEBATTLEUI.AnimaCount;
 	var html = ' \
@@ -1070,18 +1063,17 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 	var icon_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + card);
 	var detail;
 	var hover_flag = false;
-	var that = this;
 	icon_jq.hover(function (obj) {
 		MOEBATTLEUI.select.target = card;
 		MOEBATTLEUI.select.type = "icon";
 		MOEBATTLEUI.select.time = new Date();
 		hover_flag = true;
-		$(that).css("z-index", 1);
+		$(this).addClass("select");
+		$(this).css("z-index", 1);
 		if (undefined !== detail) {
 			detail.hide();
 		}
 		detail = new MOEBATTLEUI.Detail(icon_jq);
-
 	}, function (obj) {
 		hover_flag = false;
 		// delay to check leave
@@ -1089,24 +1081,34 @@ MOEBATTLEUI.Char.prototype.show = function (card, area_jq) {
 			if (! hover_flag) {
 				MOEBATTLEUI.select.target = undefined;
 				MOEBATTLEUI.select.type = undefined;
-				$(that).css("z-index", 0);
+				// don't use $(this)
+				icon_jq.removeClass("select");
+				icon_jq.css("z-index", 0);
 				detail.hide();
 			}
 		}, 200);
 	});
 	icon_jq.on("click", function () {
 		if (undefined === MOEBATTLEUI.select.target) {
+			MOEBATTLEUI.Char.arrow = false;
 			return;
 		}
+		if (MOEBATTLEUI.Char.arrow) {
+			MOEBATTLEUI.Char.arrow = false;
+			return;
+		}
+		MOEBATTLEUI.Char.arrow = true;
 		//actions.push({type: "strike", from: card, to: MOEBATTLEUI.select.target});
 		var arrow = new MOEBATTLEUI.Arrow(icon_jq, function (from, to) {
 			// hit target icon
 			if (undefined === from || undefined === to) {
+				MOEBATTLEUI.Char.arrow = false;
 				return;
 			}
-			var from_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + from);
-			var to_jq = $("#" + MOEPROJ.config.canvas + " #icon-" + to);
+			var from_jq = $("#" + MOEPROJ.config.canvas + " #" + from);
+			var to_jq = $("#" + MOEPROJ.config.canvas + " #" + to);
 			if (0 == from_jq.length || 0 == to_jq.length) {
+				MOEBATTLEUI.Char.arrow = false;
 				return;
 			}
 			var from_pos = from_jq.position();

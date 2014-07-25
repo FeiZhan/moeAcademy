@@ -6,8 +6,8 @@ html {
 }
 .moebattle #debug {
 	position: absolute;
-	top: 90%;
-	left: 0%;
+	top: 95%;
+	left: 1%;
 }
 .moebattle #board {
 	position: absolute;
@@ -289,7 +289,6 @@ html {
 }
 
 .moebattle .area .icon {
-	border: 1px solid Black;
 	max-height: 100px;
 	max-width: 100px;
 	text-align: center;
@@ -329,6 +328,9 @@ html {
 	bottom: 0%;
 	right: 1%;
 	box-shadow: -2px -2px 1px 0px #888888;
+}
+.moebattle .icon.select {
+	border: 5px solid red;
 }
 
 .moebattle .number {
