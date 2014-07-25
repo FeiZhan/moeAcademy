@@ -144,10 +144,10 @@ html {
 	box-shadow: 15px 10px 3px 0px #888888;
 	text-align: center;
 }
-.moebattle #myhead {
+.moebattle #player-0 {
 	top: 72%;
 }
-.moebattle #yourhead {
+.moebattle #player-1 {
 	top: 2%;
 }
 .moebattle .head img {
