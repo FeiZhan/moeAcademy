@@ -64,7 +64,7 @@ MOEPROJ.run = function (choice) {
 		MOEQUEST.load("quest");
 		break;
 	case "battle":
-		MOEBATTLE.load("battle");
+		MOEPROJ.MOEBATTLE.PAGE.load("battle");
 		break;
 	case "craft":
 		MOECRAFT.load("craft");

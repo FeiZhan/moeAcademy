@@ -1,5 +1,8 @@
 {
 	"title": "battle.json",
+	"name": "萌娘对战",
+	"discrip": "嗯嗯，就是萌娘对战",
+	"player_num": 2,
 	"cards": [
 	{
 		"name": "战场原黑仪",
