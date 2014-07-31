@@ -50,7 +50,7 @@ MOEPROJ.run = function (choice) {
 	active.removeClass("active");
 	$("#sidebar #li-" + choice).addClass("active");
 	// show the correpsonding view
-	$("#content div").hide();
+	$("#content div").hide().empty();
 	$("#content #" + choice).show();
 	// run the corresponding code
 	switch (choice) {
@@ -98,10 +98,13 @@ MOEPROJ.load = function (config, run_func, data_func) {
 		// fade in
 		canvas.hide().css({visibility: "inherit"}).fadeIn("slow");
 	}
+	// remove menubar
 	if (false == config.menubar) {
+		// slide left to hide
 		$("#logo").hide("slide", { direction: "left" }, "slow");
 		$("#sidebar").hide("slide", { direction: "left" }, "slow");
 	}
+	// show up menubar
 	else if ($("#sidebar").css('display') == 'none') {
 		$("#logo").show("slow");
 		$("#sidebar").show("slow");
@@ -164,21 +167,7 @@ MOEPROJ.loadFile = function (file, func) {
 		MOEPROJ.config.ready[file] = false;
 	}
 	else { // already done, don't load again
-		// special case: filenames
-		if ("filenames.json" == file.slice(-14)) {
-			var data = MOEPROJ.config.files[file];
-			for (var i = 0; i < data.length; ++ i) {
-				var file1 = file.substring(0, file.length - 14) + "raw/" + data[i];
-				if (file1 in MOEPROJ.config.files) {
-					// run it again
-					func(MOEPROJ.config.files[file1], file1);
-				}
-			}
-		}
-		else {
-			func(MOEPROJ.config.files[file], file);
-		}
-		return;
+		return func(MOEPROJ.config.files[file], file);
 	}
 	if (".js" == file.substr(file.length - 3)) {
 		// load a js script
@@ -211,6 +200,7 @@ MOEPROJ.loadFile = function (file, func) {
 	else {
 		// ignore it
 		MOEPROJ.config.ready[file] = true;
+		console.warn("unable to load", file);
 	}
 };
 // load a json file
@@ -227,22 +217,12 @@ MOEPROJ.loadJson = function (file, func) {
 		if ("data/raw" != file.substr(0, 8)) {
 			console.log("load", file);
 		}
-		// special case: filenames
-		if ("filenames.json" == file.slice(-14)) {
-			for (var i = 0; i < data.length && i < 700; ++ i) {
-				// load again
-				MOEPROJ.loadJson(file.substring(0, file.length - 14) + "raw/" + data[i], func);
-			}
-		}
-		// call callback func
-		else if (typeof func == "function") {
-			func(data, file);
-		}
+		return func(data, file);
 	})
-	.fail(function(jqXHR, textStatus, errorThrown) {
+	.fail(function (jqXHR, textStatus, errorThrown) {
 		// fail also ready
 		MOEPROJ.config.ready[file] = true;
-		//console.error("data load error", textStatus, errorThrown);
+		//console.error("file load error", file);
 	})
 	.always(function(data, textStatus, jqXHR) {
 	});
@@ -254,9 +234,32 @@ MOEPROJ.getFunctionFromString = function (string) {
     for (i = 0; i < scopeSplit.length - 1; i++)
     {
         scope = scope[scopeSplit[i]];
-
         if (scope == undefined) return;
     }
-
     return scope[scopeSplit[scopeSplit.length - 1]];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

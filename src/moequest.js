@@ -14,9 +14,9 @@ MOEQUEST.ui;
 MOEQUEST.data = ['data/filenames.json'];
 // moegirl list
 MOEQUEST.moegirls = new Array();
-MOEQUEST.load = function (canvas) {
+MOEQUEST.load = function (canvas, ui) {
 	// set ui
-	MOEQUEST.ui = MOEPROJ.MOEQUESTUI;
+	MOEQUEST.ui = undefined !== ui ? ui : MOEPROJ.MOEQUESTUI;
 	MOEQUEST.ui.init(canvas);
 	MOEPROJ.load({
 		canvas: canvas,
@@ -25,15 +25,30 @@ MOEQUEST.load = function (canvas) {
 	}, MOEQUEST.run, MOEQUEST.loadData);
 };
 // callback for loading json data
-MOEQUEST.loadData = function (data) {
-	// just keep moegirls
-	if ("发色" in data) {
-		// add to moegirl list
-		MOEQUEST.moegirls.push(data);
+MOEQUEST.loadData = function (data, file) {
+	switch (file) {
+	case 'data/filenames.json':
+		// load each moegirl
+		for (var i = 0; i < data.length; ++ i) {
+			MOEPROJ.loadJson(file.substring(0, file.length - 14) + "raw/" + data[i], function (data, file) {
+				// just keep moegirls
+				if ("发色" in data) {
+					// add to moegirl list
+					MOEQUEST.moegirls.push(data);
+				}
+			});
+		}
+		break;
+	default:
+		break;
 	}
 };
 // run when loading completes
 MOEQUEST.run = function (canvas) {
+	if (MOEQUEST.moegirls.length < 50) {
+		setTimeout(MOEQUEST.run, 500);
+		return;
+	}
 	MOEQUEST.ui.load();
 	for (var i = 0; i < MOEQUEST.config.quest_num; ++ i) {
 		// create a quest
@@ -300,3 +315,21 @@ MOEQUEST.clearChecked = function () {
 		$(value).removeClass("checked");
 	});
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

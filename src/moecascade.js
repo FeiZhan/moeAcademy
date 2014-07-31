@@ -1,17 +1,24 @@
 // moegirl cascade
 
+// namespace
 MOEPROJ.MOECASC = MOEPROJ.MOECASC || new Object();
 var MOECASC = MOEPROJ.MOECASC;
-
+// ui
 MOECASC.ui;
+MOECASC.config = {
+	init_num: 24,
+	add_num: 24,
+};
+// data files to load
 MOECASC.data = ['data/filenames.json'];
+// all moegirls' data
 MOECASC.moegirls = new Array();
 // the list of each moegirl to display
 MOECASC.list = new Array();
 // load html and files
-MOECASC.load = function (canvas) {
+MOECASC.load = function (canvas, ui) {
 	// set ui
-	MOECASC.ui = MOEPROJ.MOECASCUI;
+	MOECASC.ui = undefined !== ui ? ui : MOEPROJ.MOECASCUI;
 	MOECASC.ui.init(canvas);
 	MOEPROJ.load({
 		canvas: canvas,
@@ -20,19 +27,34 @@ MOECASC.load = function (canvas) {
 	}, MOECASC.run, MOECASC.loadData);
 };
 // callback for loading json data
-MOECASC.loadData = function (data) {
-	MOECASC.moegirls = MOECASC.moegirls.concat(data);
+MOECASC.loadData = function (data, file) {
+	switch (file) {
+	case 'data/filenames.json':
+		// load each moegirl
+		for (var i = 0; i < data.length; ++ i) {
+			MOEPROJ.loadJson(file.substring(0, file.length - 14) + "raw/" + data[i], function (data, file) {
+				MOECASC.moegirls = MOECASC.moegirls.concat(data);
+			});
+		}
+		break;
+	default:
+		break;
+	}
 };
 // run when loading completes
 MOECASC.run = function () {
+	if (MOECASC.moegirls.length < MOECASC.config.init_num) {
+		setTimeout(MOECASC.run, 500);
+		return;
+	}
 	// add init moegirls
-	MOECASC.list = MOECASC.shuffleMoegirls(24);
-	for (var i = 0; i < 24; ++ i) {
+	MOECASC.list = MOECASC.shuffleMoegirls(MOECASC.config.init_num);
+	for (var i = 0; i < MOECASC.config.init_num; ++ i) {
 		MOECASC.addPin( MOECASC.moegirls[MOECASC.list[i]] );
 	}
 	MOECASC.ui.load();
 };
-// get a list of shuffled moegirl numbers
+// get a list of shuffled numbers of moegirls
 MOECASC.shuffleMoegirls = function (num) {
 	var list = new Array();
 	for (var i = 0; i < num; ++ i) {
@@ -61,13 +83,17 @@ MOECASCUI.html = ' \
 	</div> \
 </div> \
 <div id="detail"> \
-	<a href="#" target="_blank"> \
-		<img border="0" src="resources/nophoto.jpg" alt="photo" /> \
-	</a> \
-	<a href="#" target="_blank"> \
-		<span></span> \
-	</a> \
-	<table border="0"></table> \
+	<div> \
+		<a href="#" target="_blank"> \
+			<img border="0" src="resources/nophoto.jpg" alt="photo" /> \
+		</a> \
+	</div> \
+	<div> \
+		<a href="#" target="_blank"> \
+			<span></span> \
+		</a> \
+		<table border="0"></table> \
+	</div> \
 </div> \
 ';
 MOECASCUI.show_detail = false;
@@ -110,8 +136,8 @@ MOECASCUI.load = function () {
 			if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
 				// add new moegirls
 				var last = MOECASC.list.length;
-				MOECASC.list = MOECASC.list.concat(MOECASC.shuffleMoegirls(24));
-				for (var i = 0; i < 24; ++ i) {
+				MOECASC.list = MOECASC.list.concat(MOECASC.shuffleMoegirls(MOECASC.config.add_num));
+				for (var i = 0; i < MOECASC.config.add_num; ++ i) {
 					MOECASC.addPin( MOECASC.moegirls[MOECASC.list[last + i]] );
 				}
 			}
@@ -193,3 +219,21 @@ MOECASC.showDetail = function (moegirl) {
 	}
 	$("#" + MOEPROJ.config.canvas + " #detail").hide().css({visibility: "inherit"}).fadeIn("fast");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

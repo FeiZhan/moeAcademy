@@ -17,6 +17,8 @@
 	<script src="src/moecascade.js"></script>
 	<link rel="stylesheet" type="text/css" href="src/moequest.css" />
 	<script src="src/moequest.js"></script>
+	<link rel="stylesheet" type="text/css" href="src/moecraft.css" />
+	<script src="src/moecraft.js"></script>
 	<link rel="stylesheet" type="text/css" href="src/moebattle.css" />
 	<link rel="stylesheet" type="text/css" href="src/moebattle.page.css" />
 	<script src="src/moebattle.page.js"></script>
@@ -25,8 +27,6 @@
 	<script src="src/moebattle.ui.js"></script>
 	<script src="src/moebattle.skill.js"></script>
 	<script src="src/moebattle.animation.js"></script>
-	<link rel="stylesheet" type="text/css" href="src/moecraft.css" />
-	<script src="src/moecraft.js"></script>
 </head>
 <body>
 	<div id="logo">
@@ -56,6 +56,7 @@ $(function() {
 	if (undefined !== urlparam.hash && "" != urlparam.hash && " " != urlparam.hash) {
 		MOEPROJ.run(urlparam.hash);
 	}
+	// run based on url parameter view
 	else if (undefined !== urlparam.view && "" != urlparam.view && " " != urlparam.view) {
 		MOEPROJ.run(urlparam.view);
 	} else {

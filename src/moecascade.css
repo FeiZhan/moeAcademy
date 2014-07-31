@@ -17,6 +17,20 @@
 	column-gap: 15px;
 	column-fill: auto;
 }
+@media (min-width: 1100px) {
+	.moecascade #columns {
+		-webkit-column-count: 4;
+		-moz-column-count: 4;
+		column-count: 4;
+	}
+}
+.moecascade #columns:hover .pin:not(:hover) {
+	/*opacity: 0.4;*/
+}
+.moecascade #columns .opaque {
+	opacity: 0.4;
+}
+
 .moecascade .pin {
 	display: inline-block;
 	border: 2px solid #FAFAFA;
@@ -48,20 +62,7 @@
 	font: 16px/24px Arial, sans-serif;
 	margin: 0;
 }
-@media (min-width: 1100px) {
-	.moecascade #columns {
-		-webkit-column-count: 4;
-		-moz-column-count: 4;
-		column-count: 4;
-	}
-}
-.moecascade #columns:hover .pin:not(:hover) {
-	/*opacity: 0.4;*/
-}
 
-.moecascade #columns .opaque {
-	opacity: 0.4;
-}
 .moecascade #detail {
 	visibility: hidden;
 	-webkit-box-shadow: 15px 15px 5px 0px rgba(34, 25, 25, 0.4);
@@ -74,34 +75,43 @@
 	left: 13%;
 	width: 75%;
 	min-height: 70%;
+	max-height: 85%;
 	overflow: auto;
-	/*@bug center the image */
-	/*margin-left: auto;
-	margin-right: auto;*/
 }
-.moecascade #detail img {
-	max-width: 50%;
-	max-height: 70%;
-	/*position: relative;
-	top: 0px;
-	left: 0px;*/
-}
-.moecascade #detail a span {
-	text-align: center;
+.moecascade #detail>div:first-child {
 	position: absolute;
 	top: 0px;
-	/* center text */
-	left: 50%;
-	width: 50%;
-	margin-top: 15px;
+	left: 0px;
+	width: 45%;
+	height: 100%;
+}
+.moecascade #detail img {
+	max-width: 100%;
+	max-height: 100%;
+	/* in the center */
+	margin: auto;
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0;
+}
+.moecascade #detail>div:last-child {
+	width: 55%;
+	height: 90%;
+	position: absolute;
+	left: 45%;
+	text-align: center;
+}
+.moecascade #detail a {
+	text-decoration: none;
+}
+.moecascade #detail a span {
+	margin-top: 5%;
+	text-align: center;
 	font-size: x-large;
 }
 .moecascade #detail table {
-	width: 50%;
-	min-width: 300px;
+	width: 95%;
 	position: absolute;
 	top: 15%;
-	left: 50%;
 }
 .moecascade #detail table td {
 	text-align: center;

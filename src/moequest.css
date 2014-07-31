@@ -79,6 +79,7 @@
 	height: 10%;
 	width: 1%;
 	visibility: hidden;
+	clear: both;
 }
 .moequest .option img.show {
 	height: auto;
